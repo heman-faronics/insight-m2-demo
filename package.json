@@ -1,0 +1,6 @@
+{
+  "name": "insight-m2-demo-web",
+  "version": "1.0.0",
+  "description": "Faronics Insight M2 SSO + Rostering demo — Vercel deployment",
+  "engines": { "node": ">=18" }
+}

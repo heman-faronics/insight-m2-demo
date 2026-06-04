@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!-- INSIGHT M2 DEMO -- NOT PRODUCTION CODE -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insight M2 Demo — SSO + Rostering</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root { --blue:#0091ff; --dark:#0a1424; --orange:#ce4900; }
+  body  { background:#f0f2f5; font-family:'Segoe UI',sans-serif; min-height:100vh; }
+
+  .demo-header { background:var(--dark); color:#fff; padding:8px 20px; display:flex; align-items:center; gap:12px; }
+  .demo-header .brand { font-size:1rem; font-weight:700; letter-spacing:.5px; }
+  .badge-demo { background:var(--orange); color:#fff; font-size:.65rem; padding:2px 8px; border-radius:10px; font-weight:700; }
+
+  .step-bar { background:#fff; border-bottom:1px solid #dee2e6; padding:12px 24px; }
+  .step-dot  { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:700; border:2px solid #dee2e6; background:#fff; color:#6c757d; transition:all .25s; flex-shrink:0; }
+  .step-dot.active { background:var(--blue); border-color:var(--blue); color:#fff; }
+  .step-dot.done   { background:#198754; border-color:#198754; color:#fff; }
+  .step-connector  { flex:1; height:2px; background:#dee2e6; margin:0 4px; transition:background .25s; }
+  .step-connector.done { background:#198754; }
+  .step-label      { font-size:.7rem; color:#6c757d; margin-top:4px; text-align:center; white-space:nowrap; }
+  .step-label.active { color:var(--blue); font-weight:600; }
+
+  .demo-body { padding:24px; }
+  .screen    { display:none; }
+  .screen.active { display:block; }
+
+  .console-mockup { border:1px solid #dee2e6; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+  .console-titlebar { background:var(--dark); color:#fff; padding:6px 14px; font-size:.8rem; display:flex; align-items:center; gap:8px; }
+  .win-btn { width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .win-close{background:#ff5f56;} .win-min{background:#febc2e;} .win-max{background:#28c840;}
+  .console-body { background:#f8f9fa; padding:24px; }
+
+  .tc-bg { background:linear-gradient(135deg,#f0f4ff,#e8f0fe); min-height:300px; display:flex; align-items:center; justify-content:center; border-radius:4px; padding:24px; }
+  .tc-form { width:340px; }
+  .tc-logo  { color:var(--blue); font-size:1.4rem; font-weight:800; letter-spacing:1px; }
+
+  .sc-bg  { background:var(--dark); min-height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px; }
+
+  .dfc-panel { background:#fff; border:1px solid #dee2e6; border-radius:6px; padding:16px; margin-bottom:14px; }
+  .dfc-panel-title { font-size:.85rem; font-weight:700; color:#212529; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .field-row   { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .field-label { width:165px; font-size:.8rem; color:#6c757d; flex-shrink:0; text-align:right; }
+  .field-value { font-size:.8rem; color:#212529; background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:3px 8px; flex:1; }
+  .field-value.secret { letter-spacing:2px; }
+
+  .policy-group      { background:#fff; border:1px solid #dee2e6; border-radius:6px; overflow:hidden; margin-bottom:12px; }
+  .policy-group-head { background:#f8f9fa; border-bottom:1px solid #dee2e6; padding:8px 14px; font-size:.8rem; font-weight:700; color:#495057; }
+  .policy-group-body { padding:12px 14px; }
+
+  .demo-footer { position:sticky; bottom:0; background:#fff; border-top:1px solid #dee2e6; padding:12px 24px; display:flex; justify-content:space-between; align-items:center; z-index:10; }
+  .summary-box { background:#e8f4fd; border:1px solid #bee3f8; border-radius:6px; padding:16px; }
+  .summary-row { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:.85rem; }
+
+  .ms-btn { background:#0078d4; border-color:#0078d4; color:#fff; }
+  .ms-btn:hover { background:#006cbd; color:#fff; }
+  .ms-btn:disabled { background:#0078d4; border-color:#0078d4; opacity:.6; }
+</style>
+</head>
+<body>
+
+<div class="demo-header">
+  <span class="brand">FARONICS INSIGHT</span>
+  <span class="badge-demo">M2 DEMO</span>
+  <span class="ms-auto text-white-50" style="font-size:.75rem">SSO + ClassLink Rostering POC — NOT PRODUCTION CODE</span>
+</div>
+
+<div class="step-bar">
+  <div class="d-flex align-items-start">
+    <div class="d-flex flex-column align-items-center"><div class="step-dot active" id="dot-1">1</div><div class="step-label active" id="lbl-1">Teacher<br>Sign-In</div></div>
+    <div class="step-connector mt-4" id="conn-1"></div>
+    <div class="d-flex flex-column align-items-center"><div class="step-dot" id="dot-2">2</div><div class="step-label" id="lbl-2">Student<br>Sign-In</div></div>
+    <div class="step-connector mt-4" id="conn-2"></div>
+    <div class="d-flex flex-column align-items-center"><div class="step-dot" id="dot-3">3</div><div class="step-label" id="lbl-3">DFC Org<br>Settings</div></div>
+    <div class="step-connector mt-4" id="conn-3"></div>
+    <div class="d-flex flex-column align-items-center"><div class="step-dot" id="dot-4">4</div><div class="step-label" id="lbl-4">Teacher<br>Policy</div></div>
+    <div class="step-connector mt-4" id="conn-4"></div>
+    <div class="d-flex flex-column align-items-center"><div class="step-dot" id="dot-5">5</div><div class="step-label" id="lbl-5">Student<br>Policy</div></div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 1 ══ -->
+<div class="demo-body screen active" id="screen-1">
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <h5 class="mb-1">Step 1 of 5 — Teacher Sign-In with Microsoft Entra</h5>
+      <p class="text-muted small mb-3">Real OIDC authentication against <code>faronicsna.onmicrosoft.com</code>. After sign-in, ClassLink classes are fetched live via the server-side API route.</p>
+      <div class="console-mockup">
+        <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Faronics Insight Teacher Console</span></div>
+        <div class="console-body">
+          <div class="tc-bg">
+            <div class="tc-form">
+              <div class="text-center mb-3"><div class="tc-logo mb-1">TEACHER CONSOLE</div><small class="text-muted">The ultimate platform for classroom management</small></div>
+              <div class="mb-3">
+                <button id="btn-teacher-signin" class="btn ms-btn w-100 d-flex align-items-center justify-content-center gap-2" onclick="teacherSignIn()">
+                  <svg width="16" height="16" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                  Sign in with Microsoft
+                </button>
+              </div>
+              <div id="teacher-signin-status" class="mb-2" style="min-height:24px"></div>
+              <div id="teacher-class-section" style="display:none">
+                <label class="form-label small fw-semibold">Load Classroom</label>
+                <select id="teacher-class-select" class="form-select form-select-sm mb-1"></select>
+                <small class="text-muted">Teacher's active ClassLink classes.</small>
+              </div>
+              <div class="text-center text-muted small my-2">— or —</div>
+              <div class="mb-2"><label class="form-label small fw-semibold text-muted">Enter Class ID manually</label><input type="text" class="form-control form-control-sm" placeholder="Class ID (disabled — SSO required)" disabled><small class="text-muted">Disabled: your organization requires Microsoft sign-in.</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card border-0 bg-light h-100"><div class="card-body p-3">
+        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">What's happening</div>
+        <ol class="small text-muted ps-3" style="line-height:1.8">
+          <li>MSAL Browser popup opens <code>login.microsoftonline.com</code></li>
+          <li>Teacher authenticates with Entra (with account picker)</li>
+          <li>idToken returned — email extracted from claims</li>
+          <li>Browser calls <code>/api/classlink?op=teacher&amp;email=...</code></li>
+          <li>Serverless function proxies ClassLink API (no CORS)</li>
+          <li>Classes + student counts returned → dropdown populated</li>
+        </ol>
+        <hr class="my-2">
+        <div class="fw-bold small mb-1 text-muted text-uppercase" style="letter-spacing:.5px">Test accounts</div>
+        <div class="small text-muted"><code>teacher1@faronicsna.onmicrosoft.com</code><br>Maps to ClassLink: Marian Lucas (5033_T5033-0005)</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2 ══ -->
+<div class="demo-body screen" id="screen-2">
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <h5 class="mb-1">Step 2 of 5 — Student Sign-In with Microsoft Entra</h5>
+      <p class="text-muted small mb-3">Same MSAL popup flow with account picker — sign in as a different account from Screen 1. The student's enrolled class is resolved from ClassLink via the server-side API.</p>
+      <div class="console-mockup">
+        <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Faronics Insight Student Client</span></div>
+        <div class="console-body p-0">
+          <div class="sc-bg">
+            <div style="background:#0091ff;color:#fff;padding:4px 16px;border-radius:4px;font-weight:700;letter-spacing:1px;font-size:.9rem">INSIGHT</div>
+            <h6 class="text-white mb-0">Welcome to Student Client</h6>
+            <small class="text-white-50 mb-2">Your organization requires Microsoft sign-in.</small>
+            <div class="tc-form" style="max-width:300px">
+              <button id="btn-student-signin" class="btn ms-btn w-100 d-flex align-items-center justify-content-center gap-2" onclick="studentSignIn()">
+                <svg width="16" height="16" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                Sign in with Microsoft
+              </button>
+              <div id="student-signin-status" class="mt-2" style="min-height:24px"></div>
+              <div id="student-class-section" style="display:none;text-align:center" class="mt-2">
+                <div id="student-class-info" class="mb-2"></div>
+                <button class="btn btn-success btn-sm" id="btn-student-join">Join Class</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card border-0 bg-light h-100"><div class="card-body p-3">
+        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">What's happening</div>
+        <ol class="small text-muted ps-3" style="line-height:1.8">
+          <li>MSAL popup — sign in as a student account</li>
+          <li>Email extracted from Entra idToken</li>
+          <li>Browser calls <code>/api/classlink?op=student&amp;email=...</code></li>
+          <li>Serverless function looks up ClassLink sourcedId</li>
+          <li>Fetches <code>/students/{id}/classes</code> for enrollment</li>
+          <li>Enrolled class displayed → student clicks Join</li>
+        </ol>
+        <hr class="my-2">
+        <div class="fw-bold small mb-1 text-muted text-uppercase" style="letter-spacing:.5px">Test accounts</div>
+        <div class="small text-muted">
+          <code>student1@faronicsna.onmicrosoft.com</code> → Frank Hoffman<br>
+          <code>student2@faronicsna.onmicrosoft.com</code> → Gwendolyn Price
+        </div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 3 ══ -->
+<div class="demo-body screen" id="screen-3">
+  <h5 class="mb-1">Step 3 of 5 — Admin: DFC Organization Settings</h5>
+  <p class="text-muted small mb-3">Read-only mockup of the DFC Org Settings → Insight Settings section. Click "Sync Now" to make a live ClassLink API call and update the counts.</p>
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="console-mockup">
+        <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Organization Settings</span></div>
+        <div class="console-body" style="max-height:480px;overflow-y:auto">
+          <div class="dfc-panel">
+            <div class="dfc-panel-title"><i class="fas fa-chevron-circle-up text-primary"></i> SSO Settings</div>
+            <div class="field-row"><span class="field-label"></span><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label small fw-semibold">Enable Microsoft Entra ID SSO</label></div></div>
+            <div class="field-row"><span class="field-label">Tenant ID</span><span class="field-value">04d60e3b-0fed-4071-a820-e4e87e8f8c98</span></div>
+            <div class="field-row"><span class="field-label">Client ID</span><span class="field-value">7eb737a9-32f2-4298-b617-87d35051d95d</span></div>
+            <div class="field-row"><span class="field-label">Client Secret</span><span class="field-value secret">••••••••••••CAZZ</span></div>
+            <div class="field-row"><span class="field-label"></span><div class="d-flex gap-3 flex-wrap"><div class="form-check mb-0"><input class="form-check-input" type="checkbox" id="req-t" checked><label class="form-check-label small" for="req-t">Require SSO for Teachers</label></div><div class="form-check mb-0"><input class="form-check-input" type="checkbox" id="req-s" checked><label class="form-check-label small" for="req-s">Require SSO for Students</label></div></div></div>
+            <div class="field-row"><span class="field-label">Status</span><span class="badge bg-success"><i class="fas fa-check me-1"></i>Connection verified</span></div>
+          </div>
+          <div class="dfc-panel">
+            <div class="dfc-panel-title"><i class="fas fa-chevron-circle-up text-primary"></i> Rostering Settings</div>
+            <div class="field-row"><span class="field-label"></span><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label small fw-semibold">Enable ClassLink Rostering</label></div></div>
+            <div class="field-row"><span class="field-label">OneRoster Base URL</span><span class="field-value" style="font-size:.7rem">https://classlinkcertification3-vn-v2.rosterserver.com/ims/oneroster/v1p1</span></div>
+            <div class="field-row"><span class="field-label">Client ID</span><span class="field-value">ea30f27a3e9ef691c1d32dcc</span></div>
+            <div class="field-row"><span class="field-label">Client Secret</span><span class="field-value secret">••••••••••••9bee</span></div>
+            <div class="field-row"><span class="field-label">Last synced</span><span id="last-sync-time" class="field-value">—</span></div>
+            <div class="field-row"><span class="field-label">Sync status</span><span id="sync-status-badge" class="badge bg-secondary">Not synced</span></div>
+            <div class="field-row"><span class="field-label">Teachers synced</span><span id="teacher-count" class="field-value">—</span></div>
+            <div class="field-row"><span class="field-label">Classes synced</span><span id="class-count" class="field-value">—</span></div>
+            <div class="field-row">
+              <span class="field-label"></span>
+              <button id="btn-sync-now" class="btn btn-sm btn-outline-primary" onclick="triggerSync()">
+                <i class="fas fa-sync me-1" id="sync-icon"></i><i class="fas fa-spinner fa-spin me-1 d-none" id="sync-spinner"></i>Sync Now
+              </button>
+              <span id="sync-message" class="ms-2 small text-muted"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-0 bg-light h-100"><div class="card-body p-3">
+        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Token endpoint note</div>
+        <p class="small text-muted mb-2">ClassLink docs say <code>/oauth2/token</code> — actual working endpoint confirmed by live POC is <code>/token</code> with HTTP Basic auth.</p>
+        <p class="small text-muted mb-0">In production, DFC's background sync job calls ClassLink and stores results in <code>tbl_RosteredClass</code> and <code>tbl_RosteredStudent</code>. Clients query the local DB — never ClassLink directly.</p>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 4 ══ -->
+<div class="demo-body screen" id="screen-4">
+  <h5 class="mb-1">Step 4 of 5 — Admin: Insight Policy — Teacher Settings</h5>
+  <p class="text-muted small mb-3">The authentication mode radios are interactive. Try switching between Standard and SSO Required to see the Rostering group appear and disappear.</p>
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <div class="console-mockup">
+        <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Insight Policy (Teacher)</span></div>
+        <div class="console-body">
+          <div class="policy-group">
+            <div class="policy-group-head">Authentication</div>
+            <div class="policy-group-body">
+              <div class="form-check mb-2"><input class="form-check-input" type="radio" name="teacherAuthMode" id="auth-legacy" value="legacy" onchange="onTeacherAuthChange()"><label class="form-check-label small" for="auth-legacy"><strong>Standard</strong> — Class ID + optional password</label></div>
+              <div class="form-check mb-2"><input class="form-check-input" type="radio" name="teacherAuthMode" id="auth-preferred" value="sso_preferred" onchange="onTeacherAuthChange()"><label class="form-check-label small" for="auth-preferred"><strong>SSO Preferred</strong> — show Microsoft sign-in, allow Class ID fallback</label></div>
+              <div class="form-check mb-2"><input class="form-check-input" type="radio" name="teacherAuthMode" id="auth-required" value="sso_required" checked onchange="onTeacherAuthChange()"><label class="form-check-label small" for="auth-required"><strong>SSO Required</strong> — Microsoft sign-in only</label></div>
+              <div id="sso-info-note" class="alert alert-info py-2 px-3 small mt-2 mb-0"><i class="fas fa-info-circle me-1"></i>SSO requires Microsoft Entra ID configured in Organization Settings → Insight Settings. <span class="badge bg-success">Configured ✓</span></div>
+            </div>
+          </div>
+          <div class="policy-group" id="teacher-rostering-group">
+            <div class="policy-group-head">Rostering</div>
+            <div class="policy-group-body">
+              <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="teacher-rostering-enabled" checked><label class="form-check-label small fw-semibold" for="teacher-rostering-enabled">Enable ClassLink Rostering</label></div>
+              <div class="ms-3 mt-1">
+                <div class="small text-muted fw-semibold mb-1">When ClassLink is unavailable:</div>
+                <div class="form-check mb-1"><input class="form-check-input" type="radio" name="rosteringFallback" id="fallback-manual" value="show_manual_entry" checked><label class="form-check-label small" for="fallback-manual">Allow teacher to enter Class ID manually</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="rosteringFallback" id="fallback-block" value="block"><label class="form-check-label small" for="fallback-block">Block teacher from starting class</label></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card border-0 bg-light h-100"><div class="card-body p-3">
+        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">C# model (Phase 3-A)</div>
+        <table class="table table-sm table-borderless" style="font-size:.75rem"><tr><td class="text-muted">Auth Mode</td><td><code>TeacherSettings.AuthMode</code></td></tr><tr><td class="text-muted">Rostering</td><td><code>TeacherSettings.RosteringEnabled</code></td></tr><tr><td class="text-muted">Fallback</td><td><code>TeacherSettings.RosteringFallback</code></td></tr></table>
+        <p class="small text-muted mb-0">All stored as <code>[XmlAttribute]</code> decorators. Existing saved policies without these attributes deserialize correctly using constructor defaults.</p>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 5 ══ -->
+<div class="demo-body screen" id="screen-5">
+  <h5 class="mb-1">Step 5 of 5 — Admin: Insight Policy — Student Settings</h5>
+  <p class="text-muted small mb-3">Try switching the radio buttons — when Standard is selected the Class ID re-enables; when SSO Required is selected it locks and the auto-join checkbox appears.</p>
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <div class="console-mockup">
+        <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Insight Policy (Student)</span></div>
+        <div class="console-body">
+          <div class="policy-group">
+            <div class="policy-group-head">Student Settings</div>
+            <div class="policy-group-body">
+              <div class="mb-3">
+                <label class="small text-muted fw-semibold">Class ID</label>
+                <div class="input-group input-group-sm" style="width:240px">
+                  <input type="text" class="form-control" id="student-class-id-field" value="cl_5033_5033_01" title="Class ID is assigned automatically from ClassLink roster" disabled>
+                  <span class="input-group-text bg-light"><i class="fas fa-lock text-muted" style="font-size:.7rem"></i></span>
+                </div>
+                <small class="text-muted" id="class-id-hint">Class ID is assigned automatically from ClassLink roster.</small>
+              </div>
+              <div class="small text-muted fw-semibold mb-1">Student Sign-in Mode</div>
+              <div class="form-check mb-2"><input class="form-check-input" type="radio" name="studentAuthMode" id="std-legacy" value="legacy" onchange="onStudentAuthChange()"><label class="form-check-label small" for="std-legacy"><strong>Standard</strong> — student enters Class ID manually</label></div>
+              <div class="form-check mb-2"><input class="form-check-input" type="radio" name="studentAuthMode" id="std-sso" value="sso_required" checked onchange="onStudentAuthChange()"><label class="form-check-label small" for="std-sso"><strong>SSO Required</strong> — Microsoft sign-in, Class ID from roster</label></div>
+              <div id="auto-join-row" class="form-check ms-3 mt-1">
+                <input class="form-check-input" type="checkbox" id="auto-join-cb" checked>
+                <label class="form-check-label small" for="auto-join-cb">Auto-join rostered class <span class="text-muted">(joins without confirmation prompt)</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-box mt-3">
+            <div class="fw-bold small mb-2"><i class="fas fa-check-circle text-success me-1"></i>Milestone 2 Configuration Summary</div>
+            <div class="summary-row"><span style="width:22px;text-align:center"><i class="fab fa-microsoft text-primary"></i></span><span class="small">Microsoft Entra SSO: <strong class="text-success">configured</strong></span></div>
+            <div class="summary-row"><span style="width:22px;text-align:center"><i class="fas fa-sync text-primary"></i></span><span class="small">ClassLink rostering: <strong class="text-success">enabled</strong></span></div>
+            <div class="summary-row"><span style="width:22px;text-align:center"><i class="fas fa-chalkboard-teacher text-primary"></i></span><span class="small" id="summary-teacher-text">Teacher: <em>sign in on Screen 1 to populate</em></span></div>
+            <div class="summary-row"><span style="width:22px;text-align:center"><i class="fas fa-user-graduate text-primary"></i></span><span class="small" id="summary-student-text">Student: <em>sign in on Screen 2 to populate</em></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card border-0 bg-light"><div class="card-body p-3">
+        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">End-to-end flow</div>
+        <ol class="small text-muted ps-3" style="line-height:1.8">
+          <li>Admin configures Entra + ClassLink in DFC Org Settings</li>
+          <li>Admin sets SSO Required + Rostering in Policy</li>
+          <li>DFC sync job pulls ClassLink roster → local DB</li>
+          <li>Teacher signs in → classes loaded from DFC DB</li>
+          <li>Teacher selects class → starts session</li>
+          <li>Student signs in → DFC resolves enrolled class → auto-joins</li>
+        </ol>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-footer">
+  <button class="btn btn-outline-secondary btn-sm" id="btn-back" onclick="navigate(-1)" style="display:none"><i class="fas fa-arrow-left me-1"></i>Back</button>
+  <span class="text-muted small" id="footer-hint"></span>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-danger btn-sm" id="btn-start-over" onclick="startOver()" style="display:none"><i class="fas fa-redo me-1"></i>Start Over</button>
+    <button class="btn btn-primary btn-sm" id="btn-next" onclick="navigate(1)">Next <i class="fas fa-arrow-right ms-1"></i></button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://alcdn.msauth.net/browser/2.39.0/js/msal-browser.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
