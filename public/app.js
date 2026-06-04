@@ -18,13 +18,16 @@ const state = {
 };
 const screenReady = { 1: false, 2: false, 3: true, 4: true, 5: true };
 
-// ── MSAL setup (v3) ────────────────────────────────────────────────────────────
+// ── MSAL setup (v2) ────────────────────────────────────────────────────────────
+// Uses MSAL Browser v2 CDN (v3 dropped the UMD bundle so CDN use requires v2)
 let msalApp = null;
 
-async function getMsalApp() {
+function getMsalApp() {
     if (msalApp) return msalApp;
-    // MSAL Browser v3: PublicClientApplication.createPublicClientApplication() is async
-    msalApp = await msal.PublicClientApplication.createPublicClientApplication({
+    if (typeof msal === 'undefined') {
+        throw new Error('MSAL library failed to load. Check your network connection and refresh.');
+    }
+    msalApp = new msal.PublicClientApplication({
         auth: {
             clientId:    ENTRA_CLIENT_ID,
             authority:   `https://login.microsoftonline.com/${ENTRA_TENANT_ID}`,
@@ -36,10 +39,7 @@ async function getMsalApp() {
 }
 
 async function signIn() {
-    if (typeof msal === 'undefined') {
-        throw new Error('MSAL library failed to load. Please refresh the page and try again.');
-    }
-    const app    = await getMsalApp();
+    const app    = getMsalApp();
     const result = await app.loginPopup({
         scopes: ENTRA_SCOPES,
         prompt: 'select_account'
