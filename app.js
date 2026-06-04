@@ -107,6 +107,14 @@ function updateNav() {
         : '';
 }
 
+// ── Tab switcher for real TC UI ────────────────────────────────────────────────
+function tcSwitchTab(tab) {
+    document.getElementById('tab-classids').classList.toggle('active', tab === 'classids');
+    document.getElementById('tab-classrooms').classList.toggle('active', tab === 'classrooms');
+    document.getElementById('tc-view-classids').style.display   = tab === 'classids'   ? '' : 'none';
+    document.getElementById('tc-view-classrooms').style.display = tab === 'classrooms' ? '' : 'none';
+}
+
 // ── Teacher sign-in ────────────────────────────────────────────────────────────
 async function teacherSignIn() {
     const btn      = document.getElementById('btn-teacher-signin');
@@ -118,7 +126,7 @@ async function teacherSignIn() {
         setStatus(statusEl, 'info', 'Opening Microsoft sign-in…');
         const msalResult = await signIn();
 
-        setStatus(statusEl, 'info', `Signed in as ${esc(msalResult.email)} — fetching ClassLink classrooms…`);
+        setStatus(statusEl, 'info', 'Fetching ClassLink classrooms…');
         const clData = await clApi('teacher', msalResult.email);
 
         state.teacher = {
@@ -129,10 +137,18 @@ async function teacherSignIn() {
             selectedClass: clData.classes && clData.classes.length > 0 ? clData.classes[0] : null
         };
 
-        setStatus(statusEl, 'success',
-            `Signed in as <strong>${esc(msalResult.email)}</strong> (${esc(msalResult.displayName)})`);
+        // Update the real product header: show user info row, hide plain logo
+        document.getElementById('tc-logo-row').style.display = 'none';
+        const userRow = document.getElementById('tc-user-row');
+        userRow.style.display = 'flex';
+        document.getElementById('tc-name-display').textContent  = msalResult.displayName;
+        document.getElementById('tc-email-display').textContent = msalResult.email;
 
-        // Populate class dropdown
+        // Enable START button, clear status
+        statusEl.innerHTML = '';
+        document.getElementById('btnStartSession').disabled = false;
+
+        // Populate ClassLink dropdown
         const section = document.getElementById('teacher-class-section');
         const select  = document.getElementById('teacher-class-select');
         select.innerHTML = '';
@@ -141,7 +157,7 @@ async function teacherSignIn() {
                 const opt = document.createElement('option');
                 opt.value = i;
                 const cc  = cls.courseCode ? ` (${cls.courseCode})` : '';
-                opt.textContent = `${cls.title}${cc} — ${cls.studentCount} student${cls.studentCount !== 1 ? 's' : ''}`;
+                opt.textContent = `⟳ ${cls.title}${cc} — ${cls.studentCount} student${cls.studentCount !== 1 ? 's' : ''}`;
                 select.appendChild(opt);
             });
             select.addEventListener('change', () => {
@@ -152,6 +168,7 @@ async function teacherSignIn() {
             select.innerHTML = '<option>No active classes found in ClassLink</option>';
         }
         section.style.display = 'block';
+
         screenReady[1] = true;
         updateNav();
         updateSummary();
@@ -278,6 +295,12 @@ function startOver() {
     state.teacher = null; state.student = null; state.sync = null;
     screenReady[1] = false; screenReady[2] = false;
     ['teacher-signin-status','student-signin-status'].forEach(id => document.getElementById(id).innerHTML = '');
+    // Reset real TC header
+    document.getElementById('tc-logo-row').style.display = '';
+    document.getElementById('tc-user-row').style.display  = 'none';
+    document.getElementById('tc-name-display').textContent  = '';
+    document.getElementById('tc-email-display').textContent = '';
+    document.getElementById('btnStartSession').disabled = true;
     document.getElementById('teacher-class-section').style.display = 'none';
     document.getElementById('student-class-section').style.display = 'none';
     document.getElementById('btn-teacher-signin').disabled = false;

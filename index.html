@@ -28,15 +28,76 @@
   .screen    { display:none; }
   .screen.active { display:block; }
 
-  .console-mockup { border:1px solid #dee2e6; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.08); }
-  .console-titlebar { background:var(--dark); color:#fff; padding:6px 14px; font-size:.8rem; display:flex; align-items:center; gap:8px; }
+  /* ── Real Teacher Console styles (from FaronicsInsight.css) ── */
+  .console-mockup { border:1px solid #dee2e6; border-radius:8px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.15); }
+  .console-titlebar { background:#0a1424; color:#fff; padding:5px 12px; font-size:.78rem; display:flex; align-items:center; gap:0; }
   .win-btn { width:12px; height:12px; border-radius:50%; display:inline-block; }
   .win-close{background:#ff5f56;} .win-min{background:#febc2e;} .win-max{background:#28c840;}
-  .console-body { background:#f8f9fa; padding:24px; }
 
-  .tc-bg { background:linear-gradient(135deg,#f0f4ff,#e8f0fe); min-height:300px; display:flex; align-items:center; justify-content:center; border-radius:4px; padding:24px; }
-  .tc-form { width:340px; }
-  .tc-logo  { color:var(--blue); font-size:1.4rem; font-weight:800; letter-spacing:1px; }
+  /* Real product header bar */
+  .tc-header { background:#0a1424; padding:8px 14px; display:flex; align-items:center; gap:10px; }
+  .tc-header-right { margin-left:auto; display:flex; align-items:center; gap:14px; }
+  .tc-header-icon { color:#ccc; font-size:.75rem; display:flex; align-items:center; gap:4px; cursor:pointer; }
+  .tc-winbtn { width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .tc-winbtn:hover { background:rgba(255,255,255,.1); }
+
+  /* Real product background: white sides + centred 1100px block */
+  .tc-outer { background:#fff; width:100%; }
+  .tc-classroom-bg { width:100%; margin:0 auto; display:flex; padding:0; background:#fff; }
+  .tc-classroom-bg .tc-left { width:45%; display:flex; align-items:flex-start; justify-content:center; padding-top:32px; }
+  .tc-classroom-bg .tc-left img { width:100%; max-width:380px; }
+  .tc-classroom-bg .tc-right { width:55%; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+
+  /* Login form — matches product exactly */
+  .tc-login-wrap { width:480px; text-align:center; }
+  .tc-login-wrap h2 { font-size:28px; font-weight:300; color:#707070; line-height:40px; margin-bottom:16px; text-transform:uppercase; }
+  .tc-login-wrap h2 b { color:#000; font-weight:800; }
+  .tc-login-wrap h3 { font-size:14px; color:#888; margin-bottom:20px; font-weight:400; }
+  .tc-logo-img { width:85px; margin-bottom:10px; }
+
+  /* Login tabs */
+  .tc-login-tabs { display:flex; border-bottom:1px solid #ddd; margin-bottom:20px; }
+  .tc-login-tabs li { flex:1; list-style:none; text-align:center; padding:11px 0; font-size:12px; font-weight:800; color:#888; cursor:pointer; }
+  .tc-login-tabs li.active { color:#ce4900; border-bottom:2px solid #ce4900; margin-bottom:-1px; }
+
+  /* Form rows */
+  .tc-row { display:flex; align-items:center; margin-bottom:16px; text-align:left; }
+  .tc-row label { width:110px; flex-shrink:0; font-size:12px; font-weight:800; line-height:40px; }
+  .tc-row input, .tc-row select {
+    flex:1; height:40px; border-radius:20px; border:1px solid #888;
+    font-size:12px; padding:0 16px; font-family:inherit; background:#fff;
+  }
+  .tc-row input:focus, .tc-row select:focus { outline:none; border-color:#0091ff; }
+  .tc-row input:disabled { background:#f5f5f5; color:#aaa; cursor:not-allowed; }
+
+  /* Buttons */
+  .tc-start-btn {
+    background:#ce4900; color:#fff; border:none; border-radius:20px;
+    font-size:12px; font-weight:600; padding:11px 0; width:300px; cursor:pointer;
+    float:right; margin-bottom:12px;
+  }
+  .tc-start-btn:hover { background:#b84000; }
+  .tc-ms-btn {
+    background:#0078d4; color:#fff; border:none; border-radius:20px;
+    font-size:12px; font-weight:600; padding:11px 0; width:300px; cursor:pointer;
+    float:right; display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-bottom:8px;
+  }
+  .tc-ms-btn:hover { background:#006cbd; }
+  .tc-ms-btn:disabled { opacity:.6; cursor:not-allowed; }
+
+  /* Status badge row */
+  .ms-user-row { display:flex; align-items:flex-start; margin-bottom:8px; min-height:40px; }
+  .ms-user-row .logo-col { width:90px; }
+  .ms-user-row .info-col { flex:1; padding-top:4px; text-align:left; font-size:12px; font-weight:600; }
+
+  /* Autolaunch checkbox */
+  .tc-check-row { display:flex; align-items:center; gap:6px; margin-bottom:16px; font-size:12px; justify-content:flex-end; padding-right:calc((100% - 300px)/2); }
+
+  /* ClassLink class dropdown */
+  .tc-classlink-section { margin-bottom:12px; text-align:left; padding:0 calc((100% - 300px)/2); }
+  .tc-classlink-label { font-size:11px; font-weight:800; color:#0091ff; margin-bottom:4px; text-transform:uppercase; letter-spacing:.5px; }
+  .tc-classlink-select { width:300px; height:40px; border-radius:20px; border:1px solid #0091ff; font-size:12px; padding:0 16px; }
 
   .sc-bg  { background:var(--dark); min-height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px; }
 
@@ -83,53 +144,159 @@
 </div>
 
 <!-- ══ SCREEN 1 ══ -->
-<div class="demo-body screen active" id="screen-1">
-  <div class="row g-4">
-    <div class="col-lg-7">
-      <h5 class="mb-1">Step 1 of 5 — Teacher Sign-In with Microsoft Entra</h5>
-      <p class="text-muted small mb-3">Real OIDC authentication against <code>faronicsna.onmicrosoft.com</code>. After sign-in, ClassLink classes are fetched live via the server-side API route.</p>
-      <div class="console-mockup">
-        <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Faronics Insight Teacher Console</span></div>
-        <div class="console-body">
-          <div class="tc-bg">
-            <div class="tc-form">
-              <div class="text-center mb-3"><div class="tc-logo mb-1">TEACHER CONSOLE</div><small class="text-muted">The ultimate platform for classroom management</small></div>
-              <div class="mb-3">
-                <button id="btn-teacher-signin" class="btn ms-btn w-100 d-flex align-items-center justify-content-center gap-2" onclick="teacherSignIn()">
-                  <svg width="16" height="16" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-                  Sign in with Microsoft
-                </button>
-              </div>
-              <div id="teacher-signin-status" class="mb-2" style="min-height:24px"></div>
-              <div id="teacher-class-section" style="display:none">
-                <label class="form-label small fw-semibold">Load Classroom</label>
-                <select id="teacher-class-select" class="form-select form-select-sm mb-1"></select>
-                <small class="text-muted">Teacher's active ClassLink classes.</small>
-              </div>
-              <div class="text-center text-muted small my-2">— or —</div>
-              <div class="mb-2"><label class="form-label small fw-semibold text-muted">Enter Class ID manually</label><input type="text" class="form-control form-control-sm" placeholder="Class ID (disabled — SSO required)" disabled><small class="text-muted">Disabled: your organization requires Microsoft sign-in.</small></div>
-            </div>
-          </div>
-        </div>
+<div class="screen active" id="screen-1">
+
+  <!-- Demo label strip -->
+  <div class="demo-body pb-1 pt-2">
+    <h5 class="mb-1">Step 1 of 5 — Teacher Sign-In with Microsoft Entra</h5>
+    <p class="text-muted small mb-2">Real OIDC authentication against <code>faronicsna.onmicrosoft.com</code>. Sign in as <strong>teacher1@faronicsna.onmicrosoft.com</strong> — after auth, live ClassLink classes populate the dropdown.</p>
+  </div>
+
+  <!-- ── ACTUAL TEACHER CONSOLE UI ── -->
+  <div class="console-mockup mx-3 mb-3">
+
+    <!-- Real product header: dark bar with logo + window controls -->
+    <div class="tc-header">
+      <img src="/images/Insight_NXT_DarkBG.png" style="height:30px;visibility:visible" id="tcHeaderLogo" alt="Insight">
+      <div class="tc-header-right">
+        <span class="tc-header-icon"><img src="/images/help.png" style="height:16px"> <span style="color:#ccc;font-size:.72rem">Help</span></span>
+        <span class="tc-header-icon"><img src="/images/network.png" style="height:16px"> <span style="color:#ccc;font-size:.72rem">Network</span></span>
+        <span class="tc-header-icon" style="font-size:1rem;color:#ccc;margin-left:4px"><i class="fas fa-cog"></i></span>
+        <div class="tc-winbtn"><img src="/images/window_minimize.png" style="height:16px"></div>
+        <div class="tc-winbtn"><img src="/images/window_fullscreen.png" style="height:16px"></div>
+        <div class="tc-winbtn"><img src="/images/window_close.png" style="height:16px"></div>
       </div>
     </div>
-    <div class="col-lg-5">
-      <div class="card border-0 bg-light h-100"><div class="card-body p-3">
-        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">What's happening</div>
-        <ol class="small text-muted ps-3" style="line-height:1.8">
-          <li>MSAL Browser popup opens <code>login.microsoftonline.com</code></li>
-          <li>Teacher authenticates with Entra (with account picker)</li>
-          <li>idToken returned — email extracted from claims</li>
-          <li>Browser calls <code>/api/classlink?op=teacher&amp;email=...</code></li>
-          <li>Serverless function proxies ClassLink API (no CORS)</li>
-          <li>Classes + student counts returned → dropdown populated</li>
-        </ol>
-        <hr class="my-2">
-        <div class="fw-bold small mb-1 text-muted text-uppercase" style="letter-spacing:.5px">Test accounts</div>
-        <div class="small text-muted"><code>teacher1@faronicsna.onmicrosoft.com</code><br>Maps to ClassLink: Marian Lucas (5033_T5033-0005)</div>
-      </div></div>
+
+    <!-- Real product body: left = classroom image, right = login form -->
+    <div class="tc-outer">
+      <div class="tc-classroom-bg">
+
+        <!-- Left: classroom illustration -->
+        <div class="tc-left">
+          <img src="/images/new_classroom.png" alt="Classroom">
+        </div>
+
+        <!-- Right: login form -->
+        <div class="tc-right">
+          <div class="tc-login-wrap">
+
+            <!-- User info row (hidden until signed in) -->
+            <div class="ms-user-row" id="tc-user-row" style="display:none">
+              <div class="logo-col">
+                <img src="/images/Insight_NXT_LightBG.png" class="tc-logo-img" alt="Insight">
+                <div style="font-size:11px;color:#888">Logged in as</div>
+              </div>
+              <div class="info-col">
+                <div id="tc-name-display"></div>
+                <div id="tc-email-display" style="color:#555"></div>
+              </div>
+            </div>
+            <!-- Logo (shown when NOT signed in) -->
+            <div id="tc-logo-row">
+              <img src="/images/Insight_NXT_LightBG.png" class="tc-logo-img" alt="Insight">
+            </div>
+
+            <h2>WELCOME TO <b>TEACHER CONSOLE</b></h2>
+            <h3>The ultimate platform for classroom management</h3>
+
+            <!-- Login tabs -->
+            <ul class="tc-login-tabs" id="tc-login-tabs">
+              <li class="active" id="tab-classids" onclick="tcSwitchTab('classids')">Class IDs</li>
+              <li id="tab-classrooms" onclick="tcSwitchTab('classrooms')">Classroom Lists</li>
+            </ul>
+
+            <!-- Class IDs view -->
+            <div id="tc-view-classids">
+              <!-- ClassLink class dropdown — shown after successful sign-in -->
+              <div id="teacher-class-section" class="tc-classlink-section" style="display:none">
+                <div class="tc-classlink-label"><i class="fas fa-sync me-1"></i>ClassLink Classrooms</div>
+                <select id="teacher-class-select" class="tc-classlink-select"></select>
+              </div>
+
+              <div class="tc-row">
+                <label>Enter Class IDs</label>
+                <input type="text" id="txtClassId" placeholder="Class IDs (e.g. CS101 or Physics)" disabled
+                       title="Class ID is assigned automatically from ClassLink roster when signed in">
+              </div>
+            </div>
+
+            <!-- Classroom Lists view (placeholder) -->
+            <div id="tc-view-classrooms" style="display:none">
+              <div class="tc-row">
+                <label>Select Classroom</label>
+                <select><option value="0">None</option></select>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="tc-row" id="tc-password-row" style="display:none">
+              <label>Enter Password</label>
+              <input type="password" placeholder="Password">
+            </div>
+
+            <!-- Settings -->
+            <div class="tc-row">
+              <label>Select Settings</label>
+              <select id="selSetting"><option value="1">Default</option></select>
+            </div>
+
+            <!-- Autolaunch -->
+            <div class="tc-check-row">
+              <input type="checkbox" id="idAutolaunchClass">
+              <label for="idAutolaunchClass" style="font-size:12px">Autolaunch Class</label>
+            </div>
+
+            <!-- Status / spinner / error from sign-in -->
+            <div id="teacher-signin-status" style="min-height:20px;margin-bottom:8px;text-align:center"></div>
+
+            <!-- START button -->
+            <div style="text-align:right">
+              <button class="tc-start-btn" id="btnStartSession" disabled>START</button>
+            </div>
+
+            <!-- Sign in with Microsoft button -->
+            <div style="text-align:right;margin-top:8px">
+              <button class="tc-ms-btn" id="btn-teacher-signin" onclick="teacherSignIn()">
+                <svg width="15" height="15" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                Sign in with Microsoft
+              </button>
+            </div>
+
+          </div><!-- /tc-login-wrap -->
+        </div><!-- /tc-right -->
+      </div><!-- /tc-classroom-bg -->
+    </div><!-- /tc-outer -->
+
+  </div><!-- /console-mockup -->
+
+  <!-- Info card below -->
+  <div class="demo-body pt-1">
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card border-0 bg-light"><div class="card-body p-3">
+          <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">What's happening</div>
+          <ol class="small text-muted ps-3" style="line-height:1.8">
+            <li>MSAL Browser popup → <code>login.microsoftonline.com</code></li>
+            <li>Teacher signs in as <code>teacher1@faronicsna.onmicrosoft.com</code></li>
+            <li>idToken returned; email extracted from Entra claims</li>
+            <li>Browser calls <code>/api/classlink?op=teacher&amp;email=…</code></li>
+            <li>Serverless function maps email → ClassLink sourcedId</li>
+            <li>Classes + student counts returned → dropdown populates</li>
+          </ol>
+        </div></div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 bg-light"><div class="card-body p-3">
+          <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Test account</div>
+          <div class="small text-muted mb-2"><code>teacher1@faronicsna.onmicrosoft.com</code><br>→ ClassLink: Marian Lucas · <code>5033_T5033-0005</code><br>→ 2 active classes, 3 students each</div>
+          <div class="fw-bold small mb-1 text-muted text-uppercase" style="letter-spacing:.5px">Production difference</div>
+          <p class="small text-muted mb-0">In production, DFC serves classes from <code>tbl_RosteredClass</code> (pre-synced). In this demo the API route calls ClassLink live to show what DFC does during a sync job.</p>
+        </div></div>
+      </div>
     </div>
   </div>
+
 </div>
 
 <!-- ══ SCREEN 2 ══ -->
