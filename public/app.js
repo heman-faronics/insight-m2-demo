@@ -18,16 +18,17 @@ const state = {
 };
 const screenReady = { 1: false, 2: false, 3: true, 4: true, 5: true };
 
-// ── MSAL setup ─────────────────────────────────────────────────────────────────
+// ── MSAL setup (v3) ────────────────────────────────────────────────────────────
 let msalApp = null;
 
-function getMsalApp() {
+async function getMsalApp() {
     if (msalApp) return msalApp;
-    msalApp = new msal.PublicClientApplication({
+    // MSAL Browser v3: PublicClientApplication.createPublicClientApplication() is async
+    msalApp = await msal.PublicClientApplication.createPublicClientApplication({
         auth: {
             clientId:    ENTRA_CLIENT_ID,
             authority:   `https://login.microsoftonline.com/${ENTRA_TENANT_ID}`,
-            redirectUri: window.location.origin   // registered in Entra app registration
+            redirectUri: window.location.origin
         },
         cache: { cacheLocation: 'sessionStorage' }
     });
@@ -35,11 +36,13 @@ function getMsalApp() {
 }
 
 async function signIn() {
-    const app = getMsalApp();
-    // Use popup so we don't navigate away from the demo
+    if (typeof msal === 'undefined') {
+        throw new Error('MSAL library failed to load. Please refresh the page and try again.');
+    }
+    const app    = await getMsalApp();
     const result = await app.loginPopup({
         scopes: ENTRA_SCOPES,
-        prompt: 'select_account'    // force account picker so teacher/student differ
+        prompt: 'select_account'
     });
     const claims      = result.idTokenClaims || {};
     const email       = (claims.email || claims.preferred_username || result.account?.username || '').toLowerCase();
