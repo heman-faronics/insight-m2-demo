@@ -242,7 +242,7 @@ async function triggerSync() {
         if (badgeEl)  { badgeEl.style.display = 'inline-flex'; }
         if (countsEl) {
             countsEl.style.display = 'inline';
-            countsEl.textContent = `${data.teacherCount} teachers  ·  ${data.classCount} classes`;
+            countsEl.textContent = `${data.teacherCount} teachers  ·  ${data.classCount} classes  ·  — students`;
         }
         if (msgEl)   msgEl.textContent = '';
     } catch (err) {
@@ -252,6 +252,59 @@ async function triggerSync() {
         if (icon)    icon.classList.remove('d-none');
         if (spinner) spinner.classList.add('d-none');
     }
+}
+
+// ── Screens 4 & 5: Policy page interactions ───────────────────────────────────
+
+function polToggle(headEl) {
+    headEl.classList.toggle('collapsed');
+    const body = headEl.nextElementSibling;
+    if (body) body.style.display = headEl.classList.contains('collapsed') ? 'none' : '';
+}
+
+function polToggleInput(cb, inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const row = input.closest('.pol-row');
+    input.disabled = !cb.checked;
+    if (row) row.style.opacity = cb.checked ? '1' : '0.5';
+}
+
+// Teacher SSO enable/disable
+function polEnableTeacherSSO(cb) {
+    const fields = document.getElementById('t-sso-fields');
+    if (fields) {
+        fields.style.opacity = cb.checked ? '1' : '0.45';
+        fields.style.pointerEvents = cb.checked ? '' : 'none';
+    }
+}
+
+function polTeacherAuthMode(mode) {
+    // No additional UI changes needed beyond radio selection (rostering visible always when SSO enabled)
+}
+
+function polTeacherRostering(cb) {
+    const opts = document.getElementById('t-roster-opts');
+    if (opts) {
+        opts.style.opacity = cb.checked ? '1' : '0.5';
+        opts.style.pointerEvents = cb.checked ? '' : 'none';
+    }
+}
+
+// Student SSO enable/disable
+function polEnableStudentSSO(cb) {
+    const fields = document.getElementById('s-sso-fields');
+    if (fields) {
+        fields.style.opacity = cb.checked ? '1' : '0.45';
+        fields.style.pointerEvents = cb.checked ? '' : 'none';
+    }
+}
+
+function polStudentAuthMode(mode) {
+    const autoJoinRow = document.getElementById('s-autojoin-row');
+    const classIdRow  = document.getElementById('s-class-id');
+    if (autoJoinRow) autoJoinRow.style.display = mode === 'sso_required' ? 'block' : 'none';
+    if (classIdRow)  classIdRow.disabled = mode === 'sso_required';
 }
 
 // ── Screen 3: DFC Org Settings interactions ───────────────────────────────────
