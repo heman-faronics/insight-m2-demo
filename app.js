@@ -115,18 +115,28 @@ function tcSwitchTab(tab) {
     document.getElementById('tc-view-classrooms').style.display = tab === 'classrooms' ? '' : 'none';
 }
 
-// ── Teacher sign-in ────────────────────────────────────────────────────────────
+// ── Teacher sign-in (Scenario 1 — real MSAL + live ClassLink) ─────────────────
+// Called from the Scenario 1 step-1 button. Operates entirely inside the sim zone
+// so everything stays inside the console window mockup.
 async function teacherSignIn() {
-    const btn      = document.getElementById('btn-teacher-signin');
-    const statusEl = document.getElementById('teacher-signin-status');
-    btn.disabled   = true;
-    document.getElementById('teacher-class-section').style.display = 'none';
+    const zone = document.getElementById('tc-sim-zone');
+
+    // Loading state
+    if (zone) zone.innerHTML = `
+        <div style="text-align:center;padding:28px 0">
+            <i class="fas fa-spinner fa-spin" style="color:#1F5C99;font-size:22px"></i>
+            <div style="margin-top:10px;font-size:12px;color:#6b7280">Opening Microsoft sign-in…</div>
+        </div>`;
 
     try {
-        setStatus(statusEl, 'info', 'Opening Microsoft sign-in…');
         const msalResult = await signIn();
 
-        setStatus(statusEl, 'info', 'Fetching ClassLink classrooms…');
+        if (zone) zone.innerHTML = `
+            <div style="text-align:center;padding:28px 0">
+                <i class="fas fa-spinner fa-spin" style="color:#1F5C99;font-size:22px"></i>
+                <div style="margin-top:10px;font-size:12px;color:#6b7280">Fetching your ClassLink classrooms…</div>
+            </div>`;
+
         const clData = await clApi('teacher', msalResult.email);
 
         state.teacher = {
@@ -137,39 +147,26 @@ async function teacherSignIn() {
             selectedClass: clData.classes && clData.classes.length > 0 ? clData.classes[0] : null
         };
 
-        // Show signed-in confirmation in the "Try it live" section
-        setStatus(statusEl, 'success',
-            `Signed in as <strong>${esc(msalResult.email)}</strong>`);
-        document.getElementById('btnStartSession').disabled = false;
-
-        // Populate ClassLink dropdown
-        const section = document.getElementById('teacher-class-section');
-        const select  = document.getElementById('teacher-class-select');
-        select.innerHTML = '';
-        if (clData.classes && clData.classes.length > 0) {
-            clData.classes.forEach((cls, i) => {
-                const opt = document.createElement('option');
-                opt.value = i;
-                const cc  = cls.courseCode ? ` (${cls.courseCode})` : '';
-                opt.textContent = `⟳ ${cls.title}${cc} — ${cls.studentCount} student${cls.studentCount !== 1 ? 's' : ''}`;
-                select.appendChild(opt);
-            });
-            select.addEventListener('change', () => {
-                state.teacher.selectedClass = clData.classes[+select.value];
-                updateSummary();
-            });
-        } else {
-            select.innerHTML = '<option>No active classes found in ClassLink</option>';
-        }
-        section.style.display = 'block';
-
+        // Advance Scenario 1 to step 2 — step 2 will use state.teacher.classes for real data
+        activeSimStep  = 2;
+        simClassChosen = false;
+        renderSim(true);
         screenReady[1] = true;
         updateNav();
         updateSummary();
+
     } catch (err) {
         const msg = classifyError(err);
-        setStatus(statusEl, 'danger', msg);
-        btn.disabled = false;
+        // Restore step 1 with error banner so user can retry
+        if (zone) {
+            zone.classList.add('transitioning');
+            setTimeout(() => {
+                zone.innerHTML = _s1Step1Html() +
+                    `<div class="alert alert-danger py-2 px-3 small mt-2">${esc(msg)}</div>`;
+                updateSimDots();
+                zone.classList.remove('transitioning');
+            }, 100);
+        }
     }
 }
 
@@ -289,13 +286,13 @@ function startOver() {
     state.teacher = null; state.student = null; state.sync = null;
     screenReady[1] = false; screenReady[2] = false;
     ['teacher-signin-status','student-signin-status'].forEach(id => document.getElementById(id).innerHTML = '');
-    // Reset scenario switcher to scenario 1
+    // Reset scenario switcher + teacher sign-in state
     activeSimScenario = 1; activeSimStep = 1; simClassChosen = false; sim8ClassIdVisible = false;
+    screenReady[1] = false;
     document.querySelectorAll('.scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
     const card = document.getElementById('scenario-card');
     if (card) card.textContent = SIM_SCENARIOS[0].card;
     renderSim(false);
-    document.getElementById('btnStartSession').disabled = true;
     document.getElementById('teacher-class-section').style.display = 'none';
     document.getElementById('student-class-section').style.display = 'none';
     document.getElementById('btn-teacher-signin').disabled = false;
@@ -499,9 +496,37 @@ function updateSimDots() {
 
 const _MS_SVG = `<svg width="14" height="14" viewBox="0 0 21 21" style="flex-shrink:0"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>`;
 
+// Real sign-in button (Scenario 1 only — no "simulated" label)
+function _s1Step1Html() {
+    return `<button class="sim-ms-btn" onclick="teacherSignIn()">${_MS_SVG} Sign in with Microsoft</button>
+            <div class="sim-grey-text">Your school requires Microsoft sign-in</div>`;
+}
+
+// Simulated sign-in button (all other scenarios)
 function _msBtn(label, onclick) {
     return `<button class="sim-ms-btn" onclick="${onclick}">${_MS_SVG} ${esc(label)}</button>
             <div class="sim-simulated">(simulated — no real sign-in happens here)</div>`;
+}
+
+// Class dropdown using real ClassLink data (Scenario 1 step 2 after real sign-in)
+function _realClassDropdown(classes) {
+    let opts = '<option value="">— Choose a class —</option>';
+    classes.forEach((cls, i) => {
+        const cc = cls.courseCode ? ` (${cls.courseCode})` : '';
+        opts += `<option value="${i}">⟳ ${esc(cls.title)}${esc(cc)} — ${cls.studentCount} student${cls.studentCount !== 1 ? 's' : ''}</option>`;
+    });
+    return `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span class="sim-label" style="margin:0">Select your class:</span>
+          <button class="sim-link" onclick="simRefresh()">⟳ Refresh list</button>
+        </div>
+        <select id="sim-class-sel" class="sim-select" onchange="simClassChange()">${opts}</select>
+        <div style="text-align:center;margin:6px 0">
+          <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
+        </div>
+        <div style="text-align:right;margin-top:10px">
+          <button class="sim-start-btn" id="sim-start" ${simClassChosen ? '' : 'disabled'}>Start Class</button>
+        </div>`;
 }
 
 function _signedInPill() {
@@ -555,11 +580,17 @@ function buildSimHtml() {
     const s    = activeSimScenario;
     const step = activeSimStep;
 
-    // ── S1: SSO Required + Rostering + Allow Manual ─────────────────────────
+    // ── S1: SSO Required + Rostering + Allow Manual  (REAL auth) ────────────
     if (s === 1) {
-        if (step === 1) return _msBtn('Sign in with Microsoft', 'simAdvanceStep()') +
-            `<div class="sim-grey-text">Your school requires Microsoft sign-in</div>`;
-        if (step === 2) return _signedInPill() + _classDropdown(true);
+        if (step === 1) return _s1Step1Html();
+        if (step === 2) {
+            // Use live ClassLink data after real sign-in, else demo data
+            const pill = _signedInPill();
+            const dropdown = (state.teacher && state.teacher.classes && state.teacher.classes.length > 0)
+                ? _realClassDropdown(state.teacher.classes)
+                : _classDropdown(true);
+            return pill + dropdown;
+        }
         if (step === 3) return _signedInPill() +
             `<div class="alert alert-warning py-2 px-3 small mb-3">⚠ Couldn't load your class list right now. Enter your Class ID to continue.</div>` +
             _classIdEntry('Enter your Class ID to continue', 'sim-cid-1', 'sim-sb-1');
