@@ -137,15 +137,9 @@ async function teacherSignIn() {
             selectedClass: clData.classes && clData.classes.length > 0 ? clData.classes[0] : null
         };
 
-        // Update the real product header: show user info row, hide plain logo
-        document.getElementById('tc-logo-row').style.display = 'none';
-        const userRow = document.getElementById('tc-user-row');
-        userRow.style.display = 'flex';
-        document.getElementById('tc-name-display').textContent  = msalResult.displayName;
-        document.getElementById('tc-email-display').textContent = msalResult.email;
-
-        // Enable START button, clear status
-        statusEl.innerHTML = '';
+        // Show signed-in confirmation in the "Try it live" section
+        setStatus(statusEl, 'success',
+            `Signed in as <strong>${esc(msalResult.email)}</strong>`);
         document.getElementById('btnStartSession').disabled = false;
 
         // Populate ClassLink dropdown
