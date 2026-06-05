@@ -223,30 +223,130 @@ async function triggerSync() {
     const spinner = document.getElementById('sync-spinner');
     const icon    = document.getElementById('sync-icon');
     const msgEl   = document.getElementById('sync-message');
+    if (!btn) return;
     btn.disabled = true;
-    icon.classList.add('d-none');
-    spinner.classList.remove('d-none');
-    msgEl.textContent = 'Connecting to ClassLink…';
+    if (icon)    icon.classList.add('d-none');
+    if (spinner) spinner.classList.remove('d-none');
+    if (msgEl)   msgEl.textContent = 'Connecting to ClassLink…';
 
     try {
         const data = await clApi('sync');
         state.sync = data;
-        document.getElementById('last-sync-time').textContent      = data.syncedAt;
-        document.getElementById('teacher-count').textContent        = data.teacherCount + ' teachers';
-        document.getElementById('class-count').textContent          = data.classCount   + ' classes';
-        document.getElementById('sync-status-badge').className      = 'badge bg-success';
-        document.getElementById('sync-status-badge').innerHTML      = '<i class="fas fa-check me-1"></i>Success';
-        msgEl.textContent = '';
+
+        // Update the new DFC-style sync status elements
+        const timeEl    = document.getElementById('last-sync-time');
+        const badgeEl   = document.getElementById('sync-status-badge');
+        const countsEl  = document.getElementById('sync-counts');
+
+        if (timeEl)   timeEl.textContent  = data.syncedAt;
+        if (badgeEl)  { badgeEl.style.display = 'inline-flex'; }
+        if (countsEl) {
+            countsEl.style.display = 'inline';
+            countsEl.textContent = `${data.teacherCount} teachers  ·  ${data.classCount} classes`;
+        }
+        if (msgEl)   msgEl.textContent = '';
     } catch (err) {
-        document.getElementById('sync-status-badge').className  = 'badge bg-danger';
-        document.getElementById('sync-status-badge').textContent = 'Failed';
-        msgEl.textContent = err.message;
+        if (msgEl) msgEl.textContent = err.message;
     } finally {
         btn.disabled = false;
-        icon.classList.remove('d-none');
-        spinner.classList.add('d-none');
+        if (icon)    icon.classList.remove('d-none');
+        if (spinner) spinner.classList.add('d-none');
     }
 }
+
+// ── Screen 3: DFC Org Settings interactions ───────────────────────────────────
+
+function dfcSwitchTab(tabId, btn) {
+    // Tab buttons
+    document.querySelectorAll('#dfc-insight-tabs .dfc-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    // Tab panes
+    document.querySelectorAll('.dfc-tab-pane').forEach(p => p.classList.remove('active'));
+    const pane = document.getElementById(tabId);
+    if (pane) pane.classList.add('active');
+}
+
+function dfcSwitchProvider(provider) {
+    // Pills
+    document.querySelectorAll('.dfc-provider-pill').forEach(p => p.classList.remove('active'));
+    const pill = document.getElementById('pill-' + provider.replace('-sso', '').replace('google', 'google'));
+    // Map provider names to pill IDs
+    const pillMap = { 'entra': 'pill-entra', 'google-sso': 'pill-google' };
+    const pillEl = document.getElementById(pillMap[provider]);
+    if (pillEl) pillEl.classList.add('active');
+    // Panels
+    document.querySelectorAll('.dfc-provider-pane').forEach(p => p.classList.remove('active'));
+    const paneMap = { 'entra': 'pane-entra', 'google-sso': 'pane-google-sso' };
+    const pane = document.getElementById(paneMap[provider]);
+    if (pane) pane.classList.add('active');
+}
+
+function dfcToggle(toggleId, statusId, fieldsId) {
+    const checked = document.getElementById(toggleId).checked;
+    const statusEl = document.getElementById(statusId);
+    if (statusEl) {
+        statusEl.textContent = checked ? 'On' : 'Off';
+        statusEl.style.color = checked ? '#2E78C1' : '#9ca3af';
+    }
+    const fieldsEl = document.getElementById(fieldsId);
+    if (fieldsEl) {
+        fieldsEl.style.opacity = checked ? '1' : '0.4';
+        fieldsEl.style.pointerEvents = checked ? '' : 'none';
+    }
+}
+
+function dfcToggleSecret(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    const icon = btn.querySelector('i');
+    if (icon) icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+
+function dfcCopy(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        const icon = btn.querySelector('i');
+        if (icon) { icon.className = 'fas fa-check'; setTimeout(() => icon.className = 'fas fa-copy', 1500); }
+    });
+}
+
+function dfcTestConnection(btn, resultId) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:9px;margin-right:4px"></i>Testing…';
+    const resultEl = document.getElementById(resultId);
+    if (resultEl) resultEl.style.display = 'none';
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-exchange-alt" style="font-size:9px;margin-right:4px"></i>Test Connection';
+        if (resultEl) resultEl.style.display = 'inline-flex';
+    }, 1200);
+}
+
+function dfcRosterProvider(value) {
+    const classLinkEl = document.getElementById('roster-classlink');
+    const googleEl    = document.getElementById('roster-google-classroom');
+    if (classLinkEl) classLinkEl.style.display = value === 'classlink' ? '' : 'none';
+    if (googleEl)    googleEl.style.display    = value === 'google-classroom' ? '' : 'none';
+}
+
+function dfcSubmitEarlyAccess(formId, successId) {
+    const form    = document.getElementById(formId);
+    const success = document.getElementById(successId);
+    if (form)    form.style.display    = 'none';
+    if (success) success.style.display = 'block';
+}
+
+// Initialise masked secret values on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const secrets = [
+        { id: 'entra-secret',  masked: '••••••••••••CAZZ' },
+        { id: 'roster-secret', masked: '••••••••••••9bee' }
+    ];
+    secrets.forEach(s => {
+        const el = document.getElementById(s.id);
+        if (el) { el.setAttribute('data-real', el.value); el.value = s.masked; }
+    });
+});
 
 // ── Policy interactivity (Screens 4 & 5) ──────────────────────────────────────
 function onTeacherAuthChange() {
@@ -297,11 +397,12 @@ function startOver() {
     document.getElementById('student-class-section').style.display = 'none';
     document.getElementById('btn-teacher-signin').disabled = false;
     document.getElementById('btn-student-signin').disabled = false;
-    document.getElementById('last-sync-time').textContent     = '—';
-    document.getElementById('teacher-count').textContent       = '—';
-    document.getElementById('class-count').textContent         = '—';
-    document.getElementById('sync-status-badge').className     = 'badge bg-secondary';
-    document.getElementById('sync-status-badge').textContent   = 'Not synced';
+    var lst = document.getElementById('last-sync-time');
+    var ssb = document.getElementById('sync-status-badge');
+    var sc  = document.getElementById('sync-counts');
+    if (lst) lst.textContent = '—';
+    if (ssb) ssb.style.display = 'none';
+    if (sc)  sc.style.display  = 'none';
     document.getElementById('student-class-id-field').value    = 'cl_5033_5033_01';
     document.getElementById('summary-teacher-text').innerHTML  = 'Teacher: <em>sign in on Screen 1 to populate</em>';
     document.getElementById('summary-student-text').innerHTML  = 'Student: <em>sign in on Screen 2 to populate</em>';

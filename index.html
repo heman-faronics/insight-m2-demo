@@ -99,6 +99,102 @@
   .tc-classlink-label { font-size:11px; font-weight:800; color:#0091ff; margin-bottom:4px; text-transform:uppercase; letter-spacing:.5px; }
   .tc-classlink-select { width:300px; height:40px; border-radius:20px; border:1px solid #0091ff; font-size:12px; padding:0 16px; }
 
+  /* ── DFC Org Settings (Screen 3) ────────────────────────────────────── */
+  .dfc-product-card { background:#fff; border:1px solid #e0e0e0; border-radius:4px; margin-bottom:14px; overflow:hidden; }
+  .dfc-product-card.dfc-brand  { border-left:3px solid #2E78C1; }
+  .dfc-product-card.insight-brand { border-left:3px solid #CE4900; }
+  .dfc-card-header { padding:9px 14px 7px; border-bottom:1px solid #f0f0f0; display:flex; align-items:flex-start; gap:8px; }
+  .dfc-card-header-left { flex:1; }
+  .dfc-card-title { font-size:11px; font-weight:700; color:#2E3A40; display:flex; align-items:center; gap:7px; }
+  .dfc-card-desc  { font-size:10px; color:#929292; margin-top:2px; line-height:1.4; }
+  .dfc-badge { display:inline-block; font-size:9px; font-weight:700; padding:1px 7px; border-radius:10px; line-height:16px; }
+  .dfc-badge-blue   { background:#e8f0fb; color:#2E78C1; border:1px solid #b8d0f0; }
+  .dfc-badge-orange { background:#fdf0e8; color:#CE4900; border:1px solid #f0c8a8; }
+  .dfc-card-body { padding:12px 14px 8px; }
+
+  /* DFC form rows */
+  .dfc-field-row { display:flex; align-items:center; margin-bottom:8px; font-size:11px; }
+  .dfc-field-label { width:150px; flex-shrink:0; font-weight:600; color:#2E3A40; text-align:right; padding-right:12px; }
+  .dfc-field-value { flex:1; }
+  .dfc-input { height:24px; font-size:11px; border:1.5px solid #9ca3af; border-radius:3px; padding:2px 8px; width:320px; max-width:100%; font-family:'Consolas','Courier New',monospace; color:#2E3A40; background:#fff; }
+  .dfc-input:focus { outline:none; border-color:#2E78C1; }
+  .dfc-input[readonly] { background:#f5f5f5; color:#6b7280; cursor:default; }
+  .dfc-input.secret { letter-spacing:2px; color:#555; }
+  .dfc-select { height:24px; font-size:11px; border:1.5px solid #9ca3af; border-radius:3px; padding:1px 6px; background:#fff; color:#2E3A40; }
+  .dfc-select:focus { outline:none; border-color:#2E78C1; }
+  .input-btn-row { display:flex; align-items:center; gap:3px; }
+  .dfc-icon-btn { background:none; border:none; cursor:pointer; color:#9ca3af; font-size:11px; padding:0 3px; line-height:24px; }
+  .dfc-icon-btn:hover { color:#2E78C1; }
+
+  /* Toggle switch left of label */
+  .dfc-toggle-row { display:flex; align-items:center; gap:8px; padding:7px 10px; background:#f8f9fa; border:1px solid #e8e8e8; border-radius:3px; margin-bottom:11px; }
+  .dfc-toggle { position:relative; width:30px; height:16px; flex-shrink:0; }
+  .dfc-toggle input { opacity:0; width:0; height:0; position:absolute; }
+  .dfc-toggle-track { position:absolute; cursor:pointer; top:0;left:0;right:0;bottom:0; background:#ccc; border-radius:16px; transition:.2s; }
+  .dfc-toggle-track::before { content:''; position:absolute; width:10px; height:10px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .dfc-toggle input:checked + .dfc-toggle-track { background:#2E78C1; }
+  .dfc-toggle input:checked + .dfc-toggle-track::before { transform:translateX(14px); }
+  .dfc-toggle-text { font-size:11px; font-weight:700; color:#2E3A40; flex:1; }
+  .dfc-toggle-status { font-size:10px; font-weight:700; color:#2E78C1; min-width:18px; }
+
+  /* DFC main section tabs */
+  .dfc-tabs { display:flex; border-bottom:1px solid #e0e0e0; background:#fafafa; padding:0 14px; gap:0; }
+  .dfc-tab { font-size:11px; font-weight:600; color:#9ca3af; padding:7px 14px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:color .15s,border-color .15s; white-space:nowrap; background:none; border-top:none; border-left:none; border-right:none; }
+  .dfc-tab:hover { color:#2E78C1; }
+  .dfc-tab.active { color:#2E78C1; border-bottom-color:#2E78C1; }
+  .dfc-tab-pane { display:none; padding:12px 14px 8px; }
+  .dfc-tab-pane.active { display:block; }
+
+  /* Identity provider pills */
+  .dfc-provider-pills { display:flex; gap:5px; margin-bottom:12px; }
+  .dfc-provider-pill { display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border:1px solid #e0e0e0; background:#fafafa; color:#6b7280; font-size:10px; font-weight:700; cursor:pointer; border-radius:3px; transition:all .15s; font-family:inherit; }
+  .dfc-provider-pill.active { background:#fff; color:#2E78C1; border-color:#2E78C1; box-shadow:0 1px 3px rgba(46,120,193,.1); }
+  .dfc-provider-pill:not(.active):hover { background:#f0f0f0; }
+  .dfc-provider-pill:disabled { opacity:.5; cursor:not-allowed; }
+  .coming-soon-badge { font-size:8px; background:#e8e8e8; color:#888; padding:1px 4px; border-radius:8px; font-weight:600; }
+
+  /* Provider content panels */
+  .dfc-provider-pane { display:none; }
+  .dfc-provider-pane.active { display:block; }
+
+  /* Enforcement block */
+  .dfc-enforcement-block { padding:8px 10px; background:#f8f9fa; border:1px solid #e8e8e8; border-radius:3px; margin-bottom:10px; }
+  .dfc-enforcement-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:#9ca3af; margin-bottom:7px; }
+  .dfc-check-item { display:flex; align-items:center; gap:6px; font-size:11px; color:#2E3A40; margin-bottom:5px; cursor:pointer; }
+  .dfc-check-item input { margin:0; cursor:pointer; }
+
+  /* Sync status bar */
+  .dfc-sync-bar { display:flex; align-items:center; gap:8px; padding:6px 10px; background:#f8f9fa; border:1px solid #e8e8e8; border-radius:3px; font-size:11px; flex-wrap:wrap; margin-bottom:10px; }
+  .dfc-sync-counts { font-size:10px; color:#9ca3af; font-family:'Consolas','Courier New',monospace; margin-left:auto; }
+  .dfc-badge-success { display:inline-flex; align-items:center; gap:3px; background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; border-radius:10px; font-size:9px; font-weight:700; padding:1px 6px; }
+  .dfc-badge-verified { display:inline-flex; align-items:center; gap:3px; background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; border-radius:10px; font-size:10px; font-weight:600; padding:1px 8px; }
+
+  /* Early access form */
+  .dfc-early-access { background:#fffbf5; border:1px solid #fed7aa; border-radius:4px; padding:14px; margin-top:4px; }
+  .dfc-early-access-title { font-size:11px; font-weight:700; color:#92400e; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+  .dfc-early-access-desc { font-size:10px; color:#b45309; margin-bottom:12px; line-height:1.5; }
+  .dfc-ea-field { margin-bottom:9px; }
+  .dfc-ea-label { display:block; font-size:10px; font-weight:700; color:#374151; margin-bottom:3px; }
+  .dfc-ea-input { width:100%; height:24px; font-size:11px; border:1px solid #d1d5db; border-radius:3px; padding:2px 8px; font-family:inherit; }
+  .dfc-ea-input:focus { outline:none; border-color:#CE4900; }
+  .dfc-ea-select { width:100%; height:24px; font-size:11px; border:1px solid #d1d5db; border-radius:3px; padding:1px 6px; font-family:inherit; background:#fff; }
+  .dfc-ea-row { display:flex; gap:8px; }
+  .dfc-ea-row .dfc-ea-field { flex:1; }
+  .dfc-ea-submit { background:#CE4900; color:#fff; border:none; border-radius:3px; font-size:11px; font-weight:700; padding:5px 16px; cursor:pointer; }
+  .dfc-ea-submit:hover { background:#b84000; }
+  .dfc-ea-success { display:none; padding:8px 12px; background:#d1fae5; border:1px solid #a7f3d0; border-radius:3px; font-size:11px; color:#065f46; font-weight:600; margin-top:8px; text-align:center; }
+
+  /* DFC action row */
+  .dfc-actions { display:flex; justify-content:flex-end; gap:7px; padding:8px 0 4px; border-top:1px solid #f0f0f0; margin-top:8px; }
+  .dfc-actions.with-left { justify-content:space-between; align-items:center; }
+  .dfc-btn-primary { background:#2E78C1; color:#fff; border:none; border-radius:3px; font-size:11px; font-weight:600; padding:5px 16px; cursor:pointer; }
+  .dfc-btn-primary:hover { background:#2366a8; }
+  .dfc-btn-primary:disabled { background:#9ca3af; cursor:not-allowed; }
+  .dfc-btn-outline { background:#fff; color:#2E78C1; border:1.5px solid #2E78C1; border-radius:3px; font-size:11px; font-weight:600; padding:4px 14px; cursor:pointer; }
+  .dfc-btn-outline:hover { background:#eff6ff; }
+  .dfc-btn-outline:disabled { opacity:.5; cursor:not-allowed; }
+  .dfc-note { display:flex; gap:7px; padding:6px 10px; background:#F1F1F1; border:1px solid #CCC; border-radius:3px; font-size:10px; color:#929292; line-height:1.5; margin:10px 0 8px; }
+
   /* ── Scenario Switcher ───────────────────────────────────────────────────── */
   .scenario-switcher { background:#fff; border-bottom:1px solid #e9ecef; padding:14px 16px 2px; }
   .scenario-switcher-label { font-size:12px; color:#9ca3af; margin-bottom:10px; }
@@ -363,47 +459,340 @@
 <!-- ══ SCREEN 3 ══ -->
 <div class="demo-body screen" id="screen-3">
   <h5 class="mb-1">Step 3 of 5 — Admin: DFC Organization Settings</h5>
-  <p class="text-muted small mb-3">Read-only mockup of the DFC Org Settings → Insight Settings section. Click "Sync Now" to make a live ClassLink API call and update the counts.</p>
+  <p class="text-muted small mb-3">Explore each section below — all tabs, toggles, and provider selections are interactive. Click "Sync Now" on the Rostering tab to fetch live ClassLink data.</p>
+
   <div class="row g-3">
     <div class="col-lg-8">
       <div class="console-mockup">
         <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Organization Settings</span></div>
-        <div class="console-body" style="max-height:480px;overflow-y:auto">
-          <div class="dfc-panel">
-            <div class="dfc-panel-title"><i class="fas fa-chevron-circle-up text-primary"></i> SSO Settings</div>
-            <div class="field-row"><span class="field-label"></span><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label small fw-semibold">Enable Microsoft Entra ID SSO</label></div></div>
-            <div class="field-row"><span class="field-label">Tenant ID</span><span class="field-value">04d60e3b-0fed-4071-a820-e4e87e8f8c98</span></div>
-            <div class="field-row"><span class="field-label">Client ID</span><span class="field-value">7eb737a9-32f2-4298-b617-87d35051d95d</span></div>
-            <div class="field-row"><span class="field-label">Client Secret</span><span class="field-value secret">••••••••••••CAZZ</span></div>
-            <div class="field-row"><span class="field-label"></span><div class="d-flex gap-3 flex-wrap"><div class="form-check mb-0"><input class="form-check-input" type="checkbox" id="req-t" checked><label class="form-check-label small" for="req-t">Require SSO for Teachers</label></div><div class="form-check mb-0"><input class="form-check-input" type="checkbox" id="req-s" checked><label class="form-check-label small" for="req-s">Require SSO for Students</label></div></div></div>
-            <div class="field-row"><span class="field-label">Status</span><span class="badge bg-success"><i class="fas fa-check me-1"></i>Connection verified</span></div>
-          </div>
-          <div class="dfc-panel">
-            <div class="dfc-panel-title"><i class="fas fa-chevron-circle-up text-primary"></i> Rostering Settings</div>
-            <div class="field-row"><span class="field-label"></span><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label small fw-semibold">Enable ClassLink Rostering</label></div></div>
-            <div class="field-row"><span class="field-label">OneRoster Base URL</span><span class="field-value" style="font-size:.7rem">https://classlinkcertification3-vn-v2.rosterserver.com/ims/oneroster/v1p1</span></div>
-            <div class="field-row"><span class="field-label">Client ID</span><span class="field-value">ea30f27a3e9ef691c1d32dcc</span></div>
-            <div class="field-row"><span class="field-label">Client Secret</span><span class="field-value secret">••••••••••••9bee</span></div>
-            <div class="field-row"><span class="field-label">Last synced</span><span id="last-sync-time" class="field-value">—</span></div>
-            <div class="field-row"><span class="field-label">Sync status</span><span id="sync-status-badge" class="badge bg-secondary">Not synced</span></div>
-            <div class="field-row"><span class="field-label">Teachers synced</span><span id="teacher-count" class="field-value">—</span></div>
-            <div class="field-row"><span class="field-label">Classes synced</span><span id="class-count" class="field-value">—</span></div>
-            <div class="field-row">
-              <span class="field-label"></span>
-              <button id="btn-sync-now" class="btn btn-sm btn-outline-primary" onclick="triggerSync()">
-                <i class="fas fa-sync me-1" id="sync-icon"></i><i class="fas fa-spinner fa-spin me-1 d-none" id="sync-spinner"></i>Sync Now
-              </button>
-              <span id="sync-message" class="ms-2 small text-muted"></span>
+
+        <!-- Breadcrumb inside console -->
+        <div style="background:#EDF3F7;border-bottom:1px solid #d4dde6;padding:5px 14px;font-size:10px;color:#555;display:flex;align-items:center;gap:4px">
+          <span style="color:#2E78C1">Organization Settings</span>
+        </div>
+
+        <div style="padding:14px;max-height:540px;overflow-y:auto">
+
+          <div style="font-size:11px;font-weight:700;color:#2E3A40;margin-bottom:4px">Organization-wide Settings</div>
+          <hr style="margin:0 0 14px;border-color:#e0e0e0">
+
+          <!-- ── Section 1: Deep Freeze Cloud Data Retention ── -->
+          <div class="dfc-product-card dfc-brand">
+            <div class="dfc-card-header">
+              <div class="dfc-card-header-left">
+                <div class="dfc-card-title">
+                  <i class="fas fa-database" style="color:#2E78C1;font-size:11px"></i>
+                  Data Retention
+                  <span class="dfc-badge dfc-badge-blue">Deep Freeze Cloud</span>
+                </div>
+                <div class="dfc-card-desc">Configure how long Deep Freeze Cloud retains historical task, alert, report, and usage data across all products and sites.</div>
+              </div>
+            </div>
+            <div class="dfc-card-body">
+              <div class="dfc-field-row">
+                <label class="dfc-field-label">Task Status:</label>
+                <div class="dfc-field-value"><select class="dfc-select"><option>1 week (recommended)</option><option>2 weeks</option><option selected>1 month</option></select></div>
+              </div>
+              <div class="dfc-field-row">
+                <label class="dfc-field-label">Alerts &amp; Notifications:</label>
+                <div class="dfc-field-value"><select class="dfc-select"><option>1 week (recommended)</option><option>2 weeks</option><option selected>1 month</option></select></div>
+              </div>
+              <div class="dfc-field-row">
+                <label class="dfc-field-label">Reports Data:</label>
+                <div class="dfc-field-value"><select class="dfc-select"><option>2 weeks</option><option>1 month</option><option>3 months (recommended)</option><option selected>6 months</option></select></div>
+              </div>
+              <div class="dfc-field-row">
+                <label class="dfc-field-label">Computer Usage Data:</label>
+                <div class="dfc-field-value"><select class="dfc-select"><option>2 weeks</option><option>1 month</option><option>3 months (recommended)</option><option selected>6 months</option></select></div>
+              </div>
+              <div class="dfc-note">
+                <i class="fas fa-info-circle" style="color:#9ca3af;margin-top:1px;flex-shrink:0"></i>
+                <span>Longer durations may affect reports and task page loading times. Changes can take up to one week to take full effect.</span>
+              </div>
+              <div class="dfc-actions"><button class="dfc-btn-primary">Save</button></div>
             </div>
           </div>
-        </div>
-      </div>
+
+          <!-- ── Section 2: Insight Settings ── -->
+          <div class="dfc-product-card insight-brand">
+            <div class="dfc-card-header">
+              <div class="dfc-card-header-left">
+                <div class="dfc-card-title">
+                  <img src="/images/Insight_Cloud_LightBG.png" style="height:16px;filter:brightness(0) saturate(100%) invert(35%) sepia(70%) saturate(600%) hue-rotate(180deg) brightness(90%)" alt="Insight">
+                  Insight Settings
+                  <span class="dfc-badge dfc-badge-orange">Insight Cloud</span>
+                </div>
+                <div class="dfc-card-desc">Configure sign-in and classroom rostering for Insight Teacher Console and Student Client. These settings apply to all Insight policies in this organization.</div>
+              </div>
+            </div>
+
+            <!-- Insight tabs: Sign-In & Identity | Rostering -->
+            <div class="dfc-tabs" id="dfc-insight-tabs">
+              <button class="dfc-tab active" onclick="dfcSwitchTab('sso-tab',this)">
+                <i class="fas fa-lock" style="font-size:9px;margin-right:4px"></i>Sign-In &amp; Identity
+              </button>
+              <button class="dfc-tab" onclick="dfcSwitchTab('roster-tab',this)">
+                <i class="fas fa-list-alt" style="font-size:9px;margin-right:4px"></i>Rostering
+              </button>
+            </div>
+
+            <!-- ── TAB: Sign-In & Identity ── -->
+            <div id="sso-tab" class="dfc-tab-pane active">
+
+              <!-- Identity provider pills -->
+              <div class="dfc-provider-pills">
+                <button class="dfc-provider-pill active" id="pill-entra" onclick="dfcSwitchProvider('entra')">
+                  <svg width="12" height="12" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                  Microsoft Entra ID
+                </button>
+                <button class="dfc-provider-pill" id="pill-google" onclick="dfcSwitchProvider('google-sso')">
+                  <svg width="12" height="12" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.8 2.5 30.2 0 24 0 14.7 0 6.8 5.4 3 13.3l7.9 6.1C12.7 13.2 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.1z"/><path fill="#FBBC05" d="M10.9 28.7A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.2.7-4.7L2.3 13.3A24 24 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.4-5.9z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.2-8.3 2.2-6.1 0-11.3-3.7-13.1-9.8l-8.4 5.9C6.8 42.6 14.7 48 24 48z"/></svg>
+                  Google Workspace
+                  <span class="coming-soon-badge">Coming soon</span>
+                </button>
+              </div>
+
+              <!-- Microsoft Entra ID panel -->
+              <div id="pane-entra" class="dfc-provider-pane active">
+                <div class="dfc-toggle-row">
+                  <label class="dfc-toggle">
+                    <input type="checkbox" checked id="toggle-entra" onchange="dfcToggle('toggle-entra','status-entra','entra-fields')">
+                    <span class="dfc-toggle-track"></span>
+                  </label>
+                  <span class="dfc-toggle-text">Enable Microsoft Entra ID SSO for Insight</span>
+                  <span class="dfc-toggle-status" id="status-entra">On</span>
+                </div>
+                <div id="entra-fields">
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">Tenant ID:</label>
+                    <div class="dfc-field-value"><input type="text" class="dfc-input" value="04d60e3b-0fed-4071-a820-e4e87e8f8c98"></div>
+                  </div>
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">Client ID:</label>
+                    <div class="dfc-field-value"><input type="text" class="dfc-input" value="7eb737a9-32f2-4298-b617-87d35051d95d"></div>
+                  </div>
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">Client Secret:</label>
+                    <div class="dfc-field-value">
+                      <div class="input-btn-row">
+                        <input type="password" class="dfc-input secret" id="entra-secret" value="placeholderCAZZ">
+                        <button class="dfc-icon-btn" onclick="dfcToggleSecret('entra-secret',this)"><i class="fas fa-eye"></i></button>
+                      </div>
+                      <div style="font-size:10px;color:#9ca3af;margin-top:2px">Leave blank to keep the existing secret.</div>
+                    </div>
+                  </div>
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">Redirect URI:</label>
+                    <div class="dfc-field-value">
+                      <div class="input-btn-row">
+                        <input type="text" class="dfc-input" value="https://cloud.faronics.com/signin-microsoft" readonly>
+                        <button class="dfc-icon-btn" title="Copy" onclick="dfcCopy('https://cloud.faronics.com/signin-microsoft',this)"><i class="fas fa-copy"></i></button>
+                      </div>
+                      <div style="font-size:10px;color:#9ca3af;margin-top:2px">Register this URI in your Azure App Registration.</div>
+                    </div>
+                  </div>
+                  <div class="dfc-field-row" style="align-items:flex-start">
+                    <label class="dfc-field-label" style="padding-top:2px">Enforcement:</label>
+                    <div class="dfc-field-value">
+                      <div class="dfc-enforcement-block">
+                        <div class="dfc-enforcement-title">Require sign-in via Microsoft for:</div>
+                        <label class="dfc-check-item"><input type="checkbox" checked> Teacher Console</label>
+                        <label class="dfc-check-item"><input type="checkbox" checked> Student Client</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dfc-actions with-left">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <button class="dfc-btn-outline" onclick="dfcTestConnection(this,'entra-test-result')">
+                        <i class="fas fa-exchange-alt" style="font-size:9px;margin-right:4px"></i>Test Connection
+                      </button>
+                      <span id="entra-test-result" class="dfc-badge-verified" style="display:none"><i class="fas fa-check" style="font-size:8px"></i> Connection verified</span>
+                    </div>
+                    <button class="dfc-btn-primary">Save</button>
+                  </div>
+                </div>
+              </div><!-- /pane-entra -->
+
+              <!-- Google Workspace SSO panel -->
+              <div id="pane-google-sso" class="dfc-provider-pane">
+                <div class="dfc-toggle-row" style="opacity:.5;pointer-events:none">
+                  <label class="dfc-toggle"><input type="checkbox" disabled><span class="dfc-toggle-track"></span></label>
+                  <span class="dfc-toggle-text">Enable Google Workspace SSO for Insight</span>
+                  <span class="dfc-toggle-status">Off</span>
+                </div>
+                <div class="dfc-early-access">
+                  <div class="dfc-early-access-title">
+                    <i class="fas fa-clock" style="font-size:11px"></i>
+                    Google Workspace SSO — Coming Soon
+                  </div>
+                  <div class="dfc-early-access-desc">
+                    Google Workspace sign-in for Insight is in development. Request early access and we'll notify you when it's available for your organization.
+                  </div>
+                  <div id="ea-sso-form">
+                    <div class="dfc-ea-row">
+                      <div class="dfc-ea-field"><label class="dfc-ea-label">Full Name</label><input type="text" class="dfc-ea-input" placeholder="Jane Smith"></div>
+                      <div class="dfc-ea-field"><label class="dfc-ea-label">Email</label><input type="email" class="dfc-ea-input" placeholder="jane@school.edu"></div>
+                    </div>
+                    <div class="dfc-ea-row">
+                      <div class="dfc-ea-field"><label class="dfc-ea-label">Phone</label><input type="tel" class="dfc-ea-input" placeholder="+1 (555) 000-0000"></div>
+                      <div class="dfc-ea-field"><label class="dfc-ea-label">Number of Devices</label><input type="number" class="dfc-ea-input" placeholder="e.g. 500" min="1"></div>
+                    </div>
+                    <div class="dfc-ea-field">
+                      <label class="dfc-ea-label">Best way to contact you</label>
+                      <select class="dfc-ea-select"><option value="">Select preference…</option><option>Email</option><option>Phone</option><option>Either</option></select>
+                    </div>
+                    <div style="margin-top:10px">
+                      <button class="dfc-ea-submit" onclick="dfcSubmitEarlyAccess('ea-sso-form','ea-sso-success')">
+                        <i class="fas fa-paper-plane" style="font-size:9px;margin-right:4px"></i>Request Early Access
+                      </button>
+                    </div>
+                    <div id="ea-sso-success" class="dfc-ea-success"><i class="fas fa-check-circle me-1"></i>Request submitted! We'll be in touch soon.</div>
+                  </div>
+                </div>
+              </div><!-- /pane-google-sso -->
+
+            </div><!-- /sso-tab -->
+
+            <!-- ── TAB: Rostering ── -->
+            <div id="roster-tab" class="dfc-tab-pane">
+
+              <div class="dfc-toggle-row">
+                <label class="dfc-toggle">
+                  <input type="checkbox" checked id="toggle-roster" onchange="dfcToggle('toggle-roster','status-roster','roster-fields')">
+                  <span class="dfc-toggle-track"></span>
+                </label>
+                <span class="dfc-toggle-text">Enable Classroom Rostering for Insight</span>
+                <span class="dfc-toggle-status" id="status-roster">On</span>
+              </div>
+
+              <div id="roster-fields">
+                <div class="dfc-field-row">
+                  <label class="dfc-field-label">Rostering Provider:</label>
+                  <div class="dfc-field-value">
+                    <select class="dfc-select" id="roster-provider" onchange="dfcRosterProvider(this.value)">
+                      <option value="classlink" selected>ClassLink</option>
+                      <option value="google-classroom">Google Classroom</option>
+                    </select>
+                    <div style="font-size:10px;color:#9ca3af;margin-top:2px">Additional providers will be available in future updates.</div>
+                  </div>
+                </div>
+
+                <!-- ClassLink fields -->
+                <div id="roster-classlink">
+                  <div style="border-top:1px solid #f0f0f0;margin:10px 0 10px 150px">
+                    <div style="padding-top:10px;font-size:10px;font-weight:700;color:#0056A2;margin-bottom:8px;display:flex;align-items:center;gap:5px">
+                      <svg width="60" height="12" viewBox="0 0 60 12"><text x="0" y="10" font-size="10" font-family="'Segoe UI',Arial,sans-serif" font-weight="700" fill="#0056A2">Class</text><text x="26" y="10" font-size="10" font-family="'Segoe UI',Arial,sans-serif" font-weight="700" fill="#00A2E8">Link</text></svg>
+                      <span style="color:#9ca3af;font-weight:400">OneRoster 1.1</span>
+                    </div>
+                  </div>
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">OneRoster Base URL:</label>
+                    <div class="dfc-field-value"><input type="text" class="dfc-input" style="width:340px" value="https://classlinkcertification3-vn-v2.rosterserver.com/ims/oneroster/v1p1"></div>
+                  </div>
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">Client ID:</label>
+                    <div class="dfc-field-value"><input type="text" class="dfc-input" value="ea30f27a3e9ef691c1d32dcc"></div>
+                  </div>
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">Client Secret:</label>
+                    <div class="dfc-field-value">
+                      <div class="input-btn-row">
+                        <input type="password" class="dfc-input secret" id="roster-secret" value="placeholder9bee">
+                        <button class="dfc-icon-btn" onclick="dfcToggleSecret('roster-secret',this)"><i class="fas fa-eye"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dfc-field-row">
+                    <label class="dfc-field-label">Sync Schedule:</label>
+                    <div class="dfc-field-value"><select class="dfc-select"><option selected>Daily at 3:00 AM</option><option>Daily at 12:00 AM</option><option>Every 6 hours</option><option>Manual only</option></select></div>
+                  </div>
+                  <div class="dfc-field-row" style="align-items:flex-start">
+                    <label class="dfc-field-label" style="padding-top:2px">Sync Scope:</label>
+                    <div class="dfc-field-value" style="display:flex;gap:14px;flex-wrap:wrap">
+                      <label class="dfc-check-item" style="margin:0"><input type="checkbox" checked> Teachers</label>
+                      <label class="dfc-check-item" style="margin:0"><input type="checkbox" checked> Students</label>
+                      <label class="dfc-check-item" style="margin:0"><input type="checkbox" checked> Classes</label>
+                      <label class="dfc-check-item" style="margin:0"><input type="checkbox" checked> Enrollments</label>
+                    </div>
+                  </div>
+                  <div class="dfc-field-row" style="align-items:flex-start;margin-top:4px">
+                    <label class="dfc-field-label" style="padding-top:6px">Last Sync:</label>
+                    <div class="dfc-field-value">
+                      <div class="dfc-sync-bar">
+                        <i class="fas fa-check-circle" style="color:#1a7a3c;font-size:11px"></i>
+                        <span id="last-sync-time" style="color:#555">—</span>
+                        <span id="sync-status-badge" class="dfc-badge-success" style="display:none"><i class="fas fa-check" style="font-size:8px"></i> Success</span>
+                        <span id="sync-counts" class="dfc-sync-counts" style="display:none"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dfc-actions with-left">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <button class="dfc-btn-outline" id="btn-sync-now" onclick="triggerSync()">
+                        <i class="fas fa-sync me-1" id="sync-icon" style="font-size:9px"></i><i class="fas fa-spinner fa-spin me-1 d-none" id="sync-spinner" style="font-size:9px"></i>Sync Now
+                      </button>
+                      <span id="sync-message" style="font-size:10px;color:#9ca3af"></span>
+                    </div>
+                    <button class="dfc-btn-primary">Save</button>
+                  </div>
+                </div><!-- /roster-classlink -->
+
+                <!-- Google Classroom early access -->
+                <div id="roster-google-classroom" style="display:none">
+                  <div class="dfc-early-access">
+                    <div class="dfc-early-access-title">
+                      <svg width="12" height="12" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.8 2.5 30.2 0 24 0 14.7 0 6.8 5.4 3 13.3l7.9 6.1C12.7 13.2 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.1z"/><path fill="#FBBC05" d="M10.9 28.7A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.2.7-4.7L2.3 13.3A24 24 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.4-5.9z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.2-8.3 2.2-6.1 0-11.3-3.7-13.1-9.8l-8.4 5.9C6.8 42.6 14.7 48 24 48z"/></svg>
+                      Google Classroom — Coming Soon
+                    </div>
+                    <div class="dfc-early-access-desc">Google Classroom rostering integration is in development. Request early access and we'll notify you when it's available.</div>
+                    <div id="ea-roster-form">
+                      <div class="dfc-ea-row">
+                        <div class="dfc-ea-field"><label class="dfc-ea-label">Full Name</label><input type="text" class="dfc-ea-input" placeholder="Jane Smith"></div>
+                        <div class="dfc-ea-field"><label class="dfc-ea-label">Email</label><input type="email" class="dfc-ea-input" placeholder="jane@school.edu"></div>
+                      </div>
+                      <div class="dfc-ea-row">
+                        <div class="dfc-ea-field"><label class="dfc-ea-label">Phone</label><input type="tel" class="dfc-ea-input" placeholder="+1 (555) 000-0000"></div>
+                        <div class="dfc-ea-field"><label class="dfc-ea-label">Number of Devices</label><input type="number" class="dfc-ea-input" placeholder="e.g. 500" min="1"></div>
+                      </div>
+                      <div class="dfc-ea-field">
+                        <label class="dfc-ea-label">Best way to contact you</label>
+                        <select class="dfc-ea-select"><option value="">Select preference…</option><option>Email</option><option>Phone</option><option>Either</option></select>
+                      </div>
+                      <div style="margin-top:10px">
+                        <button class="dfc-ea-submit" onclick="dfcSubmitEarlyAccess('ea-roster-form','ea-roster-success')">
+                          <i class="fas fa-paper-plane" style="font-size:9px;margin-right:4px"></i>Request Early Access
+                        </button>
+                      </div>
+                      <div id="ea-roster-success" class="dfc-ea-success"><i class="fas fa-check-circle me-1"></i>Request submitted! We'll be in touch soon.</div>
+                    </div>
+                  </div>
+                </div><!-- /roster-google-classroom -->
+
+              </div><!-- /roster-fields -->
+            </div><!-- /roster-tab -->
+
+          </div><!-- /insight-section -->
+
+        </div><!-- /scrollable content -->
+      </div><!-- /console-mockup -->
     </div>
+
+    <!-- Right info panel -->
     <div class="col-lg-4">
-      <div class="card border-0 bg-light h-100"><div class="card-body p-3">
-        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Token endpoint note</div>
-        <p class="small text-muted mb-2">ClassLink docs say <code>/oauth2/token</code> — actual working endpoint confirmed by live POC is <code>/token</code> with HTTP Basic auth.</p>
-        <p class="small text-muted mb-0">In production, DFC's background sync job calls ClassLink and stores results in <code>tbl_RosteredClass</code> and <code>tbl_RosteredStudent</code>. Clients query the local DB — never ClassLink directly.</p>
+      <div class="card border-0 bg-light mb-3"><div class="card-body p-3">
+        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Architecture note</div>
+        <p class="small text-muted mb-2">ClassLink token endpoint: <code>/token</code> with HTTP Basic auth — <strong>not</strong> <code>/oauth2/token</code> as ClassLink docs state (confirmed by live POC).</p>
+        <p class="small text-muted mb-0">DFC's sync job calls ClassLink and stores results in <code>tbl_RosteredClass</code> and <code>tbl_RosteredStudent</code>. Teacher Console and Student Client only query the local DB — never ClassLink directly.</p>
+      </div></div>
+      <div class="card border-0 bg-light"><div class="card-body p-3">
+        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Try it</div>
+        <ul class="small text-muted ps-3 mb-0" style="line-height:1.9">
+          <li>Toggle SSO or Rostering on/off</li>
+          <li>Switch between Microsoft Entra and Google Workspace tabs</li>
+          <li>Select Google Classroom in Rostering to see the early access form</li>
+          <li>Click <strong>Test Connection</strong> to simulate a connection check</li>
+          <li>Click <strong>Sync Now</strong> to fetch live ClassLink counts</li>
+        </ul>
       </div></div>
     </div>
   </div>
