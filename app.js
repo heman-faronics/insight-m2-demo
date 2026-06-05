@@ -16,7 +16,8 @@ const state = {
     student: null,   // { email, displayName, sourcedId, enrolledClass }
     sync:    null    // { teacherCount, classCount, syncedAt }
 };
-const screenReady = { 1: false, 2: false, 3: true, 4: true, 5: true };
+// All screens freely navigable — sign-in enriches data but doesn't block navigation
+const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true };
 
 // ── MSAL setup (v2) ────────────────────────────────────────────────────────────
 // Uses MSAL Browser v2 CDN (v3 dropped the UMD bundle so CDN use requires v2)
@@ -101,10 +102,8 @@ function updateNav() {
     soBtn.style.display   = n === 5 ? '' : 'none';
     if (n === 5) { nextBtn.style.display = 'none'; return; }
     nextBtn.style.display = '';
-    nextBtn.disabled = !screenReady[n];
-    hint.textContent = !screenReady[n]
-        ? (n === 1 ? 'Complete teacher sign-in to continue' : n === 2 ? 'Complete student sign-in to continue' : '')
-        : '';
+    nextBtn.disabled = false;
+    hint.textContent = '';
 }
 
 // ── Tab switcher for real TC UI ────────────────────────────────────────────────
@@ -151,7 +150,7 @@ async function teacherSignIn() {
         activeSimStep  = 2;
         simClassChosen = false;
         renderSim(true);
-        screenReady[1] = true;
+        
         updateNav();
         updateSummary();
 
@@ -199,7 +198,9 @@ async function studentSignIn() {
 
         if (clData.enrolledClass) {
             classInfo.innerHTML = `<div class="small text-white">You are enrolled in:<br><strong>${esc(clData.enrolledClass.title)}</strong></div>`;
-            document.getElementById('student-class-id-field').value = 'cl_' + clData.enrolledClass.sourcedId;
+            // Update Screen 5 student class ID field if it exists
+            var sciField = document.getElementById('s-class-id');
+            if (sciField) sciField.value = 'cl_' + clData.enrolledClass.sourcedId;
             joinBtn.disabled = false;
         } else {
             classInfo.innerHTML = `<div class="small text-warning">No class assignment found.<br>Contact your teacher.</div>`;
@@ -207,7 +208,7 @@ async function studentSignIn() {
         }
         section.style.display = 'block';
 
-        screenReady[2] = true;
+        
         updateNav();
         updateSummary();
     } catch (err) {
@@ -410,13 +411,7 @@ function onTeacherAuthChange() {
 }
 
 function onStudentAuthChange() {
-    const isSsoReq  = document.querySelector('input[name="studentAuthMode"]:checked')?.value === 'sso_required';
-    const classField = document.getElementById('student-class-id-field');
-    classField.disabled = isSsoReq;
-    document.getElementById('class-id-hint').textContent = isSsoReq
-        ? 'Class ID is assigned automatically from ClassLink roster.'
-        : 'Enter the Class ID your teacher announced.';
-    document.getElementById('auto-join-row').style.display = isSsoReq ? '' : 'none';
+    // Screen 5 now uses polStudentAuthMode() — this is kept for legacy compatibility
 }
 
 // ── Summary + Start Over ───────────────────────────────────────────────────────
@@ -437,11 +432,11 @@ function updateSummary() {
 
 function startOver() {
     state.teacher = null; state.student = null; state.sync = null;
-    screenReady[1] = false; screenReady[2] = false;
+    
     ['teacher-signin-status','student-signin-status'].forEach(id => document.getElementById(id).innerHTML = '');
     // Reset scenario switcher + teacher sign-in state
     activeSimScenario = 1; activeSimStep = 1; simClassChosen = false; sim8ClassIdVisible = false;
-    screenReady[1] = false;
+    
     document.querySelectorAll('.scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
     const card = document.getElementById('scenario-card');
     if (card) card.textContent = SIM_SCENARIOS[0].card;
@@ -456,7 +451,8 @@ function startOver() {
     if (lst) lst.textContent = '—';
     if (ssb) ssb.style.display = 'none';
     if (sc)  sc.style.display  = 'none';
-    document.getElementById('student-class-id-field').value    = 'cl_5033_5033_01';
+    var sciField = document.getElementById('s-class-id');
+    if (sciField) sciField.value = '';
     document.getElementById('summary-teacher-text').innerHTML  = 'Teacher: <em>sign in on Screen 1 to populate</em>';
     document.getElementById('summary-student-text').innerHTML  = 'Student: <em>sign in on Screen 2 to populate</em>';
     showScreen(1);
