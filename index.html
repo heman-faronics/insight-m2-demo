@@ -99,6 +99,86 @@
   .tc-classlink-label { font-size:11px; font-weight:800; color:#0091ff; margin-bottom:4px; text-transform:uppercase; letter-spacing:.5px; }
   .tc-classlink-select { width:300px; height:40px; border-radius:20px; border:1px solid #0091ff; font-size:12px; padding:0 16px; }
 
+  /* ── Scenario Switcher ───────────────────────────────────────────────────── */
+  .scenario-switcher { background:#fff; border-bottom:1px solid #e9ecef; padding:14px 16px 2px; }
+  .scenario-switcher-label { font-size:12px; color:#9ca3af; margin-bottom:10px; }
+  .scenario-pills-row { display:flex; gap:7px; overflow-x:auto; padding-bottom:12px; scrollbar-width:none; -ms-overflow-style:none; }
+  .scenario-pills-row::-webkit-scrollbar { display:none; }
+  .scenario-pill {
+    padding:5px 13px; border-radius:20px; border:1.5px solid #1F5C99;
+    background:#fff; color:#1F5C99; font-size:12px; cursor:pointer; white-space:nowrap;
+    flex-shrink:0; transition:background 150ms ease, color 150ms ease;
+    font-family:inherit; line-height:1.4;
+  }
+  .scenario-pill.active { background:#1F5C99; color:#fff; }
+  .scenario-pill:hover:not(.active) { background:#eff6ff; }
+  .scenario-card {
+    background:#eff6ff; border-left:3px solid #1F5C99; border-radius:0 6px 6px 0;
+    padding:9px 13px; margin-bottom:12px; font-size:13px; color:#1e3a5f;
+    min-height:38px; transition:opacity 150ms ease; line-height:1.5;
+  }
+  .scenario-card.fading { opacity:0; }
+
+  /* Sim zone transition */
+  .tc-sim-zone { transition:opacity 200ms ease, transform 200ms ease; }
+  .tc-sim-zone.transitioning { opacity:0; transform:translateY(8px); }
+
+  /* Step dots */
+  .tc-step-dots { display:flex; justify-content:center; gap:7px; padding:10px 0 4px; }
+  .tc-dot { width:7px; height:7px; border-radius:50%; background:#ddd; transition:background .2s; }
+  .tc-dot.active { background:#1F5C99; }
+
+  /* Signed-in pill */
+  .sim-signed-pill {
+    display:inline-flex; align-items:center; gap:5px; background:#d1fae5; color:#065f46;
+    border-radius:20px; font-size:11px; font-weight:600; padding:3px 11px; margin-bottom:14px;
+  }
+
+  /* Simulated console UI elements */
+  .sim-ms-btn {
+    background:#1F5C99; color:#fff; border:none; border-radius:20px;
+    font-size:13px; font-weight:600; padding:12px 0; width:100%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:3px;
+    font-family:inherit;
+  }
+  .sim-ms-btn:hover { background:#174f87; }
+  .sim-simulated { font-size:9px; color:#bbb; font-style:italic; text-align:center; margin-bottom:8px; }
+  .sim-start-btn {
+    background:#ce4900; color:#fff; border:none; border-radius:20px;
+    font-size:12px; font-weight:600; padding:10px 22px; cursor:pointer; font-family:inherit;
+  }
+  .sim-start-btn:disabled { background:#d1d5db; color:#9ca3af; cursor:not-allowed; }
+  .sim-start-btn:hover:not(:disabled) { background:#b84000; }
+  .sim-input {
+    width:100%; height:40px; border-radius:20px; border:1px solid #9ca3af;
+    font-size:12px; padding:0 16px; font-family:inherit; background:#fff;
+    margin-bottom:12px; box-sizing:border-box;
+  }
+  .sim-input:focus { outline:none; border-color:#1F5C99; }
+  .sim-select {
+    width:100%; height:40px; border-radius:20px; border:1px solid #1F5C99;
+    font-size:12px; padding:0 14px; font-family:inherit; background:#fff; margin-bottom:4px;
+  }
+  .sim-label { font-size:12px; font-weight:700; color:#374151; margin-bottom:6px; text-align:left; display:block; }
+  .sim-link { font-size:11px; color:#9ca3af; cursor:pointer; background:none; border:none; text-decoration:none; font-family:inherit; }
+  .sim-link:hover { color:#6b7280; text-decoration:underline; }
+  .sim-or { text-align:center; font-size:11px; color:#9ca3af; margin:10px 0; }
+  .sim-grey-text { text-align:center; font-size:12px; color:#9ca3af; margin-top:6px; }
+
+  /* Try it live section */
+  .try-it-live-section {
+    margin:0 12px 16px; padding:14px 20px 16px;
+    background:#fff; border:1px solid #e5e7eb; border-radius:8px;
+  }
+  .try-it-live-header {
+    font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase;
+    letter-spacing:.8px; margin-bottom:14px; text-align:center; display:flex;
+    align-items:center; gap:10px;
+  }
+  .try-it-live-header::before, .try-it-live-header::after {
+    content:''; flex:1; height:1px; background:#e5e7eb;
+  }
+
   .sc-bg  { background:var(--dark); min-height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px; }
 
   .dfc-panel { background:#fff; border:1px solid #dee2e6; border-radius:6px; padding:16px; margin-bottom:14px; }
@@ -146,18 +226,27 @@
 <!-- ══ SCREEN 1 ══ -->
 <div class="screen active" id="screen-1">
 
-  <!-- Demo label strip -->
+  <!-- Page title -->
   <div class="demo-body pb-1 pt-2">
-    <h5 class="mb-1">Step 1 of 5 — Teacher Sign-In with Microsoft Entra</h5>
-    <p class="text-muted small mb-2">Real OIDC authentication against <code>faronicsna.onmicrosoft.com</code>. Sign in as <strong>teacher1@faronicsna.onmicrosoft.com</strong> — after auth, live ClassLink classes populate the dropdown.</p>
+    <h5 class="mb-1">Step 1 of 5 — Teacher Sign-In</h5>
+    <p class="text-muted small mb-1">Try each setup below to see how the Teacher Console login screen changes. Then use the live section to authenticate for real.</p>
   </div>
 
-  <!-- ── ACTUAL TEACHER CONSOLE UI ── -->
-  <div class="console-mockup mx-3 mb-3">
+  <!-- ── SCENARIO SWITCHER ── -->
+  <div class="scenario-switcher mx-3 mb-0" style="border-radius:8px 8px 0 0; border:1px solid #dee2e6; border-bottom:none;">
+    <div class="scenario-switcher-label">Try a different setup to see how the console changes:</div>
+    <div class="scenario-pills-row" id="scenario-pills-row">
+      <!-- pills injected by JS -->
+    </div>
+    <div class="scenario-card" id="scenario-card">Loading…</div>
+  </div>
 
-    <!-- Real product header: dark bar with logo + window controls -->
+  <!-- ── TEACHER CONSOLE WINDOW (scenario-driven content) ── -->
+  <div class="console-mockup mx-3 mb-3" style="border-radius:0 0 8px 8px;">
+
+    <!-- Real product header bar — never changes -->
     <div class="tc-header">
-      <img src="/images/Insight_NXT_DarkBG.png" style="height:30px;visibility:visible" id="tcHeaderLogo" alt="Insight">
+      <img src="/images/Insight_NXT_DarkBG.png" style="height:30px" alt="Insight">
       <div class="tc-header-right">
         <span class="tc-header-icon"><img src="/images/help.png" style="height:16px"> <span style="color:#ccc;font-size:.72rem">Help</span></span>
         <span class="tc-header-icon"><img src="/images/network.png" style="height:16px"> <span style="color:#ccc;font-size:.72rem">Network</span></span>
@@ -168,109 +257,53 @@
       </div>
     </div>
 
-    <!-- Real product body: left = classroom image, right = login form -->
+    <!-- Console body: left image + right dynamic content -->
     <div class="tc-outer">
       <div class="tc-classroom-bg">
-
-        <!-- Left: classroom illustration -->
         <div class="tc-left">
           <img src="/images/new_classroom.png" alt="Classroom">
         </div>
-
-        <!-- Right: login form -->
         <div class="tc-right">
           <div class="tc-login-wrap">
-
-            <!-- User info row (hidden until signed in) -->
-            <div class="ms-user-row" id="tc-user-row" style="display:none">
-              <div class="logo-col">
-                <img src="/images/Insight_NXT_LightBG.png" class="tc-logo-img" alt="Insight">
-                <div style="font-size:11px;color:#888">Logged in as</div>
-              </div>
-              <div class="info-col">
-                <div id="tc-name-display"></div>
-                <div id="tc-email-display" style="color:#555"></div>
-              </div>
-            </div>
-            <!-- Logo (shown when NOT signed in) -->
-            <div id="tc-logo-row">
-              <img src="/images/Insight_NXT_LightBG.png" class="tc-logo-img" alt="Insight">
-            </div>
-
+            <!-- Logo always present -->
+            <img src="/images/Insight_NXT_LightBG.png" class="tc-logo-img" alt="Insight">
             <h2>WELCOME TO <b>TEACHER CONSOLE</b></h2>
             <h3>The ultimate platform for classroom management</h3>
 
-            <!-- Login tabs -->
-            <ul class="tc-login-tabs" id="tc-login-tabs">
-              <li class="active" id="tab-classids" onclick="tcSwitchTab('classids')">Class IDs</li>
-              <li id="tab-classrooms" onclick="tcSwitchTab('classrooms')">Classroom Lists</li>
-            </ul>
+            <!-- Dynamic scenario content injected here -->
+            <div id="tc-sim-zone" class="tc-sim-zone"></div>
 
-            <!-- Class IDs view -->
-            <div id="tc-view-classids">
-              <!-- ClassLink class dropdown — shown after successful sign-in -->
-              <div id="teacher-class-section" class="tc-classlink-section" style="display:none">
-                <div class="tc-classlink-label"><i class="fas fa-sync me-1"></i>ClassLink Classrooms</div>
-                <select id="teacher-class-select" class="tc-classlink-select"></select>
-              </div>
-
-              <div class="tc-row">
-                <label>Enter Class IDs</label>
-                <input type="text" id="txtClassId" placeholder="Class IDs (e.g. CS101 or Physics)" disabled
-                       title="Class ID is assigned automatically from ClassLink roster when signed in">
-              </div>
-            </div>
-
-            <!-- Classroom Lists view (placeholder) -->
-            <div id="tc-view-classrooms" style="display:none">
-              <div class="tc-row">
-                <label>Select Classroom</label>
-                <select><option value="0">None</option></select>
-              </div>
-            </div>
-
-            <!-- Password -->
-            <div class="tc-row" id="tc-password-row" style="display:none">
-              <label>Enter Password</label>
-              <input type="password" placeholder="Password">
-            </div>
-
-            <!-- Settings -->
-            <div class="tc-row">
-              <label>Select Settings</label>
-              <select id="selSetting"><option value="1">Default</option></select>
-            </div>
-
-            <!-- Autolaunch -->
-            <div class="tc-check-row">
-              <input type="checkbox" id="idAutolaunchClass">
-              <label for="idAutolaunchClass" style="font-size:12px">Autolaunch Class</label>
-            </div>
-
-            <!-- Status / spinner / error from sign-in -->
-            <div id="teacher-signin-status" style="min-height:20px;margin-bottom:8px;text-align:center"></div>
-
-            <!-- START button -->
-            <div style="text-align:right">
-              <button class="tc-start-btn" id="btnStartSession" disabled>START</button>
-            </div>
-
-            <!-- Sign in with Microsoft button -->
-            <div style="text-align:right;margin-top:8px">
-              <button class="tc-ms-btn" id="btn-teacher-signin" onclick="teacherSignIn()">
-                <svg width="15" height="15" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-                Sign in with Microsoft
-              </button>
-            </div>
-
-          </div><!-- /tc-login-wrap -->
-        </div><!-- /tc-right -->
-      </div><!-- /tc-classroom-bg -->
-    </div><!-- /tc-outer -->
-
+            <!-- Step dots (shown for multi-step scenarios) -->
+            <div id="tc-step-dots" class="tc-step-dots" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div><!-- /console-mockup -->
 
-  <!-- Info card below -->
+  <!-- ── TRY IT LIVE ── -->
+  <div class="try-it-live-section">
+    <div class="try-it-live-header">Try it live</div>
+    <div class="d-flex flex-wrap align-items-start gap-4">
+      <div style="flex:1;min-width:260px">
+        <p class="small text-muted mb-2">Authenticate with real Entra credentials and fetch live ClassLink data:</p>
+        <button class="tc-ms-btn" id="btn-teacher-signin" onclick="teacherSignIn()" style="float:none;width:260px;background:#0078d4">
+          <svg width="14" height="14" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+          Sign in with Microsoft
+        </button>
+        <div id="teacher-signin-status" style="margin-top:8px;min-height:20px"></div>
+      </div>
+      <div id="teacher-class-section" style="display:none;flex:1;min-width:220px">
+        <div class="tc-classlink-label" style="margin-bottom:6px"><i class="fas fa-sync me-1"></i>Live ClassLink Classes</div>
+        <select id="teacher-class-select" class="tc-classlink-select" style="width:100%;max-width:320px"></select>
+        <div style="margin-top:6px">
+          <button class="tc-start-btn" id="btnStartSession" disabled style="float:none;width:auto;padding:10px 24px">START CLASS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info cards (unchanged) -->
   <div class="demo-body pt-1">
     <div class="row g-3">
       <div class="col-lg-6">
