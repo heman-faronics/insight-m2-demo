@@ -110,13 +110,15 @@ module.exports = async function handler(req, res) {
 
         // ── op=sync: get counts for the sync summary panel ────────────────────
         if (op === 'sync') {
-            const [td, cd] = await Promise.all([
-                clGet('/teachers?limit=100'),
-                clGet('/classes?limit=100')
+            const [td, cd, sd] = await Promise.all([
+                clGet('/teachers?limit=200'),
+                clGet('/classes?limit=200'),
+                clGet('/students?limit=500')
             ]);
             return res.status(200).json({
-                teacherCount: (td.users  || []).length,
+                teacherCount: (td.users   || []).length,
                 classCount:   (cd.classes || []).length,
+                studentCount: (sd.users   || []).length,
                 syncedAt:     new Date().toLocaleString()
             });
         }

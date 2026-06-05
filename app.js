@@ -243,7 +243,8 @@ async function triggerSync() {
         if (badgeEl)  { badgeEl.style.display = 'inline-flex'; }
         if (countsEl) {
             countsEl.style.display = 'inline';
-            countsEl.textContent = `${data.teacherCount} teachers  ·  ${data.classCount} classes  ·  — students`;
+            const students = data.studentCount != null ? `${data.studentCount} students` : '— students';
+            countsEl.textContent = `${data.teacherCount} teachers  ·  ${data.classCount} classes  ·  ${students}`;
         }
         if (msgEl)   msgEl.textContent = '';
     } catch (err) {
@@ -374,6 +375,11 @@ function dfcTestConnection(btn, resultId) {
         btn.innerHTML = '<i class="fas fa-exchange-alt" style="font-size:9px;margin-right:4px"></i>Test Connection';
         if (resultEl) resultEl.style.display = 'inline-flex';
     }, 1200);
+}
+
+function dfcSyncFreqChange(value) {
+    const dayEl = document.getElementById('sync-day');
+    if (dayEl) dayEl.style.display = value === 'weekly' ? '' : 'none';
 }
 
 function dfcRosterProvider(value) {

@@ -744,7 +744,31 @@
                   </div>
                   <div class="dfc-field-row">
                     <label class="dfc-field-label">Sync Schedule:</label>
-                    <div class="dfc-field-value"><select class="dfc-select"><option selected>Daily at 3:00 AM</option><option>Daily at 12:00 AM</option><option>Every 6 hours</option><option>Manual only</option></select></div>
+                    <div class="dfc-field-value" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                      <select class="dfc-select" id="sync-freq" onchange="dfcSyncFreqChange(this.value)" style="width:90px">
+                        <option value="weekly" selected>Weekly</option>
+                        <option value="daily">Daily</option>
+                      </select>
+                      <select class="dfc-select" id="sync-day" style="width:110px">
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option selected>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
+                      </select>
+                      <select class="dfc-select" style="width:115px">
+                        <option>12:00 AM PST</option>
+                        <option>1:00 AM PST</option>
+                        <option>2:00 AM PST</option>
+                        <option selected>3:00 AM PST</option>
+                        <option>4:00 AM PST</option>
+                        <option>5:00 AM PST</option>
+                        <option>6:00 AM PST</option>
+                        <option>12:00 PM PST</option>
+                      </select>
+                    </div>
                   </div>
                   <div class="dfc-field-row" style="align-items:flex-start">
                     <label class="dfc-field-label" style="padding-top:2px">Sync Scope:</label>
