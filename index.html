@@ -871,23 +871,24 @@
         <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Policies → Edit Policy (Teacher)</span></div>
         <div class="pol-shell">
 
-          <!-- Left sidebar — 15 DFC tabs -->
+          <!-- Left sidebar — matches actual product groupings -->
           <div class="pol-sidebar">
-            <div class="pol-sidebar-item">General Settings</div>
-            <div class="pol-sidebar-item">Deep Freeze</div>
-            <div class="pol-sidebar-item">Data Igloo</div>
-            <div class="pol-sidebar-item">Software Updater</div>
-            <div class="pol-sidebar-item">Anti-Executable</div>
-            <div class="pol-sidebar-item">WINSelect</div>
-            <div class="pol-sidebar-item">Cloud Sync</div>
-            <div class="pol-sidebar-item">Usage Stats</div>
-            <div class="pol-sidebar-item">Incident Reporting</div>
-            <div class="pol-sidebar-item">Power Save</div>
-            <div class="pol-sidebar-item">Ticketing</div>
-            <div class="pol-sidebar-item">Imaging</div>
-            <div class="pol-sidebar-item">Remote Connection</div>
-            <div class="pol-sidebar-item">Anti-Virus</div>
-            <div class="pol-sidebar-item active">Insight Cloud</div>
+            <div class="pol-sidebar-item" style="font-size:9px;color:#6b7280;padding:4px 10px;text-transform:uppercase;letter-spacing:.5px">Basic</div>
+            <div class="pol-sidebar-item"><i class="fas fa-cog" style="margin-right:5px;opacity:.6;font-size:10px"></i>General Settings</div>
+            <div class="pol-sidebar-item active"><i class="fas fa-chalkboard" style="margin-right:5px;font-size:10px"></i>Insight <i class="fas fa-check" style="margin-left:4px;font-size:9px;color:#4ade80"></i></div>
+            <div class="pol-sidebar-item"><i class="fas fa-desktop" style="margin-right:5px;opacity:.6;font-size:10px"></i>Remote <i class="fas fa-check" style="margin-left:4px;font-size:9px;color:#4ade80"></i></div>
+            <div class="pol-sidebar-item" style="font-size:9px;color:#6b7280;padding:4px 10px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Premium</div>
+            <div class="pol-sidebar-item"><i class="fas fa-upload" style="margin-right:5px;opacity:.6;font-size:10px"></i>Software Updater <i class="fas fa-check" style="margin-left:4px;font-size:9px;color:#4ade80"></i></div>
+            <div class="pol-sidebar-item"><i class="fas fa-shield-alt" style="margin-right:5px;opacity:.6;font-size:10px"></i>Anti-Executable</div>
+            <div class="pol-sidebar-item"><i class="fas fa-window-maximize" style="margin-right:5px;opacity:.6;font-size:10px"></i>WINSelect</div>
+            <div class="pol-sidebar-item"><i class="fas fa-cloud" style="margin-right:5px;opacity:.6;font-size:10px"></i>Cloud Sync</div>
+            <div class="pol-sidebar-item"><i class="fas fa-chart-bar" style="margin-right:5px;opacity:.6;font-size:10px"></i>Usage Stats</div>
+            <div class="pol-sidebar-item" style="font-size:9px;color:#6b7280;padding:4px 10px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Ultimate</div>
+            <div class="pol-sidebar-item"><i class="fas fa-exclamation-circle" style="margin-right:5px;opacity:.6;font-size:10px"></i>Incident Reporting</div>
+            <div class="pol-sidebar-item"><i class="fas fa-bolt" style="margin-right:5px;opacity:.6;font-size:10px"></i>Power Save</div>
+            <div class="pol-sidebar-item"><i class="fas fa-ticket-alt" style="margin-right:5px;opacity:.6;font-size:10px"></i>Ticketing</div>
+            <div class="pol-sidebar-item"><i class="fas fa-images" style="margin-right:5px;opacity:.6;font-size:10px"></i>Imaging</div>
+            <div class="pol-sidebar-item"><i class="fas fa-virus-slash" style="margin-right:5px;opacity:.6;font-size:10px"></i>Anti-Virus</div>
           </div>
 
           <!-- Main content: Insight Cloud tab -->
@@ -918,34 +919,41 @@
                 </div>
               </div>
 
-              <!-- Teacher Sign-In Mode (renamed from Teacher Settings; Class ID moved inside Standard) -->
+              <!-- Teacher Sign-In Mode (replaces Teacher Settings; Class ID lives inside Standard) -->
               <div class="pol-group">
-                <div class="pol-group-head" onclick="polToggle(this)">Teacher Sign-In Mode <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
+                <div class="pol-group-head" onclick="polToggle(this)">Teacher Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
 
-                  <!-- Standard (default) -->
-                  <div class="pol-row" style="align-items:flex-start">
-                    <div class="pol-row-label" style="padding-top:2px"></div>
-                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:0">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin-bottom:6px">
+                  <!-- Class ID — shown under Standard, hidden for SSO modes -->
+                  <div id="t-standard-fields">
+                    <div class="pol-row">
+                      <div class="pol-row-label">Class ID</div>
+                      <div class="pol-row-control" style="gap:6px">
+                        <input type="text" class="pol-input" id="t-class-id" value="Class101" placeholder="Enter Class IDs" style="width:200px">
+                        <i class="fas fa-info-circle" title="Separate multiple IDs with a comma" style="color:#2E78C1;font-size:12px;cursor:help"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Teacher Password -->
+                  <div class="pol-row">
+                    <div class="pol-row-label"></div>
+                    <div class="pol-row-control">
+                      <input type="checkbox" class="pol-cb" id="t-pwd-enable" onchange="polToggleInput(this,'t-pwd-field')">
+                      <label for="t-pwd-enable" style="font-size:12px;cursor:pointer">Teacher Password</label>
+                      <input type="password" class="pol-input" id="t-pwd-field" disabled placeholder="Enter password" style="margin-left:8px;width:180px">
+                    </div>
+                  </div>
+
+                  <!-- Sign-In Mode radios -->
+                  <div class="pol-row" style="align-items:flex-start;margin-top:4px;padding-top:8px;border-top:1px solid #f0f0f0">
+                    <div class="pol-row-label" style="padding-top:3px">Sign-In Mode</div>
+                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                         <input type="radio" name="t-signin-mode" value="standard" id="t-mode-standard" checked onchange="polTeacherSignInMode('standard')">
                         Standard — Class ID + optional password
                       </label>
-                      <!-- Class ID field — shown under Standard, hidden for SSO modes -->
-                      <div id="t-standard-fields" style="margin-left:18px;margin-bottom:8px">
-                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-                          <label style="font-size:12px;font-weight:600;width:80px;flex-shrink:0">Class IDs:</label>
-                          <input type="text" class="pol-input" id="t-class-id" value="Class101" placeholder="Enter Class IDs" style="width:180px">
-                          <span style="font-size:10px;color:#929292">Separate multiple with a comma</span>
-                        </div>
-                        <!-- Info tip -->
-                        <div style="display:flex;align-items:flex-start;gap:5px;padding:5px 8px;background:#f0f6ff;border:1px solid #c7deff;border-radius:3px;max-width:480px">
-                          <i class="fas fa-info-circle" style="color:#2E78C1;font-size:11px;margin-top:1px;flex-shrink:0"></i>
-                          <span style="font-size:10px;color:#1e4080;line-height:1.5">Ensure the Class ID for both Teacher and Student match so students appear in the Teacher Console.</span>
-                        </div>
-                      </div>
-
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin-bottom:6px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                         <input type="radio" name="t-signin-mode" value="sso_preferred" onchange="polTeacherSignInMode('sso_preferred')">
                         SSO Preferred — show Microsoft sign-in, allow Class ID fallback
                       </label>
@@ -956,46 +964,38 @@
                     </div>
                   </div>
 
-                  <!-- Teacher Password (always visible) -->
-                  <div class="pol-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control">
-                      <input type="checkbox" class="pol-cb" id="t-pwd-enable" onchange="polToggleInput(this,'t-pwd-field')">
-                      <label for="t-pwd-enable" style="font-size:12px;cursor:pointer">Enable Teacher Password</label>
-                    </div>
-                  </div>
-                  <div class="pol-row" id="t-pwd-row" style="opacity:.5">
-                    <div class="pol-row-label">Teacher Password:</div>
-                    <div class="pol-row-control"><input type="password" class="pol-input" id="t-pwd-field" disabled placeholder="Enter password"></div>
+                  <!-- Info note at bottom of section (matches actual product placement) -->
+                  <div style="display:flex;align-items:flex-start;gap:5px;margin-top:10px;padding-top:8px;border-top:1px solid #f0f0f0;font-size:11px;color:#757575">
+                    <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                    Ensure the Class ID for both Teacher and Student match so the student appears in the Teacher Console.
                   </div>
 
                 </div>
               </div>
 
               <!-- Rostering (separate section, requires SSO) -->
-              <div class="pol-group pol-new-feature" id="t-rostering-section">
-                <div class="pol-group-head" onclick="polToggle(this)">
-                  <span><i class="fas fa-list-alt" style="font-size:10px;margin-right:5px;color:#CE4900"></i>Rostering</span>
-                  <i class="fas fa-chevron-down pol-collapse-icon"></i>
-                </div>
+              <div class="pol-group" id="t-rostering-section">
+                <div class="pol-group-head" onclick="polToggle(this)">Rostering <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
 
-                  <!-- Warning shown when SSO mode is Standard -->
-                  <div id="t-roster-sso-warn" style="display:none" class="pol-notice" style="background:#fff3cd;border-color:#ffc107">
-                    <i class="fas fa-exclamation-triangle" style="margin-top:1px;flex-shrink:0;color:#856404"></i>
-                    <span>Rostering requires Microsoft sign-in. Change Teacher Sign-In Mode to SSO Preferred or Required above before enabling rostering.</span>
-                  </div>
-
-                  <div id="t-roster-enable-row" class="pol-row">
+                  <!-- Rostering enable checkbox (no empty-label indent) -->
+                  <div class="pol-row">
                     <div class="pol-row-label"></div>
-                    <div class="pol-row-control">
-                      <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
-                      <label for="t-roster-cb" style="font-size:12px;cursor:pointer">Enable ClassLink Rostering — teacher selects class from a dropdown</label>
+                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:6px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
+                        Enable ClassLink Rostering — teacher selects class from a dropdown
+                      </label>
+                      <!-- Warning: only shown when user tries to enable rostering while in Standard mode -->
+                      <div id="t-roster-sso-warn" style="display:none;padding:6px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;max-width:480px">
+                        <i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>
+                        Rostering requires Microsoft sign-in. Change Teacher Sign-In Mode to SSO Preferred or Required above before enabling rostering.
+                      </div>
                     </div>
                   </div>
 
-                  <!-- Rostering details (shown when enabled) -->
-                  <div id="t-roster-opts" style="display:none;margin-left:18px;margin-top:4px">
+                  <!-- Rostering fallback options (shown when enabled) -->
+                  <div id="t-roster-opts" style="display:none;margin-left:20px;margin-top:4px">
                     <div style="font-size:11px;font-weight:600;color:#2E3A40;margin-bottom:5px">When ClassLink is unavailable:</div>
                     <div style="display:flex;flex-direction:column;gap:5px">
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="manual" checked> Allow teacher to enter Class ID manually</label>
@@ -1068,21 +1068,22 @@
         <div class="pol-shell">
 
           <div class="pol-sidebar">
-            <div class="pol-sidebar-item">General Settings</div>
-            <div class="pol-sidebar-item">Deep Freeze</div>
-            <div class="pol-sidebar-item">Data Igloo</div>
-            <div class="pol-sidebar-item">Software Updater</div>
-            <div class="pol-sidebar-item">Anti-Executable</div>
-            <div class="pol-sidebar-item">WINSelect</div>
-            <div class="pol-sidebar-item">Cloud Sync</div>
-            <div class="pol-sidebar-item">Usage Stats</div>
-            <div class="pol-sidebar-item">Incident Reporting</div>
-            <div class="pol-sidebar-item">Power Save</div>
-            <div class="pol-sidebar-item">Ticketing</div>
-            <div class="pol-sidebar-item">Imaging</div>
-            <div class="pol-sidebar-item">Remote Connection</div>
-            <div class="pol-sidebar-item">Anti-Virus</div>
-            <div class="pol-sidebar-item active">Insight Cloud</div>
+            <div class="pol-sidebar-item" style="font-size:9px;color:#6b7280;padding:4px 10px;text-transform:uppercase;letter-spacing:.5px">Basic</div>
+            <div class="pol-sidebar-item"><i class="fas fa-cog" style="margin-right:5px;opacity:.6;font-size:10px"></i>General Settings</div>
+            <div class="pol-sidebar-item active"><i class="fas fa-chalkboard" style="margin-right:5px;font-size:10px"></i>Insight <i class="fas fa-check" style="margin-left:4px;font-size:9px;color:#4ade80"></i></div>
+            <div class="pol-sidebar-item"><i class="fas fa-desktop" style="margin-right:5px;opacity:.6;font-size:10px"></i>Remote <i class="fas fa-check" style="margin-left:4px;font-size:9px;color:#4ade80"></i></div>
+            <div class="pol-sidebar-item" style="font-size:9px;color:#6b7280;padding:4px 10px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Premium</div>
+            <div class="pol-sidebar-item"><i class="fas fa-upload" style="margin-right:5px;opacity:.6;font-size:10px"></i>Software Updater <i class="fas fa-check" style="margin-left:4px;font-size:9px;color:#4ade80"></i></div>
+            <div class="pol-sidebar-item"><i class="fas fa-shield-alt" style="margin-right:5px;opacity:.6;font-size:10px"></i>Anti-Executable</div>
+            <div class="pol-sidebar-item"><i class="fas fa-window-maximize" style="margin-right:5px;opacity:.6;font-size:10px"></i>WINSelect</div>
+            <div class="pol-sidebar-item"><i class="fas fa-cloud" style="margin-right:5px;opacity:.6;font-size:10px"></i>Cloud Sync</div>
+            <div class="pol-sidebar-item"><i class="fas fa-chart-bar" style="margin-right:5px;opacity:.6;font-size:10px"></i>Usage Stats</div>
+            <div class="pol-sidebar-item" style="font-size:9px;color:#6b7280;padding:4px 10px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Ultimate</div>
+            <div class="pol-sidebar-item"><i class="fas fa-exclamation-circle" style="margin-right:5px;opacity:.6;font-size:10px"></i>Incident Reporting</div>
+            <div class="pol-sidebar-item"><i class="fas fa-bolt" style="margin-right:5px;opacity:.6;font-size:10px"></i>Power Save</div>
+            <div class="pol-sidebar-item"><i class="fas fa-ticket-alt" style="margin-right:5px;opacity:.6;font-size:10px"></i>Ticketing</div>
+            <div class="pol-sidebar-item"><i class="fas fa-images" style="margin-right:5px;opacity:.6;font-size:10px"></i>Imaging</div>
+            <div class="pol-sidebar-item"><i class="fas fa-virus-slash" style="margin-right:5px;opacity:.6;font-size:10px"></i>Anti-Virus</div>
           </div>
 
           <div class="pol-main">

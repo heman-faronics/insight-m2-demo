@@ -272,36 +272,45 @@ function polToggleInput(cb, inputId) {
     if (row) row.style.opacity = cb.checked ? '1' : '0.5';
 }
 
-// Teacher sign-in mode change — controls Class ID visibility and Rostering availability
+// Teacher sign-in mode change
 function polTeacherSignInMode(mode) {
     const standardFields = document.getElementById('t-standard-fields');
-    const rosterWarn     = document.getElementById('t-roster-sso-warn');
-    const rosterEnableRow = document.getElementById('t-roster-enable-row');
     const rosterCb       = document.getElementById('t-roster-cb');
+    const rosterWarn     = document.getElementById('t-roster-sso-warn');
 
-    // Show/hide Class ID block
+    // Show/hide Class ID field under Standard mode
     if (standardFields) standardFields.style.display = mode === 'standard' ? '' : 'none';
 
-    // Rostering needs SSO — show warning and disable if Standard
+    // If switching back to Standard while rostering was on — uncheck + hide fallback options
     const isSso = mode !== 'standard';
-    if (rosterWarn) rosterWarn.style.display = isSso ? 'none' : 'flex';
-    if (rosterEnableRow) {
-        rosterEnableRow.style.opacity = isSso ? '1' : '0.45';
-        rosterEnableRow.style.pointerEvents = isSso ? '' : 'none';
-    }
-    // If switching back to Standard while rostering was on — uncheck it
     if (!isSso && rosterCb && rosterCb.checked) {
         rosterCb.checked = false;
         polTeacherRostering(rosterCb);
     }
+    // Hide the SSO warning if mode changes away from Standard
+    if (isSso && rosterWarn) rosterWarn.style.display = 'none';
 }
 
-// Legacy function kept for compat
+// Legacy compat stubs
 function polEnableTeacherSSO(cb) {}
 function polTeacherAuthMode(mode) {}
 
 function polTeacherRostering(cb) {
-    const opts = document.getElementById('t-roster-opts');
+    const opts     = document.getElementById('t-roster-opts');
+    const warn     = document.getElementById('t-roster-sso-warn');
+    const mode     = document.querySelector('input[name="t-signin-mode"]:checked')?.value || 'standard';
+    const isSso    = mode !== 'standard';
+
+    if (cb.checked && !isSso) {
+        // Tried to enable rostering while in Standard mode — block it and show warning
+        cb.checked = false;
+        if (warn) warn.style.display = 'block';
+        if (opts) opts.style.display = 'none';
+        return;
+    }
+
+    // Hide warning once rostering is allowed to proceed
+    if (warn) warn.style.display = 'none';
     if (opts) opts.style.display = cb.checked ? 'block' : 'none';
 }
 
@@ -343,9 +352,9 @@ function polSaveTeacher() {
     }
 
     const html = errors.map(e => `
-        <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;margin-bottom:5px">
+        <div style="display:flex;align-items:flex-start;gap:7px;padding:7px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;margin-bottom:4px">
             <i class="${e.icon}" style="margin-top:1px;flex-shrink:0"></i>
-            <span>${e.msg}${e.link ? ` <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" style="color:#1e40af;font-weight:700">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>` : ''}</span>
+            <span>${esc(e.msg)} ${e.link ? `<a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>` : ''}</span>
         </div>`).join('');
 
     errContainer.style.display = 'block';
