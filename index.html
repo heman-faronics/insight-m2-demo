@@ -919,34 +919,34 @@
                 </div>
               </div>
 
-              <!-- Teacher Sign-In Mode (replaces Teacher Settings; Class ID lives inside Standard) -->
+              <!-- Teacher Settings -->
               <div class="pol-group">
                 <div class="pol-group-head" onclick="polToggle(this)">Teacher Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
 
-                  <!-- Class ID — shown under Standard, hidden for SSO modes -->
-                  <div id="t-standard-fields">
-                    <div class="pol-row">
-                      <div class="pol-row-label">Class ID</div>
-                      <div class="pol-row-control" style="gap:6px">
-                        <input type="text" class="pol-input" id="t-class-id" value="Class101" placeholder="Enter Class IDs" style="width:200px">
-                        <i class="fas fa-info-circle" title="Separate multiple IDs with a comma" style="color:#2E78C1;font-size:12px;cursor:help"></i>
+                  <!-- Class ID — always visible at top -->
+                  <div class="pol-row">
+                    <div class="pol-row-label">Class ID</div>
+                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:5px">
+                      <input type="text" class="pol-input" id="t-class-id" value="Class101" placeholder="Enter Class IDs" style="width:200px">
+                      <div style="display:flex;align-items:flex-start;gap:4px;font-size:11px;color:#757575">
+                        <i class="fas fa-info-circle" style="font-size:11px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                        Ensure the Class ID for both Teacher and Student match so the student appears in the Teacher Console.
                       </div>
                     </div>
                   </div>
 
-                  <!-- Teacher Password -->
+                  <!-- Teacher Password — optional, no checkbox -->
                   <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control">
-                      <input type="checkbox" class="pol-cb" id="t-pwd-enable" onchange="polToggleInput(this,'t-pwd-field')">
-                      <label for="t-pwd-enable" style="font-size:12px;cursor:pointer">Teacher Password</label>
-                      <input type="password" class="pol-input" id="t-pwd-field" disabled placeholder="Enter password" style="margin-left:8px;width:180px">
+                    <div class="pol-row-label">Teacher Password</div>
+                    <div class="pol-row-control" style="gap:8px">
+                      <input type="password" class="pol-input" placeholder="Enter password" style="width:200px">
+                      <span style="font-size:11px;color:#929292">(optional)</span>
                     </div>
                   </div>
 
-                  <!-- Sign-In Mode radios -->
-                  <div class="pol-row" style="align-items:flex-start;margin-top:4px;padding-top:8px;border-top:1px solid #f0f0f0">
+                  <!-- Sign-In Mode -->
+                  <div class="pol-row" style="align-items:flex-start;margin-top:6px;padding-top:10px;border-top:1px solid #f0f0f0">
                     <div class="pol-row-label" style="padding-top:3px">Sign-In Mode</div>
                     <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
@@ -961,13 +961,13 @@
                         <input type="radio" name="t-signin-mode" value="sso_required" onchange="polTeacherSignInMode('sso_required')">
                         SSO Required — Microsoft sign-in only
                       </label>
+                      <!-- Immediate warning when SSO selected but not configured in Org Settings -->
+                      <div id="t-sso-org-warn" style="display:none;padding:6px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;max-width:500px">
+                        <i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>
+                        Microsoft Entra ID SSO is not configured in Organization Settings.
+                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
+                      </div>
                     </div>
-                  </div>
-
-                  <!-- Info note at bottom of section (matches actual product placement) -->
-                  <div style="display:flex;align-items:flex-start;gap:5px;margin-top:10px;padding-top:8px;border-top:1px solid #f0f0f0;font-size:11px;color:#757575">
-                    <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
-                    Ensure the Class ID for both Teacher and Student match so the student appears in the Teacher Console.
                   </div>
 
                 </div>
@@ -1006,25 +1006,46 @@
                 </div>
               </div>
 
-              <!-- Insight Connector (unchanged) -->
+              <!-- Insight Connector — matches actual product -->
               <div class="pol-group">
                 <div class="pol-group-head" onclick="polToggle(this)">Insight Connector (recommended) <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-                  <div style="font-size:11px;color:#757575;margin-bottom:8px">When student and teacher devices reside on different VLANs or subnets, use the Insight Connector to bridge them.</div>
-                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><input type="checkbox" class="pol-cb" id="t-connector" onchange="polToggleInput(this,'t-connector-ip')"><label for="t-connector" style="font-size:12px;cursor:pointer">Use Insight Connector</label></div></div>
-                  <div class="pol-row" id="t-connector-row" style="opacity:.5"><div class="pol-row-label">Connector Address:</div><div class="pol-row-control"><input type="text" class="pol-input" id="t-connector-ip" disabled placeholder="Enter Connector IP address"></div></div>
-                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><a href="#" style="font-size:11px;color:#2E78C1">Download Connector</a></div></div>
+                  <div style="font-size:12px;color:#333;margin-bottom:12px;line-height:1.6">
+                    When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay - keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                    <input type="checkbox" class="pol-cb" id="t-connector" onchange="polToggleConnector(this)">
+                    <label for="t-connector" style="font-size:12px;cursor:pointer">Use Insight Connector</label>
+                    <input type="text" class="pol-input" id="t-connector-ip" disabled placeholder="Enter Connector IP address" style="width:220px;background:#f0f0f0">
+                    <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#757575">
+                    <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                    To remain licensed, your computer must connect to the Internet at least once every 30 days.
+                  </div>
                 </div>
               </div>
 
-              <!-- Existing Insight On-premise Customers (was missing — added back) -->
+              <!-- Existing Insight On-premise Customers — matches actual product -->
               <div class="pol-group">
                 <div class="pol-group-head" onclick="polToggle(this)">Existing Insight On-premise Customers <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><input type="checkbox" class="pol-cb" id="t-migration" onchange="polToggleGroup(this,'t-migration-opts')"><label for="t-migration" style="font-size:12px;cursor:pointer">Migrate Insight On-premise to Insight Cloud automatically</label></div></div>
-                  <div id="t-migration-opts" style="opacity:.5;pointer-events:none">
-                    <div class="pol-row"><div class="pol-row-label">Migration mode:</div><div class="pol-row-control"><select class="pol-select" disabled><option>On agent discovery</option><option>On class join</option><option>Manual</option></select></div></div>
-                    <div class="pol-row"><div class="pol-row-label">Student policy:</div><div class="pol-row-control"><select class="pol-select" disabled><option>Default Student Policy</option></select></div></div>
+                  <div style="font-size:12px;color:#333;margin-bottom:12px;line-height:1.6">
+                    Automatically migrate your Faronics Insight On-premise v11.24 or higher to Cloud licensing. Once the Teacher Console is migrated, the Insight Students will be automatically migrated based on the below settings. <a href="#" style="color:#2E78C1">Learn more</a>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                    <input type="checkbox" class="pol-cb" id="t-migration" onchange="polToggleGroup(this,'t-migration-opts')">
+                    <label for="t-migration" style="font-size:12px;cursor:pointer">Migrate Insight On-Premise automatically to subscription licensing to manage from Cloud</label>
+                  </div>
+                  <div id="t-migration-opts" style="opacity:.5;pointer-events:none;margin-left:24px">
+                    <div style="font-size:12px;color:#555;margin-bottom:4px">Migrate On-premise Students when</div>
+                    <select class="pol-select" disabled style="width:320px;height:32px;border-radius:6px;margin-bottom:12px;font-size:12px;color:#555;background:#f8f8f8"><option>Student device joins the Teacher console</option><option>Teacher Console is migrated</option></select>
+                    <div style="font-size:12px;color:#555;margin-bottom:4px">Apply Student policy during migration</div>
+                    <select class="pol-select" disabled style="width:320px;height:32px;border-radius:6px;font-size:12px;color:#555;background:#f8f8f8"><option>Insight Student - Windows</option><option>Default Student Policy</option></select>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:5px;margin-top:14px;font-size:11px;color:#757575">
+                    <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                    Class ID settings in this policy will be ignored during the migration to ensure existing Insight Students will continue to report to their current Teacher consoles.
                   </div>
                 </div>
               </div>

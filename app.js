@@ -274,21 +274,32 @@ function polToggleInput(cb, inputId) {
 
 // Teacher sign-in mode change
 function polTeacherSignInMode(mode) {
-    const standardFields = document.getElementById('t-standard-fields');
-    const rosterCb       = document.getElementById('t-roster-cb');
-    const rosterWarn     = document.getElementById('t-roster-sso-warn');
+    const rosterCb   = document.getElementById('t-roster-cb');
+    const rosterWarn = document.getElementById('t-roster-sso-warn');
+    const ssoOrgWarn = document.getElementById('t-sso-org-warn');
+    const isSso      = mode !== 'standard';
 
-    // Show/hide Class ID field under Standard mode
-    if (standardFields) standardFields.style.display = mode === 'standard' ? '' : 'none';
-
-    // If switching back to Standard while rostering was on — uncheck + hide fallback options
-    const isSso = mode !== 'standard';
+    // If switching back to Standard while rostering was on — uncheck it
     if (!isSso && rosterCb && rosterCb.checked) {
         rosterCb.checked = false;
         polTeacherRostering(rosterCb);
     }
-    // Hide the SSO warning if mode changes away from Standard
+    // Hide rostering SSO warning when mode changes
     if (isSso && rosterWarn) rosterWarn.style.display = 'none';
+
+    // Show Org Settings warning IMMEDIATELY when SSO selected and not yet configured
+    // state.teacher !== null means the user has signed in on Screen 1 (SSO proven to work)
+    if (ssoOrgWarn) {
+        ssoOrgWarn.style.display = (isSso && !state.teacher) ? 'block' : 'none';
+    }
+}
+
+function polToggleConnector(cb) {
+    const ip = document.getElementById('t-connector-ip');
+    if (ip) {
+        ip.disabled = !cb.checked;
+        ip.style.background = cb.checked ? '#fff' : '#f0f0f0';
+    }
 }
 
 // Legacy compat stubs
@@ -323,14 +334,8 @@ function polSaveTeacher() {
 
     const errors = [];
 
-    // Check SSO configured (use state.teacher as proxy — sign-in on Screen 1 proves SSO works)
-    if (mode !== 'standard' && !state.teacher) {
-        errors.push({
-            icon: 'fab fa-microsoft',
-            msg: 'Microsoft Entra ID SSO is not configured in Organization Settings.',
-            link: true
-        });
-    }
+    // SSO org-settings warning now shows immediately on mode change (not at save time)
+    // Only block save for ClassLink rostering if not configured
 
     // Check ClassLink configured (state.sync proves a sync has run)
     if (rosterOn && !state.sync) {
