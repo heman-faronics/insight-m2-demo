@@ -272,25 +272,93 @@ function polToggleInput(cb, inputId) {
     if (row) row.style.opacity = cb.checked ? '1' : '0.5';
 }
 
-// Teacher SSO enable/disable
-function polEnableTeacherSSO(cb) {
-    const fields = document.getElementById('t-sso-fields');
-    if (fields) {
-        fields.style.opacity = cb.checked ? '1' : '0.45';
-        fields.style.pointerEvents = cb.checked ? '' : 'none';
+// Teacher sign-in mode change — controls Class ID visibility and Rostering availability
+function polTeacherSignInMode(mode) {
+    const standardFields = document.getElementById('t-standard-fields');
+    const rosterWarn     = document.getElementById('t-roster-sso-warn');
+    const rosterEnableRow = document.getElementById('t-roster-enable-row');
+    const rosterCb       = document.getElementById('t-roster-cb');
+
+    // Show/hide Class ID block
+    if (standardFields) standardFields.style.display = mode === 'standard' ? '' : 'none';
+
+    // Rostering needs SSO — show warning and disable if Standard
+    const isSso = mode !== 'standard';
+    if (rosterWarn) rosterWarn.style.display = isSso ? 'none' : 'flex';
+    if (rosterEnableRow) {
+        rosterEnableRow.style.opacity = isSso ? '1' : '0.45';
+        rosterEnableRow.style.pointerEvents = isSso ? '' : 'none';
+    }
+    // If switching back to Standard while rostering was on — uncheck it
+    if (!isSso && rosterCb && rosterCb.checked) {
+        rosterCb.checked = false;
+        polTeacherRostering(rosterCb);
     }
 }
 
-function polTeacherAuthMode(mode) {
-    // No additional UI changes needed beyond radio selection (rostering visible always when SSO enabled)
-}
+// Legacy function kept for compat
+function polEnableTeacherSSO(cb) {}
+function polTeacherAuthMode(mode) {}
 
 function polTeacherRostering(cb) {
     const opts = document.getElementById('t-roster-opts');
-    if (opts) {
-        opts.style.opacity = cb.checked ? '1' : '0.5';
-        opts.style.pointerEvents = cb.checked ? '' : 'none';
+    if (opts) opts.style.display = cb.checked ? 'block' : 'none';
+}
+
+// Save validation for teacher policy
+function polSaveTeacher() {
+    const mode       = document.querySelector('input[name="t-signin-mode"]:checked')?.value || 'standard';
+    const rosterOn   = document.getElementById('t-roster-cb')?.checked || false;
+    const errContainer = document.getElementById('t-save-errors');
+    if (!errContainer) return;
+
+    const errors = [];
+
+    // Check SSO configured (use state.teacher as proxy — sign-in on Screen 1 proves SSO works)
+    if (mode !== 'standard' && !state.teacher) {
+        errors.push({
+            icon: 'fab fa-microsoft',
+            msg: 'Microsoft Entra ID SSO is not configured in Organization Settings.',
+            link: true
+        });
     }
+
+    // Check ClassLink configured (state.sync proves a sync has run)
+    if (rosterOn && !state.sync) {
+        errors.push({
+            icon: 'fas fa-sync',
+            msg: 'ClassLink Rostering is not configured in Organization Settings.',
+            link: true
+        });
+    }
+
+    if (errors.length === 0) {
+        errContainer.style.display = 'none';
+        errContainer.innerHTML = '';
+        // Show brief success
+        errContainer.style.display = 'block';
+        errContainer.innerHTML = `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#d1fae5;border:1px solid #a7f3d0;border-radius:3px;font-size:11px;color:#065f46"><i class="fas fa-check-circle"></i> Policy saved successfully.</div>`;
+        setTimeout(() => { errContainer.style.display = 'none'; }, 3000);
+        return;
+    }
+
+    const html = errors.map(e => `
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;margin-bottom:5px">
+            <i class="${e.icon}" style="margin-top:1px;flex-shrink:0"></i>
+            <span>${e.msg}${e.link ? ` <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" style="color:#1e40af;font-weight:700">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>` : ''}</span>
+        </div>`).join('');
+
+    errContainer.style.display = 'block';
+    errContainer.innerHTML = html;
+}
+
+// Toggle entire group on/off (for on-prem section)
+function polToggleGroup(cb, groupId) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    group.style.opacity = cb.checked ? '1' : '0.5';
+    group.style.pointerEvents = cb.checked ? '' : 'none';
+    group.querySelectorAll('select,input').forEach(el => el.disabled = !cb.checked);
 }
 
 // Student SSO enable/disable

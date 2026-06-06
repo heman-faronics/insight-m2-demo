@@ -864,7 +864,7 @@
 <!-- ══ SCREEN 4 ══ -->
 <div class="demo-body screen" id="screen-4">
   <h5 class="mb-1">Step 4 of 5 — Admin: Insight Policy — Teacher Settings</h5>
-  <p class="text-muted small mb-3">This is the actual DFC Insight Policy page. The new <strong>Authentication &amp; Rostering</strong> section is disabled by default — toggle it on to explore the options.</p>
+  <p class="text-muted small mb-3">The actual DFC Insight Policy page. Teacher Sign-In Mode replaces the old Class IDs field. Rostering is a separate section that requires SSO to be active first.</p>
   <div class="row g-3">
     <div class="col-lg-9">
       <div class="console-mockup" style="border-radius:4px">
@@ -908,50 +908,56 @@
 
             <div class="pol-content">
 
-              <!-- Admin Settings -->
+              <!-- Admin Settings (unchanged) -->
               <div class="pol-group">
-                <div class="pol-group-head" onclick="polToggle(this)">
-                  Admin Settings
-                  <i class="fas fa-chevron-down pol-collapse-icon"></i>
-                </div>
+                <div class="pol-group-head" onclick="polToggle(this)">Admin Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-                  <div class="pol-row">
-                    <div class="pol-row-label">Admin Password:</div>
-                    <div class="pol-row-control">
-                      <input type="password" class="pol-input" placeholder="Enter password">
-                    </div>
-                  </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label">Geographical Zone:</div>
-                    <div class="pol-row-control">
-                      <select class="pol-select"><option selected>US West</option><option>US East</option><option>Europe</option></select>
-                    </div>
-                  </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control">
-                      <input type="checkbox" class="pol-cb" id="t-privmode">
-                      <label for="t-privmode" style="font-size:12px;cursor:pointer">Enable Private Mode (Enhanced Security)</label>
-                    </div>
-                  </div>
+                  <div class="pol-row"><div class="pol-row-label">Admin Password:</div><div class="pol-row-control"><input type="password" class="pol-input" placeholder="Enter password"></div></div>
+                  <div class="pol-row"><div class="pol-row-label">Geographical Zone:</div><div class="pol-row-control"><select class="pol-select"><option selected>US West</option><option>US East</option><option>Europe</option></select></div></div>
+                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><input type="checkbox" class="pol-cb" id="t-privmode"><label for="t-privmode" style="font-size:12px;cursor:pointer">Enable Private Mode (Enhanced Security)</label></div></div>
                 </div>
               </div>
 
-              <!-- Teacher Settings -->
+              <!-- Teacher Sign-In Mode (renamed from Teacher Settings; Class ID moved inside Standard) -->
               <div class="pol-group">
-                <div class="pol-group-head" onclick="polToggle(this)">
-                  Teacher Settings
-                  <i class="fas fa-chevron-down pol-collapse-icon"></i>
-                </div>
+                <div class="pol-group-head" onclick="polToggle(this)">Teacher Sign-In Mode <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-                  <div class="pol-row">
-                    <div class="pol-row-label">Class IDs:</div>
-                    <div class="pol-row-control">
-                      <input type="text" class="pol-input" value="Class101" placeholder="Enter Class IDs">
-                      <span style="font-size:10px;color:#929292">Separate multiple IDs with a comma</span>
+
+                  <!-- Standard (default) -->
+                  <div class="pol-row" style="align-items:flex-start">
+                    <div class="pol-row-label" style="padding-top:2px"></div>
+                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:0">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin-bottom:6px">
+                        <input type="radio" name="t-signin-mode" value="standard" id="t-mode-standard" checked onchange="polTeacherSignInMode('standard')">
+                        Standard — Class ID + optional password
+                      </label>
+                      <!-- Class ID field — shown under Standard, hidden for SSO modes -->
+                      <div id="t-standard-fields" style="margin-left:18px;margin-bottom:8px">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                          <label style="font-size:12px;font-weight:600;width:80px;flex-shrink:0">Class IDs:</label>
+                          <input type="text" class="pol-input" id="t-class-id" value="Class101" placeholder="Enter Class IDs" style="width:180px">
+                          <span style="font-size:10px;color:#929292">Separate multiple with a comma</span>
+                        </div>
+                        <!-- Info tip -->
+                        <div style="display:flex;align-items:flex-start;gap:5px;padding:5px 8px;background:#f0f6ff;border:1px solid #c7deff;border-radius:3px;max-width:480px">
+                          <i class="fas fa-info-circle" style="color:#2E78C1;font-size:11px;margin-top:1px;flex-shrink:0"></i>
+                          <span style="font-size:10px;color:#1e4080;line-height:1.5">Ensure the Class ID for both Teacher and Student match so students appear in the Teacher Console.</span>
+                        </div>
+                      </div>
+
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin-bottom:6px">
+                        <input type="radio" name="t-signin-mode" value="sso_preferred" onchange="polTeacherSignInMode('sso_preferred')">
+                        SSO Preferred — show Microsoft sign-in, allow Class ID fallback
+                      </label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="t-signin-mode" value="sso_required" onchange="polTeacherSignInMode('sso_required')">
+                        SSO Required — Microsoft sign-in only
+                      </label>
                     </div>
                   </div>
-                  <div class="pol-row">
+
+                  <!-- Teacher Password (always visible) -->
+                  <div class="pol-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0">
                     <div class="pol-row-label"></div>
                     <div class="pol-row-control">
                       <input type="checkbox" class="pol-cb" id="t-pwd-enable" onchange="polToggleInput(this,'t-pwd-field')">
@@ -960,110 +966,76 @@
                   </div>
                   <div class="pol-row" id="t-pwd-row" style="opacity:.5">
                     <div class="pol-row-label">Teacher Password:</div>
-                    <div class="pol-row-control">
-                      <input type="password" class="pol-input" id="t-pwd-field" disabled placeholder="Enter password">
-                    </div>
+                    <div class="pol-row-control"><input type="password" class="pol-input" id="t-pwd-field" disabled placeholder="Enter password"></div>
                   </div>
+
                 </div>
               </div>
 
-              <!-- ★ NEW: Authentication & Rostering -->
-              <div class="pol-group pol-new-feature">
+              <!-- Rostering (separate section, requires SSO) -->
+              <div class="pol-group pol-new-feature" id="t-rostering-section">
                 <div class="pol-group-head" onclick="polToggle(this)">
-                  <span>
-                    <i class="fas fa-lock" style="font-size:10px;margin-right:5px;color:#CE4900"></i>
-                    Authentication &amp; Rostering
-                    <span style="font-size:9px;background:#CE4900;color:#fff;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600">New in M2</span>
-                  </span>
+                  <span><i class="fas fa-list-alt" style="font-size:10px;margin-right:5px;color:#CE4900"></i>Rostering</span>
                   <i class="fas fa-chevron-down pol-collapse-icon"></i>
                 </div>
                 <div class="pol-group-body">
 
-                  <!-- Notice -->
-                  <div class="pol-notice">
-                    <i class="fas fa-info-circle" style="margin-top:1px;flex-shrink:0;color:#856404"></i>
-                    <span>
-                      These features require Microsoft Entra ID SSO and ClassLink Rostering to be configured first.
-                      <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener">
-                        Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i>
-                      </a>
-                    </span>
+                  <!-- Warning shown when SSO mode is Standard -->
+                  <div id="t-roster-sso-warn" style="display:none" class="pol-notice" style="background:#fff3cd;border-color:#ffc107">
+                    <i class="fas fa-exclamation-triangle" style="margin-top:1px;flex-shrink:0;color:#856404"></i>
+                    <span>Rostering requires Microsoft sign-in. Change Teacher Sign-In Mode to SSO Preferred or Required above before enabling rostering.</span>
                   </div>
 
-                  <!-- Master enable toggle -->
-                  <div class="pol-row" style="margin-bottom:10px">
+                  <div id="t-roster-enable-row" class="pol-row">
                     <div class="pol-row-label"></div>
                     <div class="pol-row-control">
-                      <input type="checkbox" class="pol-cb" id="t-sso-enable" onchange="polEnableTeacherSSO(this)">
-                      <label for="t-sso-enable" style="font-size:12px;font-weight:700;cursor:pointer;color:#2E3A40">Enable Authentication &amp; Rostering for this policy</label>
+                      <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
+                      <label for="t-roster-cb" style="font-size:12px;cursor:pointer">Enable ClassLink Rostering — teacher selects class from a dropdown</label>
                     </div>
                   </div>
 
-                  <!-- Collapsible fields (disabled until toggled) -->
-                  <div id="t-sso-fields" style="opacity:.45;pointer-events:none">
-
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#929292;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #f0f0f0">Teacher Sign-In Mode</div>
-                    <div class="pol-row">
-                      <div class="pol-row-label"></div>
-                      <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:6px">
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                          <input type="radio" name="t-auth-mode" value="legacy" checked> Standard — Class ID + optional password
-                        </label>
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                          <input type="radio" name="t-auth-mode" value="sso_preferred" onchange="polTeacherAuthMode('sso_preferred')"> SSO Preferred — show Microsoft sign-in, allow Class ID fallback
-                        </label>
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                          <input type="radio" name="t-auth-mode" value="sso_required" onchange="polTeacherAuthMode('sso_required')"> SSO Required — Microsoft sign-in only, no Class ID entry
-                        </label>
-                      </div>
-                    </div>
-
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#929292;margin:10px 0 8px;padding-bottom:4px;border-bottom:1px solid #f0f0f0">ClassLink Rostering</div>
-                    <div class="pol-row">
-                      <div class="pol-row-label"></div>
-                      <div class="pol-row-control">
-                        <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
-                        <label for="t-roster-cb" style="font-size:12px;cursor:pointer">Enable ClassLink Rostering — teacher selects class from a dropdown</label>
-                      </div>
-                    </div>
-                    <div id="t-roster-opts" style="opacity:.5;pointer-events:none;margin-left:20px">
-                      <div style="font-size:11px;font-weight:600;color:#2E3A40;margin-bottom:5px">When ClassLink is unavailable:</div>
-                      <div style="display:flex;flex-direction:column;gap:5px">
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="manual" checked> Allow teacher to enter Class ID manually</label>
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="block"> Block teacher from starting class</label>
-                      </div>
+                  <!-- Rostering details (shown when enabled) -->
+                  <div id="t-roster-opts" style="display:none;margin-left:18px;margin-top:4px">
+                    <div style="font-size:11px;font-weight:600;color:#2E3A40;margin-bottom:5px">When ClassLink is unavailable:</div>
+                    <div style="display:flex;flex-direction:column;gap:5px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="manual" checked> Allow teacher to enter Class ID manually</label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="block"> Block teacher from starting class</label>
                     </div>
                   </div>
 
                 </div>
-              </div><!-- /auth+rostering -->
+              </div>
 
-              <!-- Insight Connector -->
+              <!-- Insight Connector (unchanged) -->
               <div class="pol-group">
-                <div class="pol-group-head" onclick="polToggle(this)">
-                  Insight Connector (recommended)
-                  <i class="fas fa-chevron-down pol-collapse-icon"></i>
-                </div>
+                <div class="pol-group-head" onclick="polToggle(this)">Insight Connector (recommended) <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
                   <div style="font-size:11px;color:#757575;margin-bottom:8px">When student and teacher devices reside on different VLANs or subnets, use the Insight Connector to bridge them.</div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control">
-                      <input type="checkbox" class="pol-cb" id="t-connector" onchange="polToggleInput(this,'t-connector-ip')">
-                      <label for="t-connector" style="font-size:12px;cursor:pointer">Use Insight Connector</label>
-                    </div>
-                  </div>
-                  <div class="pol-row" id="t-connector-row" style="opacity:.5">
-                    <div class="pol-row-label">Connector Address:</div>
-                    <div class="pol-row-control"><input type="text" class="pol-input" id="t-connector-ip" disabled placeholder="Enter Connector IP address"></div>
+                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><input type="checkbox" class="pol-cb" id="t-connector" onchange="polToggleInput(this,'t-connector-ip')"><label for="t-connector" style="font-size:12px;cursor:pointer">Use Insight Connector</label></div></div>
+                  <div class="pol-row" id="t-connector-row" style="opacity:.5"><div class="pol-row-label">Connector Address:</div><div class="pol-row-control"><input type="text" class="pol-input" id="t-connector-ip" disabled placeholder="Enter Connector IP address"></div></div>
+                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><a href="#" style="font-size:11px;color:#2E78C1">Download Connector</a></div></div>
+                </div>
+              </div>
+
+              <!-- Existing Insight On-premise Customers (was missing — added back) -->
+              <div class="pol-group">
+                <div class="pol-group-head" onclick="polToggle(this)">Existing Insight On-premise Customers <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
+                <div class="pol-group-body">
+                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><input type="checkbox" class="pol-cb" id="t-migration" onchange="polToggleGroup(this,'t-migration-opts')"><label for="t-migration" style="font-size:12px;cursor:pointer">Migrate Insight On-premise to Insight Cloud automatically</label></div></div>
+                  <div id="t-migration-opts" style="opacity:.5;pointer-events:none">
+                    <div class="pol-row"><div class="pol-row-label">Migration mode:</div><div class="pol-row-control"><select class="pol-select" disabled><option>On agent discovery</option><option>On class join</option><option>Manual</option></select></div></div>
+                    <div class="pol-row"><div class="pol-row-label">Student policy:</div><div class="pol-row-control"><select class="pol-select" disabled><option>Default Student Policy</option></select></div></div>
                   </div>
                 </div>
               </div>
+
+              <!-- Save validation errors -->
+              <div id="t-save-errors" style="display:none;margin-bottom:8px"></div>
 
               <!-- Save/Cancel -->
               <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
                 <button class="dfc-btn-outline">Cancel</button>
-                <button class="dfc-btn-primary">Save Policy</button>
+                <button class="dfc-btn-primary" onclick="polSaveTeacher()">Save Policy</button>
               </div>
 
             </div><!-- /pol-content -->
@@ -1076,15 +1048,10 @@
       <div class="card border-0 bg-light mb-3"><div class="card-body p-3">
         <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Try it</div>
         <ul class="small text-muted ps-3 mb-0" style="line-height:1.9">
-          <li>Toggle <strong>Authentication &amp; Rostering</strong> on to reveal settings</li>
-          <li>Switch Sign-In Mode between Standard, Preferred, and Required</li>
-          <li>Enable ClassLink Rostering to see the fallback options</li>
-          <li>Click the Org Settings link to open it in a new tab</li>
+          <li>Switch Sign-In Mode to SSO Preferred or Required to unlock Rostering</li>
+          <li>Enable Rostering — then try saving to see validation</li>
+          <li>Complete Screen 1 (teacher sign-in) and Screen 3 (sync) first to pass validation</li>
         </ul>
-      </div></div>
-      <div class="card border-0" style="background:#fff3cd;border:1px solid #ffc107!important"><div class="card-body p-3">
-        <div class="fw-bold small mb-1" style="color:#664d03"><i class="fas fa-exclamation-triangle me-1"></i>Default: Disabled</div>
-        <p class="small mb-0" style="color:#664d03;line-height:1.5">New settings default to off. Most customers need to configure Organization Settings first before enabling these in a policy.</p>
       </div></div>
     </div>
   </div>
