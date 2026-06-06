@@ -195,6 +195,26 @@
   .dfc-btn-outline:disabled { opacity:.5; cursor:not-allowed; }
   .dfc-note { display:flex; gap:7px; padding:6px 10px; background:#F1F1F1; border:1px solid #CCC; border-radius:3px; font-size:10px; color:#929292; line-height:1.5; margin:10px 0 8px; }
 
+  /* ── Tooltip ─────────────────────────────────────────────────────────────── */
+  .pol-tooltip-wrap { position:relative; display:inline-flex; align-items:center; }
+  .pol-info-icon { color:#555; transition:color .15s; }
+  .pol-info-icon:hover { color:#2E78C1; }
+  .pol-tooltip-text {
+    visibility:hidden; opacity:0;
+    position:absolute; left:50%; transform:translateX(-50%);
+    bottom:calc(100% + 7px);
+    background:#2E3A40; color:#fff; font-size:11px; line-height:1.5;
+    padding:7px 10px; border-radius:4px; width:280px; text-align:left;
+    white-space:normal; pointer-events:none;
+    transition:opacity .15s ease, visibility .15s ease;
+    z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.25);
+  }
+  .pol-tooltip-text::after {
+    content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:5px solid transparent; border-top-color:#2E3A40;
+  }
+  .pol-tooltip-wrap:hover .pol-tooltip-text { visibility:visible; opacity:1; }
+
   /* ── DFC Policy Pages (Screens 4 & 5) ───────────────────────────────────── */
   .pol-shell { display:flex; background:#fff; border:1px solid #dee2e6; border-radius:4px; overflow:hidden; min-height:520px; }
   .pol-sidebar { width:170px; flex-shrink:0; background:#2E3A40; padding:6px 0; }
@@ -909,13 +929,38 @@
 
             <div class="pol-content">
 
-              <!-- Admin Settings (unchanged) -->
+              <!-- Admin Settings — matches product exactly -->
               <div class="pol-group">
                 <div class="pol-group-head" onclick="polToggle(this)">Admin Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-                  <div class="pol-row"><div class="pol-row-label">Admin Password:</div><div class="pol-row-control"><input type="password" class="pol-input" placeholder="Enter password"></div></div>
-                  <div class="pol-row"><div class="pol-row-label">Geographical Zone:</div><div class="pol-row-control"><select class="pol-select"><option selected>US West</option><option>US East</option><option>Europe</option></select></div></div>
-                  <div class="pol-row"><div class="pol-row-label"></div><div class="pol-row-control"><input type="checkbox" class="pol-cb" id="t-privmode"><label for="t-privmode" style="font-size:12px;cursor:pointer">Enable Private Mode (Enhanced Security)</label></div></div>
+                  <div class="pol-row">
+                    <div class="pol-row-label">Admin Password</div>
+                    <div class="pol-row-control" style="gap:10px">
+                      <input type="password" class="pol-input" id="t-admin-pwd" placeholder="Enter password" style="width:220px">
+                      <input type="checkbox" class="pol-cb" id="t-show-admin-pwd" onchange="polShowPwd('t-admin-pwd',this)">
+                      <label for="t-show-admin-pwd" style="font-size:12px;cursor:pointer">Show Password</label>
+                    </div>
+                  </div>
+                  <div class="pol-row">
+                    <div class="pol-row-label">Insight Cloud Server</div>
+                    <div class="pol-row-control">
+                      <select class="pol-select" style="width:220px"><option selected>us-west</option><option>us-east</option><option>eu-west</option><option>ap-southeast</option></select>
+                    </div>
+                  </div>
+                  <div class="pol-row">
+                    <div class="pol-row-label"></div>
+                    <div class="pol-row-control" style="gap:10px">
+                      <input type="checkbox" class="pol-cb" id="t-privmode" onchange="polPrivMode(this)">
+                      <label for="t-privmode" style="font-size:12px;cursor:pointer">Private Mode</label>
+                      <input type="password" class="pol-input" id="t-access-token" disabled placeholder="Enter access token" style="width:220px;background:#f0f0f0">
+                      <input type="checkbox" class="pol-cb" id="t-show-token" disabled onchange="polShowPwd('t-access-token',this)">
+                      <label for="t-show-token" style="font-size:12px;cursor:pointer;color:#929292">Show Password</label>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:5px;margin-top:4px;font-size:11px;color:#757575">
+                    <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                    Enabling private mode ensures the Teacher Console can only view and add students whose devices share the same access token.
+                  </div>
                 </div>
               </div>
 
@@ -924,24 +969,27 @@
                 <div class="pol-group-head" onclick="polToggle(this)">Teacher Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
 
-                  <!-- Class ID — always visible at top -->
+                  <!-- Class ID — info text as tooltip on the info icon -->
                   <div class="pol-row">
                     <div class="pol-row-label">Class ID</div>
-                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:5px">
-                      <input type="text" class="pol-input" id="t-class-id" value="Class101" placeholder="Enter Class IDs" style="width:200px">
-                      <div style="display:flex;align-items:flex-start;gap:4px;font-size:11px;color:#757575">
-                        <i class="fas fa-info-circle" style="font-size:11px;margin-top:1px;flex-shrink:0;color:#929292"></i>
-                        Ensure the Class ID for both Teacher and Student match so the student appears in the Teacher Console.
-                      </div>
+                    <div class="pol-row-control" style="gap:8px">
+                      <input type="text" class="pol-input" id="t-class-id" value="Class101" placeholder="Enter Class IDs" style="width:220px">
+                      <span class="pol-tooltip-wrap">
+                        <i class="fas fa-info-circle pol-info-icon" style="font-size:15px;color:#555;cursor:pointer"></i>
+                        <span class="pol-tooltip-text">Ensure the Class ID for both Teacher and Student match so the student appears in the Teacher Console.</span>
+                      </span>
                     </div>
                   </div>
 
-                  <!-- Teacher Password — optional, no checkbox -->
+                  <!-- Teacher Password — checkbox + field + Show Password (matches product) -->
                   <div class="pol-row">
-                    <div class="pol-row-label">Teacher Password</div>
-                    <div class="pol-row-control" style="gap:8px">
-                      <input type="password" class="pol-input" placeholder="Enter password" style="width:200px">
-                      <span style="font-size:11px;color:#929292">(optional)</span>
+                    <div class="pol-row-label"></div>
+                    <div class="pol-row-control" style="gap:10px">
+                      <input type="checkbox" class="pol-cb" id="t-pwd-enable" onchange="polTeacherPwd(this)">
+                      <label for="t-pwd-enable" style="font-size:12px;cursor:pointer">Teacher Password</label>
+                      <input type="password" class="pol-input" id="t-pwd-field" disabled placeholder="Enter optional password" style="width:200px;background:#f0f0f0">
+                      <input type="checkbox" class="pol-cb" id="t-show-pwd" disabled onchange="polShowPwd('t-pwd-field',this)">
+                      <label for="t-show-pwd" style="font-size:12px;cursor:pointer;color:#929292">Show Password</label>
                     </div>
                   </div>
 

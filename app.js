@@ -294,6 +294,32 @@ function polTeacherSignInMode(mode) {
     }
 }
 
+// Show/hide password field
+function polShowPwd(inputId, cb) {
+    const el = document.getElementById(inputId);
+    if (el) el.type = cb.checked ? 'text' : 'password';
+}
+
+// Private Mode toggle — enables access token field and its Show Password checkbox
+function polPrivMode(cb) {
+    const token    = document.getElementById('t-access-token');
+    const showCb   = document.getElementById('t-show-token');
+    const showLbl  = showCb ? showCb.nextElementSibling : null;
+    if (token)   { token.disabled = !cb.checked; token.style.background = cb.checked ? '#fff' : '#f0f0f0'; }
+    if (showCb)  { showCb.disabled = !cb.checked; }
+    if (showLbl) { showLbl.style.color = cb.checked ? '#2E3A40' : '#929292'; }
+}
+
+// Teacher Password checkbox — enables field and its Show Password
+function polTeacherPwd(cb) {
+    const field  = document.getElementById('t-pwd-field');
+    const showCb = document.getElementById('t-show-pwd');
+    const showLbl = showCb ? showCb.nextElementSibling : null;
+    if (field)   { field.disabled = !cb.checked; field.style.background = cb.checked ? '#fff' : '#f0f0f0'; }
+    if (showCb)  { showCb.disabled = !cb.checked; }
+    if (showLbl) { showLbl.style.color = cb.checked ? '#2E3A40' : '#929292'; }
+}
+
 function polToggleConnector(cb) {
     const ip = document.getElementById('t-connector-ip');
     if (ip) {
