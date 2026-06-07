@@ -333,21 +333,31 @@ function polEnableTeacherSSO(cb) {}
 function polTeacherAuthMode(mode) {}
 
 function polTeacherRostering(cb) {
-    const opts     = document.getElementById('t-roster-opts');
-    const warn     = document.getElementById('t-roster-sso-warn');
-    const mode     = document.querySelector('input[name="t-signin-mode"]:checked')?.value || 'standard';
-    const isSso    = mode !== 'standard';
+    const opts      = document.getElementById('t-roster-opts');
+    const ssoWarn   = document.getElementById('t-roster-sso-warn');
+    const orgWarn   = document.getElementById('t-roster-org-warn');
+    const mode      = document.querySelector('input[name="t-signin-mode"]:checked')?.value || 'standard';
+    const isSso     = mode !== 'standard';
+    const clConfigured = state.sync !== null; // sync has run = ClassLink configured
 
     if (cb.checked && !isSso) {
-        // Tried to enable rostering while in Standard mode — block it and show warning
+        // Block: SSO not enabled
         cb.checked = false;
-        if (warn) warn.style.display = 'block';
-        if (opts) opts.style.display = 'none';
+        if (ssoWarn) ssoWarn.style.display = 'block';
+        if (orgWarn) orgWarn.style.display = 'none';
+        if (opts)    opts.style.display    = 'none';
         return;
     }
 
-    // Hide warning once rostering is allowed to proceed
-    if (warn) warn.style.display = 'none';
+    if (ssoWarn) ssoWarn.style.display = 'none';
+
+    if (cb.checked && !clConfigured) {
+        // Show immediate org-settings warning for ClassLink — but still show fallback options
+        if (orgWarn) orgWarn.style.display = 'block';
+    } else {
+        if (orgWarn) orgWarn.style.display = 'none';
+    }
+
     if (opts) opts.style.display = cb.checked ? 'block' : 'none';
 }
 
@@ -360,10 +370,16 @@ function polSaveTeacher() {
 
     const errors = [];
 
-    // SSO org-settings warning now shows immediately on mode change (not at save time)
-    // Only block save for ClassLink rostering if not configured
+    // SSO: block save if non-standard mode and not configured
+    if (mode !== 'standard' && !state.teacher) {
+        errors.push({
+            icon: 'fab fa-microsoft',
+            msg: 'Microsoft Entra ID SSO is not configured in Organization Settings.',
+            link: true
+        });
+    }
 
-    // Check ClassLink configured (state.sync proves a sync has run)
+    // ClassLink: block save if rostering enabled and sync hasn't run
     if (rosterOn && !state.sync) {
         errors.push({
             icon: 'fas fa-sync',

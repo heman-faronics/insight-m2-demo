@@ -952,15 +952,13 @@
                       <select class="pol-select" style="width:220px"><option selected>us-west</option><option>us-east</option><option>eu-west</option><option>ap-southeast</option></select>
                     </div>
                   </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control" style="gap:10px">
-                      <input type="checkbox" class="pol-cb" id="t-privmode" onchange="polPrivMode(this)">
-                      <label for="t-privmode" style="font-size:12px;cursor:pointer">Private Mode</label>
-                      <input type="password" class="pol-input" id="t-access-token" disabled placeholder="Enter access token" style="width:220px;background:#f0f0f0">
-                      <input type="checkbox" class="pol-cb" id="t-show-token" disabled onchange="polShowPwd('t-access-token',this)">
-                      <label for="t-show-token" style="font-size:12px;cursor:pointer;color:#929292">Show Password</label>
-                    </div>
+                  <!-- Private Mode: left-aligned, no label column offset -->
+                  <div style="display:flex;align-items:center;gap:10px;padding:4px 0">
+                    <input type="checkbox" class="pol-cb" id="t-privmode" onchange="polPrivMode(this)">
+                    <label for="t-privmode" style="font-size:12px;cursor:pointer">Private Mode</label>
+                    <input type="password" class="pol-input" id="t-access-token" disabled placeholder="Enter access token" style="width:220px;background:#f0f0f0">
+                    <input type="checkbox" class="pol-cb" id="t-show-token" disabled onchange="polShowPwd('t-access-token',this)">
+                    <label for="t-show-token" style="font-size:12px;cursor:pointer;color:#929292">Show Password</label>
                   </div>
                   <div style="display:flex;align-items:flex-start;gap:5px;margin-top:4px;font-size:11px;color:#757575">
                     <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
@@ -986,16 +984,12 @@
                     </div>
                   </div>
 
-                  <!-- Teacher Password — checkbox + field + Show Password (matches product) -->
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control" style="gap:10px">
-                      <input type="checkbox" class="pol-cb" id="t-pwd-enable" onchange="polTeacherPwd(this)">
-                      <label for="t-pwd-enable" style="font-size:12px;cursor:pointer">Teacher Password</label>
-                      <input type="password" class="pol-input" id="t-pwd-field" disabled placeholder="Enter optional password" style="width:200px;background:#f0f0f0">
-                      <input type="checkbox" class="pol-cb" id="t-show-pwd" disabled onchange="polShowPwd('t-pwd-field',this)">
-                      <label for="t-show-pwd" style="font-size:12px;cursor:pointer;color:#929292">Show Password</label>
-                    </div>
+                  <!-- Teacher Password: left-aligned under Class ID, no checkbox -->
+                  <div style="display:flex;align-items:center;gap:10px;padding:4px 0">
+                    <span style="font-size:12px;color:#2E3A40;width:190px;flex-shrink:0">Teacher Password</span>
+                    <input type="password" class="pol-input" id="t-pwd-field" placeholder="Enter optional password" style="width:200px">
+                    <input type="checkbox" class="pol-cb" id="t-show-pwd" onchange="polShowPwd('t-pwd-field',this)">
+                    <label for="t-show-pwd" style="font-size:12px;cursor:pointer">Show Password</label>
                   </div>
 
                   <!-- Sign-In Mode -->
@@ -1014,11 +1008,11 @@
                         <input type="radio" name="t-signin-mode" value="sso_required" onchange="polTeacherSignInMode('sso_required')">
                         SSO Required — Microsoft sign-in only
                       </label>
-                      <!-- Immediate warning when SSO selected but not configured in Org Settings -->
-                      <div id="t-sso-org-warn" style="display:none;padding:6px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;max-width:500px">
-                        <i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>
+                      <!-- Immediate warning: one line, nowrap -->
+                      <div id="t-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                        <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
                         Microsoft Entra ID SSO is not configured in Organization Settings.
-                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
+                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
                       </div>
                     </div>
                   </div>
@@ -1031,26 +1025,29 @@
                 <div class="pol-group-head" onclick="polToggle(this)">Rostering <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
 
-                  <!-- Rostering enable checkbox (no empty-label indent) -->
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:6px">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
-                        Enable ClassLink Rostering — teacher selects class from a dropdown
-                      </label>
-                      <!-- Warning: only shown when user tries to enable rostering while in Standard mode -->
-                      <div id="t-roster-sso-warn" style="display:none;padding:6px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;max-width:480px">
-                        <i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>
-                        Rostering requires Microsoft sign-in. Change Teacher Sign-In Mode to SSO Preferred or Required above before enabling rostering.
-                      </div>
+                  <!-- Rostering enable: left-aligned, no empty label column -->
+                  <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                      <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
+                      Enable ClassLink Rostering — teacher selects class from a dropdown
+                    </label>
+                    <!-- SSO required warning -->
+                    <div id="t-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                      <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
+                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Preferred or Required above first.
+                    </div>
+                    <!-- ClassLink not configured in Org Settings warning -->
+                    <div id="t-roster-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                      <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
+                      ClassLink Rostering is not configured in Organization Settings.
+                      <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
                     </div>
                   </div>
 
-                  <!-- Rostering fallback options (shown when enabled) -->
-                  <div id="t-roster-opts" style="display:none;margin-left:20px;margin-top:4px">
-                    <div style="font-size:11px;font-weight:600;color:#2E3A40;margin-bottom:5px">When ClassLink is unavailable:</div>
-                    <div style="display:flex;flex-direction:column;gap:5px">
+                  <!-- Rostering fallback options: indented, not bold, aligned with radios -->
+                  <div id="t-roster-opts" style="display:none;margin-left:20px;margin-top:8px">
+                    <div style="font-size:12px;color:#555;margin-bottom:6px">When ClassLink is unavailable:</div>
+                    <div style="display:flex;flex-direction:column;gap:5px;margin-left:0">
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="manual" checked> Allow teacher to enter Class ID manually</label>
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="block"> Block teacher from starting class</label>
                     </div>
