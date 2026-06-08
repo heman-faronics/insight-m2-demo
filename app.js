@@ -442,35 +442,65 @@ function polToggleGroup(cb, groupId) {
     group.querySelectorAll('select,input').forEach(el => el.disabled = !cb.checked);
 }
 
-// Student SSO enable/disable — also shows inline org warnings
-function polEnableStudentSSO(cb) {
-    const fields = document.getElementById('s-sso-fields');
-    if (fields) {
-        fields.style.opacity = cb.checked ? '1' : '0.45';
-        fields.style.pointerEvents = cb.checked ? '' : 'none';
+// Student Sign-In Mode change (mirrors polTeacherSignInMode)
+function polStudentSignInMode(mode) {
+    const ssoWarn  = document.getElementById('s-sso-org-warn');
+    const rosterCb = document.getElementById('s-roster-cb');
+    const classId  = document.getElementById('s-class-id');
+    const isSso    = mode !== 'legacy';
+
+    if (ssoWarn) ssoWarn.style.display = (isSso && !state.teacher) ? 'block' : 'none';
+    if (classId) classId.disabled = isSso;
+
+    // If switching back to Standard while rostering was on — uncheck it
+    if (!isSso && rosterCb && rosterCb.checked) {
+        rosterCb.checked = false;
+        polStudentRostering(rosterCb);
     }
-    const ssoWarn    = document.getElementById('s-sso-org-warn');
-    const rosterWarn = document.getElementById('s-roster-org-warn');
-    if (ssoWarn)    ssoWarn.style.display    = (cb.checked && !state.teacher) ? 'block' : 'none';
-    if (rosterWarn) rosterWarn.style.display = (cb.checked && !state.sync)    ? 'block' : 'none';
+}
+
+// Student Rostering enable/disable (mirrors polTeacherRostering)
+function polStudentRostering(cb) {
+    const ssoWarn  = document.getElementById('s-roster-sso-warn');
+    const orgWarn  = document.getElementById('s-roster-org-warn');
+    const opts     = document.getElementById('s-roster-opts');
+    const mode     = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
+    const isSso    = mode !== 'legacy';
+    const clOk     = state.sync !== null;
+
+    if (cb.checked && !isSso) {
+        cb.checked = false;
+        if (ssoWarn) ssoWarn.style.display = 'block';
+        if (orgWarn) orgWarn.style.display = 'none';
+        if (opts)    opts.style.display    = 'none';
+        return;
+    }
+    if (ssoWarn) ssoWarn.style.display = 'none';
+    if (cb.checked && !clOk) {
+        if (orgWarn) orgWarn.style.display = 'block';
+    } else {
+        if (orgWarn) orgWarn.style.display = 'none';
+    }
+    if (opts) opts.style.display = cb.checked ? 'block' : 'none';
 }
 
 // Save validation for student policy
 function polSaveStudent() {
-    const ssoEnabled = document.getElementById('s-sso-enable')?.checked || false;
+    const mode     = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
+    const rosterOn = document.getElementById('s-roster-cb')?.checked || false;
     const errContainer = document.getElementById('s-save-errors');
     if (!errContainer) return;
 
     const errors = [];
 
-    if (ssoEnabled && !state.teacher) {
+    if (mode !== 'legacy' && !state.teacher) {
         errors.push({
             icon: 'fab fa-microsoft',
             msg: 'Policy cannot be saved until Microsoft Entra ID SSO is configured in Organization Settings.',
             link: true
         });
     }
-    if (ssoEnabled && !state.sync) {
+    if (rosterOn && !state.sync) {
         errors.push({
             icon: 'fas fa-sync',
             msg: 'Policy cannot be saved until ClassLink Rostering is configured in Organization Settings.',
@@ -494,6 +524,10 @@ function polSaveStudent() {
     errContainer.style.display = 'block';
     errContainer.innerHTML = html;
 }
+
+// Legacy — no longer called from HTML but kept to avoid errors
+function polEnableStudentSSO() {}
+function polStudentAuthMode(mode) { polStudentSignInMode(mode); }
 
 function polStudentAuthMode(mode) {
     const autoJoinRow = document.getElementById('s-autojoin-row');

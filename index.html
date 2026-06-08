@@ -1180,7 +1180,7 @@
                 <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0">Installation Mode:</label>
                 <select class="pol-policy-select">
                   <option value="1">Teacher Console</option>
-                  <option value="2" selected>Student Client</option>
+                  <option value="2" selected>Student Computer</option>
                 </select>
               </div>
             </div>
@@ -1228,141 +1228,101 @@
               <div class="pol-group">
                 <div class="pol-group-head" onclick="polToggle(this)">Student Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-                  <!-- Class ID + Do not override inline -->
+                  <!-- Class ID with info tooltip (same pattern as Teacher Policy) -->
                   <div class="pol-row">
                     <div class="pol-row-label">Class ID</div>
-                    <div class="pol-row-control" style="gap:10px">
+                    <div class="pol-row-control" style="gap:8px">
                       <input type="text" id="s-class-id" class="pol-input" value="Class101" placeholder="Enter Class ID" style="width:180px">
+                      <span class="pol-tooltip-wrap">
+                        <i class="fas fa-info-circle pol-info-icon" style="font-size:15px;color:#555;cursor:pointer"></i>
+                        <span class="pol-tooltip-text">Ensure the Class ID for both Teacher and Student match so the student appears in the Teacher Console.</span>
+                      </span>
                       <input type="checkbox" class="pol-cb" id="s-no-override">
                       <label for="s-no-override" style="font-size:12px;cursor:pointer">Do not override existing Class ID</label>
                     </div>
                   </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control"><input type="checkbox" class="pol-cb" id="s-allow-change"><label for="s-allow-change" style="font-size:12px;cursor:pointer">Allow to change Class ID</label></div>
-                  </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control"><input type="checkbox" class="pol-cb" id="s-notray"><label for="s-notray" style="font-size:12px;cursor:pointer">Hide system tray icon</label></div>
-                  </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control"><input type="checkbox" class="pol-cb" id="s-keylog" checked><label for="s-keylog" style="font-size:12px;cursor:pointer">Monitor keystrokes</label></div>
-                  </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control"><input type="checkbox" class="pol-cb" id="s-screenshot"><label for="s-screenshot" style="font-size:12px;cursor:pointer">Ask permission for Screenshots, Screen Sharing, and Remote</label></div>
-                  </div>
-                  <!-- Allow web limiting + Track web history sub-option -->
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control"><input type="checkbox" class="pol-cb" id="s-weblimit" onchange="polToggleGroup(this,'s-webhistory-row')"><label for="s-weblimit" style="font-size:12px;cursor:pointer">Allow web limiting (installs browser extension)</label></div>
-                  </div>
-                  <div id="s-webhistory-row" style="opacity:.5;padding:2px 0 2px 22px">
+                  <!-- Left-aligned checkboxes (no indent column) -->
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-allow-change"><label for="s-allow-change" style="font-size:12px;cursor:pointer"> Allow to change Class ID</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-notray"><label for="s-notray" style="font-size:12px;cursor:pointer"> Hide system tray icon</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-keylog" checked><label for="s-keylog" style="font-size:12px;cursor:pointer"> Monitor keystrokes</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-screenshot"><label for="s-screenshot" style="font-size:12px;cursor:pointer"> Ask permission for Screenshots, Screen Sharing, and Remote</label></div>
+                  <!-- Allow web limiting + Track web history sub-option (indented) -->
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-weblimit" onchange="polToggleGroup(this,'s-webhistory-row')"><label for="s-weblimit" style="font-size:12px;cursor:pointer"> Allow web limiting (installs browser extension)</label></div>
+                  <div id="s-webhistory-row" style="opacity:.5;padding:2px 0 2px 20px">
                     <input type="checkbox" class="pol-cb" id="s-webhistory" disabled>
-                    <label for="s-webhistory" style="font-size:12px;cursor:pointer">Track web history</label>
+                    <label for="s-webhistory" style="font-size:12px;cursor:pointer"> Track web history</label>
                   </div>
-                  <!-- WiFi restriction + SSIDs -->
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control"><input type="checkbox" class="pol-cb" id="s-wifi" onchange="polToggleInput(this,'s-ssids')"><label for="s-wifi" style="font-size:12px;cursor:pointer">Enable Wifi restrictions</label></div>
+                  <!-- WiFi restriction + SSIDs (sub-row indented) -->
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-wifi" onchange="polToggleGroup(this,'s-ssids-row')"><label for="s-wifi" style="font-size:12px;cursor:pointer"> Enable Wifi restrictions</label></div>
+                  <div id="s-ssids-row" style="display:flex;align-items:center;gap:8px;padding:3px 0 3px 20px;opacity:.5">
+                    <span style="font-size:12px;color:#2E3A40;min-width:100px">Authorized SSIDs</span>
+                    <input type="text" class="pol-input" id="s-ssids" disabled placeholder="Enter Wi-Fi networks" style="width:220px">
                   </div>
-                  <div class="pol-row" id="s-wifi-row" style="opacity:.5">
-                    <div class="pol-row-label">Authorized SSIDs</div>
-                    <div class="pol-row-control"><input type="text" class="pol-input" id="s-ssids" disabled placeholder="Enter Wi-Fi networks" style="width:220px"></div>
+                  <!-- Student approve + auto-exit + extend sub-option -->
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-perm-join"><label for="s-perm-join" style="font-size:12px;cursor:pointer"> Allow the Student to approve Teacher request before joining the class. If declined, the Student will not join the class.</label></div>
+                  <div style="padding:3px 0;display:flex;align-items:center;gap:6px">
+                    <input type="checkbox" class="pol-cb" id="s-autoexit" onchange="polStudentAutoExit(this)">
+                    <label for="s-autoexit" style="font-size:12px;cursor:pointer">Automatically exit the class after</label>
+                    <select class="pol-select" id="s-exit-mins" disabled style="width:60px"><option>30</option><option>60</option><option>90</option><option>120</option></select>
+                    <span style="font-size:12px;color:#2E3A40">minutes</span>
                   </div>
-                  <!-- Student approve + auto-exit -->
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control"><input type="checkbox" class="pol-cb" id="s-perm-join"><label for="s-perm-join" style="font-size:12px;cursor:pointer">Allow the Student to approve Teacher request before joining the class. If declined, the Student will not join the class.</label></div>
+                  <div id="s-extend-row" style="opacity:.5;padding:2px 0 2px 20px">
+                    <input type="checkbox" class="pol-cb" id="s-extend" disabled>
+                    <label for="s-extend" style="font-size:12px;cursor:pointer"> Allow the Student to extend the class at 30-minute intervals.</label>
                   </div>
-                  <div class="pol-row">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control" style="gap:6px">
-                      <input type="checkbox" class="pol-cb" id="s-autoexit" onchange="polStudentAutoExit(this)">
-                      <label for="s-autoexit" style="font-size:12px;cursor:pointer">Automatically exit the class after</label>
-                      <select class="pol-select" id="s-exit-mins" disabled style="width:60px"><option>30</option><option>60</option><option>90</option><option>120</option></select>
-                      <span style="font-size:12px;color:#2E3A40">minutes</span>
+
+                  <!-- Sign-In Mode (mirrors Teacher Settings structure) -->
+                  <div class="pol-row" style="align-items:flex-start;margin-top:6px;padding-top:10px;border-top:1px solid #f0f0f0">
+                    <div class="pol-row-label" style="padding-top:3px">Sign-In Mode</div>
+                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="s-auth-mode" value="legacy" checked onchange="polStudentSignInMode('legacy')">
+                        Standard — student enters Class ID manually
+                      </label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="s-auth-mode" value="sso_required" onchange="polStudentSignInMode('sso_required')">
+                        SSO Required — Microsoft sign-in, Class ID assigned from roster
+                      </label>
+                      <!-- Immediate SSO warning -->
+                      <div id="s-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                        <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
+                        Microsoft Entra ID SSO is not configured in Organization Settings.
+                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
+                      </div>
                     </div>
                   </div>
-                  <div id="s-extend-row" style="opacity:.5;padding:2px 0 2px 22px">
-                    <input type="checkbox" class="pol-cb" id="s-extend" disabled>
-                    <label for="s-extend" style="font-size:12px;cursor:pointer">Allow the Student to extend the class at 30-minute intervals.</label>
-                  </div>
-                  <!-- Info note -->
-                  <div style="display:flex;align-items:flex-start;gap:5px;margin-top:8px;font-size:11px;color:#757575">
-                    <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
-                    Ensure the Class ID for both Teacher and Student match so the student appears in the Teacher Console.
-                  </div>
+
                 </div>
               </div>
 
-              <!-- Authentication & Rostering -->
-              <div class="pol-group">
-                <div class="pol-group-head" onclick="polToggle(this)">
-                  <span>
-                    <i class="fas fa-lock" style="font-size:10px;margin-right:5px;color:#CE4900"></i>
-                    Authentication &amp; Rostering
-                    <span style="font-size:9px;background:#CE4900;color:#fff;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600">New in M2</span>
-                  </span>
-                  <i class="fas fa-chevron-down pol-collapse-icon"></i>
-                </div>
+              <!-- Rostering (separate section, mirrors Teacher Policy Rostering) -->
+              <div class="pol-group" id="s-rostering-section">
+                <div class="pol-group-head" onclick="polToggle(this)">Rostering <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-
-                  <div class="pol-notice">
-                    <i class="fas fa-info-circle" style="margin-top:1px;flex-shrink:0;color:#856404"></i>
-                    <span>
-                      These features require Microsoft Entra ID SSO and ClassLink Rostering to be configured first.
-                      <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener">
-                        Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i>
-                      </a>
-                    </span>
-                  </div>
-
-                  <div class="pol-row" style="margin-bottom:6px">
-                    <div class="pol-row-label"></div>
-                    <div class="pol-row-control">
-                      <input type="checkbox" class="pol-cb" id="s-sso-enable" onchange="polEnableStudentSSO(this)">
-                      <label for="s-sso-enable" style="font-size:12px;font-weight:700;cursor:pointer;color:#2E3A40">Enable Authentication &amp; Rostering for this policy</label>
+                  <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                      <input type="checkbox" class="pol-cb" id="s-roster-cb" onchange="polStudentRostering(this)">
+                      Enable ClassLink Rostering — student joins their rostered class automatically
+                    </label>
+                    <!-- SSO required warning -->
+                    <div id="s-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                      <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
+                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Required above first.
+                    </div>
+                    <!-- ClassLink not configured warning -->
+                    <div id="s-roster-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                      <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
+                      ClassLink Rostering is not configured in Organization Settings.
+                      <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
                     </div>
                   </div>
-
-                  <!-- Inline org-not-configured warnings (shown immediately on checkbox tick) -->
-                  <div id="s-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;margin-bottom:4px">
-                    <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                    Microsoft Entra ID SSO is not configured in Organization Settings.
-                    <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
+                  <!-- Sub-options shown when rostering enabled -->
+                  <div id="s-roster-opts" style="display:none;margin-left:20px;margin-top:8px">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                      <input type="checkbox" class="pol-cb" id="s-autojoin">
+                      Auto-join rostered class — student joins without a confirmation prompt
+                    </label>
                   </div>
-                  <div id="s-roster-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;margin-bottom:10px">
-                    <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                    ClassLink Rostering is not configured in Organization Settings.
-                    <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
-                  </div>
-
-                  <div id="s-sso-fields" style="opacity:.45;pointer-events:none">
-
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#929292;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #f0f0f0">Student Sign-In Mode</div>
-                    <div class="pol-row">
-                      <div class="pol-row-label"></div>
-                      <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:6px">
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                          <input type="radio" name="s-auth-mode" value="legacy" checked onchange="polStudentAuthMode('legacy')"> Standard — student enters Class ID manually
-                        </label>
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                          <input type="radio" name="s-auth-mode" value="sso_required" onchange="polStudentAuthMode('sso_required')"> SSO Required — Microsoft sign-in, Class ID assigned from roster
-                        </label>
-                      </div>
-                    </div>
-
-                    <div id="s-autojoin-row" style="display:none;margin-left:20px;margin-top:4px">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="checkbox" class="pol-cb" id="s-autojoin">
-                        Auto-join rostered class — student joins without a confirmation prompt
-                      </label>
-                    </div>
-
-                  </div>
-
                 </div>
               </div>
 
@@ -1384,15 +1344,6 @@
                     To remain licensed, your computer must connect to the Internet at least once every 30 days.
                   </div>
                 </div>
-              </div>
-
-              <!-- Summary box (populated from earlier screens) -->
-              <div class="summary-box mt-2">
-                <div class="fw-bold small mb-2"><i class="fas fa-check-circle text-success me-1"></i>Milestone 2 Configuration Summary</div>
-                <div class="summary-row"><span style="width:20px;text-align:center"><i class="fab fa-microsoft text-primary" style="font-size:11px"></i></span><span class="small">Microsoft Entra SSO: <strong class="text-success">configured</strong></span></div>
-                <div class="summary-row"><span style="width:20px;text-align:center"><i class="fas fa-sync text-primary" style="font-size:11px"></i></span><span class="small">ClassLink rostering: <strong class="text-success">enabled</strong></span></div>
-                <div class="summary-row"><span style="width:20px;text-align:center"><i class="fas fa-chalkboard-teacher text-primary" style="font-size:11px"></i></span><span class="small" id="summary-teacher-text">Teacher: <em>sign in on Screen 1 to populate</em></span></div>
-                <div class="summary-row"><span style="width:20px;text-align:center"><i class="fas fa-user-graduate text-primary" style="font-size:11px"></i></span><span class="small" id="summary-student-text">Student: <em>sign in on Screen 2 to populate</em></span></div>
               </div>
 
               <div id="s-save-errors" style="display:none;margin-bottom:8px"></div>
