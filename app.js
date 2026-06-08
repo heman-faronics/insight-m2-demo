@@ -87,7 +87,6 @@ function showScreen(n) {
     }
 
     if (n === 5) updateSummary();
-    if (n === 3 && !state.sync) triggerSync();
     updateNav();
     window.scrollTo(0, 0);
 }
