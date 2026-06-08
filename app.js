@@ -374,7 +374,7 @@ function polSaveTeacher() {
     if (mode !== 'standard' && !state.teacher) {
         errors.push({
             icon: 'fab fa-microsoft',
-            msg: 'Microsoft Entra ID SSO is not configured in Organization Settings.',
+            msg: 'Policy cannot be saved until Microsoft Entra ID SSO is configured in Organization Settings.',
             link: true
         });
     }
@@ -383,7 +383,7 @@ function polSaveTeacher() {
     if (rosterOn && !state.sync) {
         errors.push({
             icon: 'fas fa-sync',
-            msg: 'ClassLink Rostering is not configured in Organization Settings.',
+            msg: 'Policy cannot be saved until ClassLink Rostering is configured in Organization Settings.',
             link: true
         });
     }
@@ -417,13 +417,57 @@ function polToggleGroup(cb, groupId) {
     group.querySelectorAll('select,input').forEach(el => el.disabled = !cb.checked);
 }
 
-// Student SSO enable/disable
+// Student SSO enable/disable — also shows inline org warnings
 function polEnableStudentSSO(cb) {
     const fields = document.getElementById('s-sso-fields');
     if (fields) {
         fields.style.opacity = cb.checked ? '1' : '0.45';
         fields.style.pointerEvents = cb.checked ? '' : 'none';
     }
+    const ssoWarn    = document.getElementById('s-sso-org-warn');
+    const rosterWarn = document.getElementById('s-roster-org-warn');
+    if (ssoWarn)    ssoWarn.style.display    = (cb.checked && !state.teacher) ? 'block' : 'none';
+    if (rosterWarn) rosterWarn.style.display = (cb.checked && !state.sync)    ? 'block' : 'none';
+}
+
+// Save validation for student policy
+function polSaveStudent() {
+    const ssoEnabled = document.getElementById('s-sso-enable')?.checked || false;
+    const errContainer = document.getElementById('s-save-errors');
+    if (!errContainer) return;
+
+    const errors = [];
+
+    if (ssoEnabled && !state.teacher) {
+        errors.push({
+            icon: 'fab fa-microsoft',
+            msg: 'Policy cannot be saved until Microsoft Entra ID SSO is configured in Organization Settings.',
+            link: true
+        });
+    }
+    if (ssoEnabled && !state.sync) {
+        errors.push({
+            icon: 'fas fa-sync',
+            msg: 'Policy cannot be saved until ClassLink Rostering is configured in Organization Settings.',
+            link: true
+        });
+    }
+
+    if (errors.length === 0) {
+        errContainer.style.display = 'block';
+        errContainer.innerHTML = `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#d1fae5;border:1px solid #a7f3d0;border-radius:3px;font-size:11px;color:#065f46"><i class="fas fa-check-circle"></i> Policy saved successfully.</div>`;
+        setTimeout(() => { errContainer.style.display = 'none'; }, 3000);
+        return;
+    }
+
+    const html = errors.map(e => `
+        <div style="display:flex;align-items:flex-start;gap:7px;padding:7px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;margin-bottom:4px">
+            <i class="${e.icon}" style="margin-top:1px;flex-shrink:0"></i>
+            <span>${esc(e.msg)} ${e.link ? `<a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>` : ''}</span>
+        </div>`).join('');
+
+    errContainer.style.display = 'block';
+    errContainer.innerHTML = html;
 }
 
 function polStudentAuthMode(mode) {
