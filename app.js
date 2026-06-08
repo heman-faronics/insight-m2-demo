@@ -319,6 +319,32 @@ function polTeacherPwd(cb) {
     if (showLbl) { showLbl.style.color = cb.checked ? '#2E3A40' : '#929292'; }
 }
 
+// Student Policy — Private Mode toggle (mirrors polPrivMode for Teacher)
+function polStudentPrivMode(cb) {
+    const token   = document.getElementById('s-access-token');
+    const showCb  = document.getElementById('s-show-token');
+    const showLbl = showCb ? showCb.nextElementSibling : null;
+    if (token)   { token.disabled = !cb.checked; token.style.background = cb.checked ? '#fff' : '#f0f0f0'; }
+    if (showCb)  { showCb.disabled = !cb.checked; }
+    if (showLbl) { showLbl.style.color = cb.checked ? '#2E3A40' : '#929292'; }
+}
+
+// Student Policy — Automatically exit class: enable select + extend sub-option
+function polStudentAutoExit(cb) {
+    const mins   = document.getElementById('s-exit-mins');
+    const extRow = document.getElementById('s-extend-row');
+    const ext    = document.getElementById('s-extend');
+    if (mins)   mins.disabled = !cb.checked;
+    if (extRow) { extRow.style.opacity = cb.checked ? '1' : '0.5'; extRow.style.pointerEvents = cb.checked ? '' : 'none'; }
+    if (ext)    ext.disabled = !cb.checked;
+}
+
+// Student Policy — Insight Connector enable/disable
+function polStudentConnector(cb) {
+    const ip = document.getElementById('s-connector-ip');
+    if (ip) { ip.disabled = !cb.checked; ip.style.background = cb.checked ? '#fff' : '#f0f0f0'; }
+}
+
 function polToggleConnector(cb) {
     const ip = document.getElementById('t-connector-ip');
     if (ip) {
