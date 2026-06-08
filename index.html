@@ -212,7 +212,7 @@
     padding:7px 10px; border-radius:4px; width:280px; text-align:left;
     white-space:normal; pointer-events:none;
     transition:opacity .15s ease, visibility .15s ease;
-    z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.25);
+    z-index:500; box-shadow:0 2px 8px rgba(0,0,0,.25);
   }
   .pol-tooltip-text::after {
     content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
@@ -227,7 +227,8 @@
   .pol-sidebar-item.active { background:#1a252b; color:#fff; font-weight:600; border-left:2px solid #2E78C1; }
   .pol-sidebar-item:not(.active) { opacity:.55; }
   .pol-main { flex:1; overflow-y:auto; max-height:520px; }
-  .pol-topbar { background:#f8f9fa; border-bottom:1px solid #dee2e6; padding:6px 12px; display:flex; align-items:center; gap:10px; }
+  .pol-topbar { background:#f8f9fa; border-bottom:1px solid #dee2e6; padding:6px 12px; display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
+  .pol-topbar-row { display:flex; align-items:center; gap:10px; }
   .pol-policy-select { height:24px; font-size:11px; border:1px solid #9ca3af; border-radius:3px; padding:1px 6px; }
   .pol-content { padding:10px 14px; }
 
@@ -236,7 +237,7 @@
   .pol-group-head { background:#ddd; padding:5px 10px; font-size:12px; font-weight:700; color:#2E3A40; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; }
   .pol-group-head .pol-collapse-icon { font-size:10px; color:#666; transition:transform .2s; }
   .pol-group-head.collapsed .pol-collapse-icon { transform:rotate(-90deg); }
-  .pol-group-body { background:#fff; padding:10px 12px; }
+  .pol-group-body { background:#fff; padding:10px 12px; overflow:visible; }
 
   /* NEW: SSO+Rostering section - visually distinct with orange accent */
   .pol-group.pol-new-feature .pol-group-head { background:#fdf0e8; color:#7c2d00; border-left:3px solid #CE4900; }
@@ -919,17 +920,21 @@
           <!-- Main content: Insight Cloud tab -->
           <div class="pol-main">
             <div class="pol-topbar">
-              <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0">Policy Setting:</label>
-              <select class="pol-policy-select">
-                <option>Disable</option>
-                <option>Enable (Install and inherit from parent)</option>
-                <option selected>Enable (Install and use these settings)</option>
-              </select>
-              <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0;margin-left:10px">Mode:</label>
-              <select class="pol-policy-select">
-                <option value="1" selected>Teacher Console</option>
-                <option value="2">Student Client</option>
-              </select>
+              <div class="pol-topbar-row">
+                <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0">Policy Setting:</label>
+                <select class="pol-policy-select">
+                  <option>Disable</option>
+                  <option>Enable (Install and inherit from parent)</option>
+                  <option selected>Enable (Install and use these settings)</option>
+                </select>
+              </div>
+              <div class="pol-topbar-row">
+                <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0">Installation Mode:</label>
+                <select class="pol-policy-select">
+                  <option value="1" selected>Teacher Console</option>
+                  <option value="2">Student Client</option>
+                </select>
+              </div>
             </div>
 
             <div class="pol-content">
@@ -986,7 +991,7 @@
 
                   <!-- Teacher Password: left-aligned under Class ID, no checkbox -->
                   <div style="display:flex;align-items:center;gap:10px;padding:4px 0">
-                    <span style="font-size:12px;color:#2E3A40;width:190px;flex-shrink:0">Teacher Password</span>
+                    <span style="font-size:12px;color:#2E3A40;width:150px;flex-shrink:0">Teacher Password</span>
                     <input type="password" class="pol-input" id="t-pwd-field" placeholder="Enter optional password" style="width:200px">
                     <input type="checkbox" class="pol-cb" id="t-show-pwd" onchange="polShowPwd('t-pwd-field',this)">
                     <label for="t-show-pwd" style="font-size:12px;cursor:pointer">Show Password</label>
@@ -1103,6 +1108,11 @@
               <!-- Save validation errors -->
               <div id="t-save-errors" style="display:none;margin-bottom:8px"></div>
 
+              <!-- Policy-not-saved note -->
+              <div style="font-size:11px;color:#856404;background:#fef9e7;border:1px solid #fcd34d;border-radius:3px;padding:5px 9px;margin-bottom:8px">
+                <strong>Note:</strong> Policy changes will not take effect until <em>Organization Settings</em> (SSO and/or ClassLink Rostering) are fully configured on Screen 3.
+              </div>
+
               <!-- Save/Cancel -->
               <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
                 <button class="dfc-btn-outline">Cancel</button>
@@ -1159,17 +1169,21 @@
 
           <div class="pol-main">
             <div class="pol-topbar">
-              <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0">Policy Setting:</label>
-              <select class="pol-policy-select">
-                <option>Disable</option>
-                <option>Enable (Install and inherit from parent)</option>
-                <option selected>Enable (Install and use these settings)</option>
-              </select>
-              <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0;margin-left:10px">Mode:</label>
-              <select class="pol-policy-select">
-                <option value="1">Teacher Console</option>
-                <option value="2" selected>Student Client</option>
-              </select>
+              <div class="pol-topbar-row">
+                <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0">Policy Setting:</label>
+                <select class="pol-policy-select">
+                  <option>Disable</option>
+                  <option>Enable (Install and inherit from parent)</option>
+                  <option selected>Enable (Install and use these settings)</option>
+                </select>
+              </div>
+              <div class="pol-topbar-row">
+                <label style="font-size:11px;font-weight:600;color:#2E3A40;margin:0">Installation Mode:</label>
+                <select class="pol-policy-select">
+                  <option value="1">Teacher Console</option>
+                  <option value="2" selected>Student Client</option>
+                </select>
+              </div>
             </div>
 
             <div class="pol-content">
