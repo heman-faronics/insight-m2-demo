@@ -476,30 +476,54 @@
 <div class="demo-body screen" id="screen-2">
   <div class="row g-4">
     <div class="col-lg-7">
-      <h5 class="mb-1">Step 2 of 5 — Student Sign-In with Microsoft Entra</h5>
-      <p class="text-muted small mb-3">Same MSAL popup flow with account picker — sign in as a different account from Screen 1. The student's enrolled class is resolved from ClassLink via the server-side API.</p>
+      <h5 class="mb-1">Step 2 of 5 — Student Sign-In</h5>
+      <p class="text-muted small mb-3">The student opens Insight Student Client. With SSO configured, they sign in with Microsoft and their rostered class is resolved automatically from ClassLink.</p>
+
+      <!-- Insight Student Client window mockup — matches actual info.html UI -->
       <div class="console-mockup">
-        <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Faronics Insight Student Client</span></div>
-        <div class="console-body p-0">
-          <div class="sc-bg">
-            <div style="background:#0091ff;color:#fff;padding:4px 16px;border-radius:4px;font-weight:700;letter-spacing:1px;font-size:.9rem">INSIGHT</div>
-            <h6 class="text-white mb-0">Welcome to Student Client</h6>
-            <small class="text-white-50 mb-2">Your organization requires Microsoft sign-in.</small>
-            <div class="tc-form" style="max-width:300px">
-              <button id="btn-student-signin" class="btn ms-btn w-100 d-flex align-items-center justify-content-center gap-2" onclick="studentSignIn()">
-                <svg width="16" height="16" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-                Sign in with Microsoft
+
+        <!-- Header bar: matches loginheader (#0a1424), logo hidden, window controls right -->
+        <div class="tc-header" style="padding:5px 10px 2px; justify-content:space-between">
+          <img src="/images/Insight_NXT_DarkBG.png" style="height:28px; visibility:hidden" alt="">
+          <div style="display:flex">
+            <div class="tc-winbtn"><img src="/images/window_minimize.png" style="height:16px"></div>
+            <div class="tc-winbtn"><img src="/images/window_fullscreen.png" style="height:16px"></div>
+            <div class="tc-winbtn"><img src="/images/window_close.png" style="height:16px"></div>
+          </div>
+        </div>
+
+        <!-- Login body: matches dvLoginScreen — white bg, centred insightForm -->
+        <div style="background:#fff; min-height:320px; display:flex; align-items:center; justify-content:center; padding:28px 16px;">
+          <div style="text-align:center; width:305px">
+
+            <!-- Logo: matches info.html (width:305px, insightStdTextLogoPrem) -->
+            <img src="/images/Insight_NXT_LightBG.png" style="width:305px; margin-bottom:16px" alt="Faronics Insight">
+
+            <!-- h2 message placeholder (matches #message in actual app) -->
+            <h2 style="font-size:28px; font-weight:300; color:#707070; line-height:40px; margin-bottom:20px">Sign in to join your class.</h2>
+
+            <!-- Sign-in button: matches updateAppButton style (#ce4900, 282×38, r:19) -->
+            <button id="btn-student-signin" onclick="studentSignIn()"
+                    style="background:#ce4900; border:1px solid #ce4900; color:#fff; width:282px; height:38px; border-radius:19px; font-size:12px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; margin:0 auto; font-family:inherit">
+              <svg width="16" height="16" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+              Sign in with Microsoft
+            </button>
+
+            <!-- Status + class section (shown after sign-in) -->
+            <div id="student-signin-status" class="mt-2" style="min-height:24px; font-size:12px; color:#555"></div>
+            <div id="student-class-section" style="display:none; text-align:center; margin-top:14px">
+              <div id="student-class-info" class="mb-2"></div>
+              <button id="btn-student-join"
+                      style="background:#ce4900; border:1px solid #ce4900; color:#fff; border-radius:16px; font-size:12px; font-weight:700; padding:5px 24px; cursor:pointer; font-family:inherit; text-transform:uppercase; letter-spacing:.5px">
+                GO TO CLASS
               </button>
-              <div id="student-signin-status" class="mt-2" style="min-height:24px"></div>
-              <div id="student-class-section" style="display:none;text-align:center" class="mt-2">
-                <div id="student-class-info" class="mb-2"></div>
-                <button class="btn btn-success btn-sm" id="btn-student-join">Join Class</button>
-              </div>
             </div>
+
           </div>
         </div>
       </div>
     </div>
+
     <div class="col-lg-5">
       <div class="card border-0 bg-light h-100"><div class="card-body p-3">
         <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">What's happening</div>
@@ -509,7 +533,7 @@
           <li>Browser calls <code>/api/classlink?op=student&amp;email=...</code></li>
           <li>Serverless function looks up ClassLink sourcedId</li>
           <li>Fetches <code>/students/{id}/classes</code> for enrollment</li>
-          <li>Enrolled class displayed → student clicks Join</li>
+          <li>Enrolled class displayed → student clicks Go to Class</li>
         </ol>
         <hr class="my-2">
         <div class="fw-bold small mb-1 text-muted text-uppercase" style="letter-spacing:.5px">Test accounts</div>

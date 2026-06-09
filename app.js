@@ -204,13 +204,13 @@ async function studentSignIn() {
         const joinBtn   = document.getElementById('btn-student-join');
 
         if (clData.enrolledClass) {
-            classInfo.innerHTML = `<div class="small text-white">You are enrolled in:<br><strong>${esc(clData.enrolledClass.title)}</strong></div>`;
+            classInfo.innerHTML = `<div class="small" style="color:#333">You are enrolled in:<br><strong>${esc(clData.enrolledClass.title)}</strong></div>`;
             // Update Screen 5 student class ID field if it exists
             var sciField = document.getElementById('s-class-id');
             if (sciField) sciField.value = 'cl_' + clData.enrolledClass.sourcedId;
             joinBtn.disabled = false;
         } else {
-            classInfo.innerHTML = `<div class="small text-warning">No class assignment found.<br>Contact your teacher.</div>`;
+            classInfo.innerHTML = `<div class="small" style="color:#c0392b">No class assignment found.<br>Contact your teacher.</div>`;
             joinBtn.disabled = true;
         }
         section.style.display = 'block';
