@@ -251,7 +251,7 @@
   .pol-input:disabled { opacity:.5; background:#f0f0f0; cursor:not-allowed; }
   .pol-select { height:22px; font-size:11px; border:1px solid #9ca3af; border-radius:3px; padding:1px 5px; }
   .pol-select:disabled { opacity:.5; cursor:not-allowed; }
-  .pol-cb { width:14px; height:14px; border:1px solid #9c9c9c; border-radius:3px; cursor:pointer; flex-shrink:0; }
+  .pol-cb { width:14px; height:14px; border:1px solid #9c9c9c; border-radius:3px; cursor:pointer; flex-shrink:0; margin-right:5px; }
 
   /* Disabled overlay for entire section */
   .pol-disabled-overlay { position:relative; }
@@ -981,6 +981,32 @@
                 <div class="pol-group-head" onclick="polToggle(this)">Teacher Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
 
+                  <!-- Sign-In Mode (at top of Teacher Settings) -->
+                  <div class="pol-row" style="align-items:flex-start">
+                    <div class="pol-row-label" style="padding-top:3px">Sign-In Mode</div>
+                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="t-signin-mode" value="standard" id="t-mode-standard" checked onchange="polTeacherSignInMode('standard')">
+                        Standard — Class ID + optional password
+                      </label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="t-signin-mode" value="sso_preferred" onchange="polTeacherSignInMode('sso_preferred')">
+                        SSO Preferred — show Microsoft sign-in, allow Class ID fallback
+                      </label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="t-signin-mode" value="sso_required" onchange="polTeacherSignInMode('sso_required')">
+                        SSO Required — Microsoft sign-in only
+                      </label>
+                      <div id="t-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                        <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
+                        Microsoft Entra ID SSO is not configured in Organization Settings.
+                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr style="margin:8px 0">
+
                   <!-- Class ID — info text as tooltip on the info icon -->
                   <div class="pol-row">
                     <div class="pol-row-label">Class ID</div>
@@ -999,31 +1025,6 @@
                     <input type="password" class="pol-input" id="t-pwd-field" placeholder="Enter optional password" style="width:200px">
                     <input type="checkbox" class="pol-cb" id="t-show-pwd" onchange="polShowPwd('t-pwd-field',this)">
                     <label for="t-show-pwd" style="font-size:12px;cursor:pointer">Show Password</label>
-                  </div>
-
-                  <!-- Sign-In Mode -->
-                  <div class="pol-row" style="align-items:flex-start;margin-top:6px;padding-top:10px;border-top:1px solid #f0f0f0">
-                    <div class="pol-row-label" style="padding-top:3px">Sign-In Mode</div>
-                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="radio" name="t-signin-mode" value="standard" id="t-mode-standard" checked onchange="polTeacherSignInMode('standard')">
-                        Standard — Class ID + optional password
-                      </label>
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="radio" name="t-signin-mode" value="sso_preferred" onchange="polTeacherSignInMode('sso_preferred')">
-                        SSO Preferred — show Microsoft sign-in, allow Class ID fallback
-                      </label>
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="radio" name="t-signin-mode" value="sso_required" onchange="polTeacherSignInMode('sso_required')">
-                        SSO Required — Microsoft sign-in only
-                      </label>
-                      <!-- Immediate warning: one line, nowrap -->
-                      <div id="t-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
-                        <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                        Microsoft Entra ID SSO is not configured in Organization Settings.
-                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
-                      </div>
-                    </div>
                   </div>
 
                 </div>
@@ -1228,6 +1229,33 @@
               <div class="pol-group">
                 <div class="pol-group-head" onclick="polToggle(this)">Student Settings <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
+
+                  <!-- Sign-In Mode (at top of Student Settings) -->
+                  <div class="pol-row" style="align-items:flex-start">
+                    <div class="pol-row-label" style="padding-top:3px">Sign-In Mode</div>
+                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="s-auth-mode" value="legacy" checked onchange="polStudentSignInMode('legacy')">
+                        Standard — student enters Class ID manually
+                      </label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="s-auth-mode" value="sso_preferred" onchange="polStudentSignInMode('sso_preferred')">
+                        SSO Preferred — Microsoft sign-in, manual Class ID fallback
+                      </label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="s-auth-mode" value="sso_required" onchange="polStudentSignInMode('sso_required')">
+                        SSO Required — Microsoft sign-in, Class ID assigned from roster
+                      </label>
+                      <div id="s-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
+                        <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
+                        Microsoft Entra ID SSO is not configured in Organization Settings.
+                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr style="margin:8px 0">
+
                   <!-- Class ID with info tooltip (same pattern as Teacher Policy) -->
                   <div class="pol-row">
                     <div class="pol-row-label">Class ID</div>
@@ -1242,24 +1270,24 @@
                     </div>
                   </div>
                   <!-- Left-aligned checkboxes (no indent column) -->
-                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-allow-change"><label for="s-allow-change" style="font-size:12px;cursor:pointer"> Allow to change Class ID</label></div>
-                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-notray"><label for="s-notray" style="font-size:12px;cursor:pointer"> Hide system tray icon</label></div>
-                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-keylog" checked><label for="s-keylog" style="font-size:12px;cursor:pointer"> Monitor keystrokes</label></div>
-                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-screenshot"><label for="s-screenshot" style="font-size:12px;cursor:pointer"> Ask permission for Screenshots, Screen Sharing, and Remote</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-allow-change"><label for="s-allow-change" style="font-size:12px;cursor:pointer">Allow to change Class ID</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-notray"><label for="s-notray" style="font-size:12px;cursor:pointer">Hide system tray icon</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-keylog" checked><label for="s-keylog" style="font-size:12px;cursor:pointer">Monitor keystrokes</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-screenshot"><label for="s-screenshot" style="font-size:12px;cursor:pointer">Ask permission for Screenshots, Screen Sharing, and Remote</label></div>
                   <!-- Allow web limiting + Track web history sub-option (indented) -->
-                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-weblimit" onchange="polToggleGroup(this,'s-webhistory-row')"><label for="s-weblimit" style="font-size:12px;cursor:pointer"> Allow web limiting (installs browser extension)</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-weblimit" onchange="polToggleGroup(this,'s-webhistory-row')"><label for="s-weblimit" style="font-size:12px;cursor:pointer">Allow web limiting (installs browser extension)</label></div>
                   <div id="s-webhistory-row" style="opacity:.5;padding:2px 0 2px 20px">
                     <input type="checkbox" class="pol-cb" id="s-webhistory" disabled>
-                    <label for="s-webhistory" style="font-size:12px;cursor:pointer"> Track web history</label>
+                    <label for="s-webhistory" style="font-size:12px;cursor:pointer">Track web history</label>
                   </div>
                   <!-- WiFi restriction + SSIDs (sub-row indented) -->
-                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-wifi" onchange="polToggleGroup(this,'s-ssids-row')"><label for="s-wifi" style="font-size:12px;cursor:pointer"> Enable Wifi restrictions</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-wifi" onchange="polToggleGroup(this,'s-ssids-row')"><label for="s-wifi" style="font-size:12px;cursor:pointer">Enable Wifi restrictions</label></div>
                   <div id="s-ssids-row" style="display:flex;align-items:center;gap:8px;padding:3px 0 3px 20px;opacity:.5">
                     <span style="font-size:12px;color:#2E3A40;min-width:100px">Authorized SSIDs</span>
                     <input type="text" class="pol-input" id="s-ssids" disabled placeholder="Enter Wi-Fi networks" style="width:220px">
                   </div>
                   <!-- Student approve + auto-exit + extend sub-option -->
-                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-perm-join"><label for="s-perm-join" style="font-size:12px;cursor:pointer"> Allow the Student to approve Teacher request before joining the class. If declined, the Student will not join the class.</label></div>
+                  <div style="padding:3px 0"><input type="checkbox" class="pol-cb" id="s-perm-join"><label for="s-perm-join" style="font-size:12px;cursor:pointer">Allow the Student to approve Teacher request before joining the class. If declined, the Student will not join the class.</label></div>
                   <div style="padding:3px 0;display:flex;align-items:center;gap:6px">
                     <input type="checkbox" class="pol-cb" id="s-autoexit" onchange="polStudentAutoExit(this)">
                     <label for="s-autoexit" style="font-size:12px;cursor:pointer">Automatically exit the class after</label>
@@ -1268,28 +1296,7 @@
                   </div>
                   <div id="s-extend-row" style="opacity:.5;padding:2px 0 2px 20px">
                     <input type="checkbox" class="pol-cb" id="s-extend" disabled>
-                    <label for="s-extend" style="font-size:12px;cursor:pointer"> Allow the Student to extend the class at 30-minute intervals.</label>
-                  </div>
-
-                  <!-- Sign-In Mode (mirrors Teacher Settings structure) -->
-                  <div class="pol-row" style="align-items:flex-start;margin-top:6px;padding-top:10px;border-top:1px solid #f0f0f0">
-                    <div class="pol-row-label" style="padding-top:3px">Sign-In Mode</div>
-                    <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="radio" name="s-auth-mode" value="legacy" checked onchange="polStudentSignInMode('legacy')">
-                        Standard — student enters Class ID manually
-                      </label>
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="radio" name="s-auth-mode" value="sso_required" onchange="polStudentSignInMode('sso_required')">
-                        SSO Required — Microsoft sign-in, Class ID assigned from roster
-                      </label>
-                      <!-- Immediate SSO warning -->
-                      <div id="s-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
-                        <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                        Microsoft Entra ID SSO is not configured in Organization Settings.
-                        <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
-                      </div>
-                    </div>
+                    <label for="s-extend" style="font-size:12px;cursor:pointer">Allow the Student to extend the class at 30-minute intervals.</label>
                   </div>
 
                 </div>
@@ -1307,7 +1314,7 @@
                     <!-- SSO required warning -->
                     <div id="s-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                       <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Required above first.
+                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Preferred or Required above first.
                     </div>
                     <!-- ClassLink not configured warning -->
                     <div id="s-roster-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">

@@ -448,9 +448,15 @@ function polStudentSignInMode(mode) {
     const rosterCb = document.getElementById('s-roster-cb');
     const classId  = document.getElementById('s-class-id');
     const isSso    = mode !== 'legacy';
+    const isReq    = mode === 'sso_required';
 
     if (ssoWarn) ssoWarn.style.display = (isSso && !state.teacher) ? 'block' : 'none';
-    if (classId) classId.disabled = isSso;
+    // SSO Required: Class ID is auto-assigned, grey it out.
+    // SSO Preferred: student can still type manually — keep it editable.
+    if (classId) {
+        classId.disabled = isReq;
+        classId.style.background = isReq ? '#f0f0f0' : '';
+    }
 
     // If switching back to Standard while rostering was on — uncheck it
     if (!isSso && rosterCb && rosterCb.checked) {
