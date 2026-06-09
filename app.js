@@ -86,7 +86,15 @@ function showScreen(n) {
         if (i > n)  { dot.textContent = i; }
     }
 
-    if (n === 5) updateSummary();
+    if (n === 4) {
+        const tMode = document.querySelector('input[name="t-signin-mode"]:checked')?.value || 'standard';
+        polTeacherSignInMode(tMode);
+    }
+    if (n === 5) {
+        updateSummary();
+        const sMode = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
+        polStudentSignInMode(sMode);
+    }
     updateNav();
     window.scrollTo(0, 0);
 }
@@ -278,16 +286,22 @@ function polTeacherSignInMode(mode) {
     const ssoOrgWarn = document.getElementById('t-sso-org-warn');
     const isSso      = mode !== 'standard';
 
+    // Disable rostering checkbox in Standard mode so it can't be clicked
+    if (rosterCb) {
+        rosterCb.disabled = !isSso;
+        rosterCb.style.opacity = isSso ? '' : '0.35';
+        rosterCb.style.cursor  = isSso ? '' : 'not-allowed';
+    }
+
+    // Clear the SSO warning whenever mode changes (it'll re-show if user clicks while blocked)
+    if (rosterWarn) rosterWarn.style.display = 'none';
+
     // If switching back to Standard while rostering was on — uncheck it
     if (!isSso && rosterCb && rosterCb.checked) {
         rosterCb.checked = false;
         polTeacherRostering(rosterCb);
     }
-    // Hide rostering SSO warning when mode changes
-    if (isSso && rosterWarn) rosterWarn.style.display = 'none';
 
-    // Show Org Settings warning IMMEDIATELY when SSO selected and not yet configured
-    // state.teacher !== null means the user has signed in on Screen 1 (SSO proven to work)
     if (ssoOrgWarn) {
         ssoOrgWarn.style.display = (isSso && !state.teacher) ? 'block' : 'none';
     }
@@ -444,19 +458,31 @@ function polToggleGroup(cb, groupId) {
 
 // Student Sign-In Mode change (mirrors polTeacherSignInMode)
 function polStudentSignInMode(mode) {
-    const ssoWarn  = document.getElementById('s-sso-org-warn');
-    const rosterCb = document.getElementById('s-roster-cb');
-    const classId  = document.getElementById('s-class-id');
-    const isSso    = mode !== 'legacy';
-    const isReq    = mode === 'sso_required';
+    const ssoWarn       = document.getElementById('s-sso-org-warn');
+    const rosterCb      = document.getElementById('s-roster-cb');
+    const rosterSsoWarn = document.getElementById('s-roster-sso-warn');
+    const classId       = document.getElementById('s-class-id');
+    const isSso         = mode !== 'legacy';
+    const isReq         = mode === 'sso_required';
 
     if (ssoWarn) ssoWarn.style.display = (isSso && !state.teacher) ? 'block' : 'none';
+
     // SSO Required: Class ID is auto-assigned, grey it out.
     // SSO Preferred: student can still type manually — keep it editable.
     if (classId) {
         classId.disabled = isReq;
         classId.style.background = isReq ? '#f0f0f0' : '';
     }
+
+    // Disable rostering checkbox in Standard mode so it can't be clicked
+    if (rosterCb) {
+        rosterCb.disabled = !isSso;
+        rosterCb.style.opacity = isSso ? '' : '0.35';
+        rosterCb.style.cursor  = isSso ? '' : 'not-allowed';
+    }
+
+    // Clear the SSO warning whenever mode changes
+    if (rosterSsoWarn) rosterSsoWarn.style.display = 'none';
 
     // If switching back to Standard while rostering was on — uncheck it
     if (!isSso && rosterCb && rosterCb.checked) {
