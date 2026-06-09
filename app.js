@@ -178,16 +178,23 @@ async function teacherSignIn() {
 
 // ── Student sign-in ────────────────────────────────────────────────────────────
 async function studentSignIn() {
-    const btn      = document.getElementById('btn-student-signin');
-    const statusEl = document.getElementById('student-signin-status');
-    btn.disabled   = true;
-    document.getElementById('student-class-section').style.display = 'none';
+    const zone = document.getElementById('s2-sim-zone');
+
+    if (zone) zone.innerHTML = `
+        <div style="text-align:center;padding:28px 0">
+            <i class="fas fa-spinner fa-spin" style="color:#ce4900;font-size:22px"></i>
+            <div style="margin-top:10px;font-size:12px;color:#6b7280">Opening Microsoft sign-in…</div>
+        </div>`;
 
     try {
-        setStatus(statusEl, 'info-light', 'Opening Microsoft sign-in…');
         const msalResult = await signIn();
 
-        setStatus(statusEl, 'info-light', `Signed in as ${esc(msalResult.email)} — looking up enrolled class…`);
+        if (zone) zone.innerHTML = `
+            <div style="text-align:center;padding:28px 0">
+                <i class="fas fa-spinner fa-spin" style="color:#ce4900;font-size:22px"></i>
+                <div style="margin-top:10px;font-size:12px;color:#6b7280">Fetching your enrolled class…</div>
+            </div>`;
+
         const clData = await clApi('student', msalResult.email);
 
         state.student = {
@@ -197,31 +204,27 @@ async function studentSignIn() {
             enrolledClass: clData.enrolledClass
         };
 
-        setStatus(statusEl, 'success-light', `Signed in as <strong>${esc(msalResult.email)}</strong>`);
+        // Update Screen 5 class ID field if rostering data exists
+        var sciField = document.getElementById('s-class-id');
+        if (sciField && clData.enrolledClass) sciField.value = 'cl_' + clData.enrolledClass.sourcedId;
 
-        const section   = document.getElementById('student-class-section');
-        const classInfo = document.getElementById('student-class-info');
-        const joinBtn   = document.getElementById('btn-student-join');
+        // Advance S1 to step 2 (shows real data)
+        activeSimStepS2 = 2;
+        renderSimS2(true);
 
-        if (clData.enrolledClass) {
-            classInfo.innerHTML = `<div class="small" style="color:#333">You are enrolled in:<br><strong>${esc(clData.enrolledClass.title)}</strong></div>`;
-            // Update Screen 5 student class ID field if it exists
-            var sciField = document.getElementById('s-class-id');
-            if (sciField) sciField.value = 'cl_' + clData.enrolledClass.sourcedId;
-            joinBtn.disabled = false;
-        } else {
-            classInfo.innerHTML = `<div class="small" style="color:#c0392b">No class assignment found.<br>Contact your teacher.</div>`;
-            joinBtn.disabled = true;
-        }
-        section.style.display = 'block';
-
-        
         updateNav();
         updateSummary();
     } catch (err) {
         const msg = classifyError(err);
-        setStatus(statusEl, 'danger-light', msg);
-        btn.disabled = false;
+        if (zone) {
+            zone.classList.add('transitioning');
+            setTimeout(() => {
+                zone.innerHTML = _s2Step1Html() +
+                    `<div class="alert alert-danger py-2 px-3 small mt-2">${esc(msg)}</div>`;
+                updateSimDotsS2();
+                zone.classList.remove('transitioning');
+            }, 100);
+        }
     }
 }
 
@@ -697,19 +700,21 @@ function updateSummary() {
 
 function startOver() {
     state.teacher = null; state.student = null; state.sync = null;
-    
-    ['teacher-signin-status','student-signin-status'].forEach(id => document.getElementById(id).innerHTML = '');
-    // Reset scenario switcher + teacher sign-in state
+
+    // Reset Screen 1 scenario switcher
     activeSimScenario = 1; activeSimStep = 1; simClassChosen = false; sim8ClassIdVisible = false;
-    
-    document.querySelectorAll('.scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
-    const card = document.getElementById('scenario-card');
-    if (card) card.textContent = SIM_SCENARIOS[0].card;
+    document.querySelectorAll('#scenario-pills-row .scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
+    const card1 = document.getElementById('scenario-card');
+    if (card1) card1.textContent = SIM_SCENARIOS[0].card;
     renderSim(false);
-    document.getElementById('teacher-class-section').style.display = 'none';
-    document.getElementById('student-class-section').style.display = 'none';
-    document.getElementById('btn-teacher-signin').disabled = false;
-    document.getElementById('btn-student-signin').disabled = false;
+
+    // Reset Screen 2 scenario switcher
+    activeSimScenarioS2 = 1; activeSimStepS2 = 1; simS2ClassIdVisible = false;
+    document.querySelectorAll('#s2-pills-row .scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
+    const card2 = document.getElementById('s2-scenario-card');
+    if (card2) card2.textContent = SIM_SCENARIOS_S2[0].card;
+    renderSimS2(false);
+
     var lst = document.getElementById('last-sync-time');
     var ssb = document.getElementById('sync-status-badge');
     var sc  = document.getElementById('sync-counts');
@@ -718,8 +723,6 @@ function startOver() {
     if (sc)  sc.style.display  = 'none';
     var sciField = document.getElementById('s-class-id');
     if (sciField) sciField.value = '';
-    document.getElementById('summary-teacher-text').innerHTML  = 'Teacher: <em>sign in on Screen 1 to populate</em>';
-    document.getElementById('summary-student-text').innerHTML  = 'Student: <em>sign in on Screen 2 to populate</em>';
     showScreen(1);
 }
 
@@ -754,6 +757,7 @@ function classifyError(err) {
 document.addEventListener('DOMContentLoaded', () => {
     showScreen(1);
     initSimSwitcher();
+    initSimSwitcherS2();
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -765,6 +769,11 @@ let activeSimScenario = 1;
 let activeSimStep     = 1;
 let simClassChosen    = false;
 let sim8ClassIdVisible = false;
+
+// ── Screen 2 sim state ────────────────────────────────────────────────────────
+let activeSimScenarioS2 = 1;
+let activeSimStepS2     = 1;
+let simS2ClassIdVisible = false;
 
 const SIM_SCENARIOS = [
     {
@@ -1080,6 +1089,215 @@ function buildSimHtml() {
         if (step === 3) return _signedInPill() +
             `<div class="alert alert-success py-2 px-3 mb-3" style="font-size:11px">✓ Sign-in succeeded on retry.</div>` +
             _classDropdown(false);
+    }
+
+    return '';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SCENARIO SWITCHER — Screen 2 (Student Client)
+// activeSimScenarioS2: 1–5  |  activeSimStepS2: 1–3
+// ══════════════════════════════════════════════════════════════════════════════
+
+const SIM_SCENARIOS_S2 = [
+    {
+        pill: '★ Class roster + sign-in',
+        card: 'Your school requires Microsoft sign-in. Once signed in, your class is assigned automatically from the school roster — no Class ID needed.',
+        steps: 2
+    },
+    {
+        pill: 'Sign-in only',
+        card: "Microsoft sign-in is required, but class lookup is off. After signing in, you still type your Class ID to join.",
+        steps: 2
+    },
+    {
+        pill: 'Sign-in or Class ID',
+        card: "You can sign in with Microsoft to get your class automatically, or skip it and type your Class ID as usual.",
+        steps: 2
+    },
+    {
+        pill: 'Class ID only',
+        card: "No Microsoft sign-in. Enter your Class ID and optional password — this is how Insight works today without SSO.",
+        steps: 1
+    },
+    {
+        pill: 'What if sign-in fails?',
+        card: "See what the student experiences if Microsoft sign-in fails — and whether a Class ID fallback is available.",
+        steps: 3
+    }
+];
+
+function initSimSwitcherS2() {
+    const row = document.getElementById('s2-pills-row');
+    if (!row) return;
+    row.innerHTML = SIM_SCENARIOS_S2.map((s, i) =>
+        `<button class="scenario-pill${i === 0 ? ' active' : ''}" onclick="switchSimS2(${i + 1})">${s.pill}</button>`
+    ).join('');
+    const card = document.getElementById('s2-scenario-card');
+    if (card) card.textContent = SIM_SCENARIOS_S2[0].card;
+    renderSimS2(false);
+}
+
+function switchSimS2(n) {
+    activeSimScenarioS2 = n;
+    activeSimStepS2     = 1;
+    simS2ClassIdVisible = false;
+
+    document.querySelectorAll('#s2-pills-row .scenario-pill').forEach((p, i) =>
+        p.classList.toggle('active', i + 1 === n));
+
+    const card = document.getElementById('s2-scenario-card');
+    if (card) {
+        card.classList.add('fading');
+        setTimeout(() => {
+            card.textContent = SIM_SCENARIOS_S2[n - 1].card;
+            card.classList.remove('fading');
+        }, 100);
+    }
+    renderSimS2(true);
+}
+
+function simAdvanceStepS2() {
+    simS2ClassIdVisible = false;
+    const maxSteps = SIM_SCENARIOS_S2[activeSimScenarioS2 - 1].steps;
+    if (activeSimStepS2 < maxSteps) activeSimStepS2++;
+    renderSimS2(true);
+}
+
+function simS2RevealClassId() {
+    simS2ClassIdVisible = true;
+    renderSimS2(false);
+}
+
+function renderSimS2(animate) {
+    const zone = document.getElementById('s2-sim-zone');
+    if (!zone) return;
+    const doRender = () => {
+        zone.innerHTML = buildSimS2Html();
+        updateSimDotsS2();
+        zone.classList.remove('transitioning');
+    };
+    if (animate) {
+        zone.classList.add('transitioning');
+        setTimeout(doRender, 100);
+    } else {
+        doRender();
+    }
+}
+
+function updateSimDotsS2() {
+    const dots = document.getElementById('s2-step-dots');
+    if (!dots) return;
+    const total = SIM_SCENARIOS_S2[activeSimScenarioS2 - 1].steps;
+    if (total <= 1) { dots.style.display = 'none'; return; }
+    dots.style.display = 'flex';
+    dots.innerHTML = Array.from({ length: total }, (_, i) =>
+        `<span class="tc-dot${i + 1 === activeSimStepS2 ? ' active' : ''}"></span>`
+    ).join('');
+}
+
+// ── S2 HTML fragment helpers ───────────────────────────────────────────────────
+
+const _MS_SVG_16 = `<svg width="16" height="16" viewBox="0 0 21 21" style="flex-shrink:0"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>`;
+
+// Real sign-in button (Scenario 1 only)
+function _s2Step1Html() {
+    return `<button class="sc-ms-btn" onclick="studentSignIn()">${_MS_SVG_16} Sign in with Microsoft</button>
+            <div class="sim-grey-text" style="margin-top:8px">Your school requires Microsoft sign-in</div>`;
+}
+
+// Simulated orange MS button
+function _s2MsBtn(onclick) {
+    return `<button class="sc-ms-btn" onclick="${onclick}">${_MS_SVG_16} Sign in with Microsoft</button>
+            <div class="sim-simulated">(simulated — no real sign-in happens here)</div>`;
+}
+
+// Class ID form styled to match student client
+function _s2ClassIdForm(inputId, btnId, label) {
+    return `<label class="sim-label">${esc(label || 'Enter your Class ID')}</label>
+            <input id="${inputId}" type="text" class="sc-classid-input" placeholder="e.g. Science101"
+                   oninput="simDynamicStart('${inputId}','${btnId}')">
+            <div style="text-align:center">
+              <button class="sc-join-btn" id="${btnId}" disabled>Join Class</button>
+            </div>`;
+}
+
+// Signed-in pill (green, uses real email if available)
+function _s2SignedInPill(email) {
+    const display = email || (state.student && state.student.email) || 'student1@faronicsna.onmicrosoft.com';
+    return `<div class="sim-signed-pill"><span style="color:#16a34a">●</span> Signed in as ${esc(display)}</div>`;
+}
+
+// Enrolled class result with GO TO CLASS button
+function _s2ClassResult(title) {
+    return `<div class="small mb-3" style="color:#333">You are enrolled in:<br><strong>${esc(title)}</strong></div>
+            <button class="sc-join-btn">GO TO CLASS</button>`;
+}
+
+// ── Main S2 scenario HTML builder ─────────────────────────────────────────────
+
+function buildSimS2Html() {
+    const s    = activeSimScenarioS2;
+    const step = activeSimStepS2;
+    const DEMO_CLASS = 'Science Lab · Period 2';
+    const DEMO_EMAIL = 'student1@faronicsna.onmicrosoft.com';
+
+    // ── S1: Class roster + sign-in (REAL auth) ───────────────────────────────
+    if (s === 1) {
+        if (step === 1) return _s2Step1Html();
+        if (step === 2) {
+            const pill = _s2SignedInPill(state.student && state.student.email);
+            if (state.student && state.student.enrolledClass) {
+                return pill + _s2ClassResult(state.student.enrolledClass.title);
+            } else if (state.student) {
+                return pill + `<div class="small" style="color:#c0392b">No class assignment found.<br>Contact your teacher.</div>`;
+            }
+            return pill + _s2ClassResult(DEMO_CLASS);
+        }
+    }
+
+    // ── S2: SSO Required + manual Class ID ──────────────────────────────────
+    if (s === 2) {
+        if (step === 1) return _s2MsBtn('simAdvanceStepS2()') +
+            `<div class="sim-grey-text" style="margin-top:8px">Your school requires Microsoft sign-in</div>`;
+        if (step === 2) return _s2SignedInPill(DEMO_EMAIL) +
+            _s2ClassIdForm('s2-cid-2', 's2-sb-2', 'Enter your Class ID to join');
+    }
+
+    // ── S3: SSO Preferred + auto class ──────────────────────────────────────
+    if (s === 3) {
+        if (step === 1) return _s2MsBtn('simAdvanceStepS2()') +
+            `<div class="sim-or">— or —</div>` +
+            _s2ClassIdForm('s2-cid-3', 's2-sb-3', 'Enter your Class ID');
+        if (step === 2) return _s2SignedInPill(DEMO_EMAIL) + _s2ClassResult(DEMO_CLASS);
+    }
+
+    // ── S4: Standard — Class ID only ────────────────────────────────────────
+    if (s === 4) {
+        return `<label class="sim-label">Enter your Class ID</label>
+                <input id="s2-cid-4" type="text" class="sc-classid-input" placeholder="e.g. Science101"
+                       oninput="simDynamicStart('s2-cid-4','s2-sb-4')">
+                <label class="sim-label">Password <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
+                <input type="password" class="sc-classid-input" placeholder="Password">
+                <div style="text-align:center">
+                  <button class="sc-join-btn" id="s2-sb-4" disabled>Join Class</button>
+                </div>`;
+    }
+
+    // ── S5: Sign-in failure ──────────────────────────────────────────────────
+    if (s === 5) {
+        if (step === 1) return _s2MsBtn('simAdvanceStepS2()') +
+            `<div class="sim-grey-text" style="margin-top:8px">Your school requires Microsoft sign-in</div>`;
+        if (step === 2) return `
+            <div class="alert alert-danger py-2 px-3 small mb-3">✕ Couldn't sign in with Microsoft. Check your internet connection and try again.</div>
+            ${_s2MsBtn('simAdvanceStepS2()')}
+            <div style="text-align:center;margin-top:8px">
+              <button class="sim-link" onclick="simS2RevealClassId()">Enter Class ID instead →</button>
+            </div>
+            ${simS2ClassIdVisible ? `<div class="mt-3">${_s2ClassIdForm('s2-cid-5', 's2-sb-5', 'Enter your Class ID to continue')}</div>` : ''}`;
+        if (step === 3) return _s2SignedInPill(DEMO_EMAIL) +
+            `<div class="alert alert-success py-2 px-3 mb-3" style="font-size:11px">✓ Sign-in succeeded on retry.</div>` +
+            _s2ClassResult(DEMO_CLASS);
     }
 
     return '';

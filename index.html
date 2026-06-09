@@ -361,6 +361,31 @@
   .ms-btn { background:#0078d4; border-color:#0078d4; color:#fff; }
   .ms-btn:hover { background:#006cbd; color:#fff; }
   .ms-btn:disabled { background:#0078d4; border-color:#0078d4; opacity:.6; }
+
+  /* ── Student Client sim buttons ─────────────────────────────────────────────── */
+  .sc-ms-btn {
+    background:#ce4900; border:1px solid #ce4900; color:#fff;
+    width:282px; height:38px; border-radius:19px;
+    font-size:12px; font-weight:800; letter-spacing:.8px; text-transform:uppercase;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    gap:10px; margin:0 auto; font-family:inherit;
+  }
+  .sc-ms-btn:hover { background:#b84000; }
+  .sc-ms-btn:disabled { opacity:.6; cursor:not-allowed; }
+  .sc-join-btn {
+    background:#ce4900; border:1px solid #ce4900; color:#fff;
+    border-radius:16px; font-size:12px; font-weight:700;
+    padding:5px 24px; cursor:pointer; font-family:inherit;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+  .sc-join-btn:hover { background:#b84000; }
+  .sc-join-btn:disabled { opacity:.6; cursor:not-allowed; }
+  .sc-classid-input {
+    width:282px; height:38px; border-radius:19px; border:1px solid #9ca3af;
+    font-size:12px; padding:0 16px; font-family:inherit; background:#fff;
+    margin-bottom:10px; box-sizing:border-box;
+  }
+  .sc-classid-input:focus { outline:none; border-color:#ce4900; }
 </style>
 </head>
 <body>
@@ -473,77 +498,80 @@
 </div>
 
 <!-- ══ SCREEN 2 ══ -->
-<div class="demo-body screen" id="screen-2">
-  <div class="row g-4">
-    <div class="col-lg-7">
-      <h5 class="mb-1">Step 2 of 5 — Student Sign-In</h5>
-      <p class="text-muted small mb-3">The student opens Insight Student Client. With SSO configured, they sign in with Microsoft and their rostered class is resolved automatically from ClassLink.</p>
+<div class="screen" id="screen-2">
 
-      <!-- Insight Student Client window mockup — matches actual info.html UI -->
-      <div class="console-mockup">
+  <!-- Page title -->
+  <div class="demo-body pb-1 pt-2">
+    <h5 class="mb-1">Step 2 of 5 — Student Sign-In</h5>
+    <p class="text-muted small mb-1">Try each setup below to see how the Student Client login screen changes. Then use the live section to authenticate for real.</p>
+  </div>
 
-        <!-- Header bar: matches loginheader (#0a1424), logo hidden, window controls right -->
-        <div class="tc-header" style="padding:5px 10px 2px; justify-content:space-between">
-          <img src="/images/Insight_NXT_DarkBG.png" style="height:28px; visibility:hidden" alt="">
-          <div style="display:flex">
-            <div class="tc-winbtn"><img src="/images/window_minimize.png" style="height:16px"></div>
-            <div class="tc-winbtn"><img src="/images/window_fullscreen.png" style="height:16px"></div>
-            <div class="tc-winbtn"><img src="/images/window_close.png" style="height:16px"></div>
-          </div>
-        </div>
+  <!-- ── SCENARIO SWITCHER ── -->
+  <div class="scenario-switcher mx-3 mb-0" style="border-radius:8px 8px 0 0; border:1px solid #dee2e6; border-bottom:none;">
+    <div class="scenario-switcher-label">Try a different setup to see how the student client changes:</div>
+    <div class="scenario-pills-row" id="s2-pills-row">
+      <!-- pills injected by JS -->
+    </div>
+    <div class="scenario-card" id="s2-scenario-card">Loading…</div>
+  </div>
 
-        <!-- Login body: matches dvLoginScreen — white bg, centred insightForm -->
-        <div style="background:#fff; min-height:320px; display:flex; align-items:center; justify-content:center; padding:28px 16px;">
-          <div style="text-align:center; width:305px">
+  <!-- ── STUDENT CLIENT WINDOW ── -->
+  <div class="console-mockup mx-3 mb-3" style="border-radius:0 0 8px 8px;">
 
-            <!-- Logo: matches info.html (width:305px, insightStdTextLogoPrem) -->
-            <img src="/images/Insight_NXT_LightBG.png" style="width:305px; margin-bottom:16px" alt="Faronics Insight">
-
-            <!-- h2 message placeholder (matches #message in actual app) -->
-            <h2 style="font-size:28px; font-weight:300; color:#707070; line-height:40px; margin-bottom:20px">Sign in to join your class.</h2>
-
-            <!-- Sign-in button: matches updateAppButton style (#ce4900, 282×38, r:19) -->
-            <button id="btn-student-signin" onclick="studentSignIn()"
-                    style="background:#ce4900; border:1px solid #ce4900; color:#fff; width:282px; height:38px; border-radius:19px; font-size:12px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; margin:0 auto; font-family:inherit">
-              <svg width="16" height="16" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-              Sign in with Microsoft
-            </button>
-
-            <!-- Status + class section (shown after sign-in) -->
-            <div id="student-signin-status" class="mt-2" style="min-height:24px; font-size:12px; color:#555"></div>
-            <div id="student-class-section" style="display:none; text-align:center; margin-top:14px">
-              <div id="student-class-info" class="mb-2"></div>
-              <button id="btn-student-join"
-                      style="background:#ce4900; border:1px solid #ce4900; color:#fff; border-radius:16px; font-size:12px; font-weight:700; padding:5px 24px; cursor:pointer; font-family:inherit; text-transform:uppercase; letter-spacing:.5px">
-                GO TO CLASS
-              </button>
-            </div>
-
-          </div>
-        </div>
+    <!-- Header: dark bar, logo hidden, window controls right -->
+    <div class="tc-header" style="padding:5px 10px 2px; justify-content:space-between">
+      <img src="/images/Insight_NXT_DarkBG.png" style="height:28px; visibility:hidden" alt="">
+      <div style="display:flex">
+        <div class="tc-winbtn"><img src="/images/window_minimize.png" style="height:16px"></div>
+        <div class="tc-winbtn"><img src="/images/window_fullscreen.png" style="height:16px"></div>
+        <div class="tc-winbtn"><img src="/images/window_close.png" style="height:16px"></div>
       </div>
     </div>
 
-    <div class="col-lg-5">
-      <div class="card border-0 bg-light h-100"><div class="card-body p-3">
-        <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">What's happening</div>
-        <ol class="small text-muted ps-3" style="line-height:1.8">
-          <li>MSAL popup — sign in as a student account</li>
-          <li>Email extracted from Entra idToken</li>
-          <li>Browser calls <code>/api/classlink?op=student&amp;email=...</code></li>
-          <li>Serverless function looks up ClassLink sourcedId</li>
-          <li>Fetches <code>/students/{id}/classes</code> for enrollment</li>
-          <li>Enrolled class displayed → student clicks Go to Class</li>
-        </ol>
-        <hr class="my-2">
-        <div class="fw-bold small mb-1 text-muted text-uppercase" style="letter-spacing:.5px">Test accounts</div>
-        <div class="small text-muted">
-          <code>student1@faronicsna.onmicrosoft.com</code> → Frank Hoffman<br>
-          <code>student2@faronicsna.onmicrosoft.com</code> → Gwendolyn Price
-        </div>
-      </div></div>
+    <!-- Login body: white, centered form -->
+    <div style="background:#fff; min-height:320px; display:flex; align-items:center; justify-content:center; padding:28px 16px;">
+      <div style="text-align:center; width:305px">
+        <img src="/images/Insight_NXT_LightBG.png" style="width:305px; margin-bottom:16px" alt="Faronics Insight">
+        <h2 style="font-size:28px; font-weight:300; color:#707070; line-height:40px; margin-bottom:20px">Sign in to join your class.</h2>
+        <!-- Dynamic scenario content -->
+        <div id="s2-sim-zone" class="tc-sim-zone"></div>
+        <!-- Step dots (shown for multi-step scenarios) -->
+        <div id="s2-step-dots" class="tc-step-dots" style="display:none"></div>
+      </div>
     </div>
   </div>
+
+  <!-- Info cards -->
+  <div class="demo-body pt-1">
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card border-0 bg-light"><div class="card-body p-3">
+          <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">What's happening</div>
+          <ol class="small text-muted ps-3" style="line-height:1.8">
+            <li>MSAL Browser popup → <code>login.microsoftonline.com</code></li>
+            <li>Student signs in as a <code>@faronicsna.onmicrosoft.com</code> account</li>
+            <li>idToken returned; email extracted from Entra claims</li>
+            <li>Browser calls <code>/api/classlink?op=student&amp;email=…</code></li>
+            <li>Serverless function looks up ClassLink sourcedId</li>
+            <li>Enrolled class returned → student clicks Go to Class</li>
+          </ol>
+        </div></div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 bg-light"><div class="card-body p-3">
+          <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Test accounts</div>
+          <div class="small text-muted mb-2">
+            <code>student1@faronicsna.onmicrosoft.com</code> → Frank Hoffman<br>
+            <code>student2@faronicsna.onmicrosoft.com</code> → Gwendolyn Price
+          </div>
+          <hr class="my-2">
+          <div class="fw-bold small mb-1 text-muted text-uppercase" style="letter-spacing:.5px">Production difference</div>
+          <p class="small text-muted mb-0">In production, the Student Client receives the class ID from DFC after the teacher has started class. This demo calls ClassLink live to show what the roster lookup does.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══ SCREEN 3 ══ -->
