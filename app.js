@@ -686,13 +686,15 @@ function onStudentAuthChange() {
 function updateSummary() {
     if (state.teacher) {
         const cls = state.teacher.selectedClass;
-        document.getElementById('summary-teacher-text').innerHTML =
+        const el  = document.getElementById('summary-teacher-text');
+        if (el) el.innerHTML =
             `Teacher: <strong>${esc(state.teacher.email)}</strong>` +
             (cls ? ` — class: <strong>${esc(cls.title)}</strong>` : '');
     }
     if (state.student) {
         const cls = state.student.enrolledClass;
-        document.getElementById('summary-student-text').innerHTML =
+        const el  = document.getElementById('summary-student-text');
+        if (el) el.innerHTML =
             `Student: <strong>${esc(state.student.email)}</strong>` +
             (cls ? ` — enrolled in <strong>${esc(cls.title)}</strong>` : ' — no class found');
     }
