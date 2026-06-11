@@ -1040,11 +1040,6 @@ const SIM_SCENARIOS_S2 = [
         steps: 2
     },
     {
-        pill: 'Sign-in or Class ID',
-        card: "You can sign in with Microsoft to get your class automatically, or skip it and type your Class ID as usual.",
-        steps: 2
-    },
-    {
         pill: 'Class ID only',
         card: "No Microsoft sign-in. Enter your Class ID and optional password — this is how Insight works today without SSO.",
         steps: 1
@@ -1192,28 +1187,20 @@ function buildSimS2Html() {
             _s2ClassIdForm('s2-cid-2', 's2-sb-2', 'Enter your Class ID to join');
     }
 
-    // ── S3: SSO Preferred + auto class ──────────────────────────────────────
+    // ── S3: Standard — Class ID only ────────────────────────────────────────
     if (s === 3) {
-        if (step === 1) return _s2MsBtn('simAdvanceStepS2()') +
-            `<div class="sim-or">— or —</div>` +
-            _s2ClassIdForm('s2-cid-3', 's2-sb-3', 'Enter your Class ID');
-        if (step === 2) return _s2SignedInPill(DEMO_EMAIL) + _s2ClassResult(DEMO_CLASS);
-    }
-
-    // ── S4: Standard — Class ID only ────────────────────────────────────────
-    if (s === 4) {
         return `<label class="sim-label">Enter your Class ID</label>
-                <input id="s2-cid-4" type="text" class="sc-classid-input" placeholder="e.g. Science101"
-                       oninput="simDynamicStart('s2-cid-4','s2-sb-4')">
+                <input id="s2-cid-3" type="text" class="sc-classid-input" placeholder="e.g. Science101"
+                       oninput="simDynamicStart('s2-cid-3','s2-sb-3')">
                 <label class="sim-label">Password <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
                 <input type="password" class="sc-classid-input" placeholder="Password">
                 <div style="text-align:center">
-                  <button class="sc-join-btn" id="s2-sb-4" disabled>Join Class</button>
+                  <button class="sc-join-btn" id="s2-sb-3" disabled>Join Class</button>
                 </div>`;
     }
 
-    // ── S5: Sign-in failure ──────────────────────────────────────────────────
-    if (s === 5) {
+    // ── S4: Sign-in failure ──────────────────────────────────────────────────
+    if (s === 4) {
         if (step === 1) return _s2MsBtn('simAdvanceStepS2()') +
             `<div class="sim-grey-text" style="margin-top:8px">Your school requires Microsoft sign-in</div>`;
         if (step === 2) return `
@@ -1222,7 +1209,7 @@ function buildSimS2Html() {
             <div style="text-align:center;margin-top:8px">
               <button class="sim-link" onclick="simS2RevealClassId()">Enter Class ID instead →</button>
             </div>
-            ${simS2ClassIdVisible ? `<div class="mt-3">${_s2ClassIdForm('s2-cid-5', 's2-sb-5', 'Enter your Class ID to continue')}</div>` : ''}`;
+            ${simS2ClassIdVisible ? `<div class="mt-3">${_s2ClassIdForm('s2-cid-4', 's2-sb-4', 'Enter your Class ID to continue')}</div>` : ''}`;
         if (step === 3) return _s2SignedInPill(DEMO_EMAIL) +
             `<div class="alert alert-success py-2 px-3 mb-3" style="font-size:11px">✓ Sign-in succeeded on retry.</div>` +
             _s2ClassResult(DEMO_CLASS);
