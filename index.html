@@ -1298,19 +1298,6 @@
                             <span class="pol-tooltip-text">Automatically sign in to the Insight Student using the account currently signed in to the computer.</span>
                           </span>
                         </label>
-                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                          <input type="checkbox" class="pol-cb" id="s-auto-assign-class" onchange="polAutoAssignChange(this)">
-                          Auto-assign Class ID via Rostering
-                          <span class="pol-tooltip-wrap">
-                            <i class="fas fa-info-circle pol-info-icon" style="font-size:13px;cursor:pointer"></i>
-                            <span class="pol-tooltip-text">When enabled, the Class ID is automatically assigned via your rostering provider. Teachers will not need to manually enter or select a Class ID.</span>
-                          </span>
-                        </label>
-                        <div id="s-auto-assign-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
-                          <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                          ClassLink Rostering is not configured in Organization Settings.
-                          <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
-                        </div>
                       </div>
                       <div id="s-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                         <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
@@ -1388,13 +1375,6 @@
                       ClassLink Rostering is not configured in Organization Settings.
                       <a href="https://www.deepfreeze.com/NU/Site/OrganizationSettings" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700;margin-left:4px">Go to Organization Settings <i class="fas fa-external-link-alt" style="font-size:9px"></i></a>
                     </div>
-                  </div>
-                  <!-- Sub-options shown when rostering enabled -->
-                  <div id="s-roster-opts" style="display:none;margin-left:20px;margin-top:8px">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                      <input type="checkbox" class="pol-cb" id="s-autojoin">
-                      Auto-join rostered class — student joins without a confirmation prompt
-                    </label>
                   </div>
                 </div>
               </div>

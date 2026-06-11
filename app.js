@@ -497,7 +497,6 @@ function polStudentSignInMode(mode) {
 function polStudentRostering(cb) {
     const ssoWarn  = document.getElementById('s-roster-sso-warn');
     const orgWarn  = document.getElementById('s-roster-org-warn');
-    const opts     = document.getElementById('s-roster-opts');
     const mode     = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
     const isSso    = mode !== 'legacy';
     const clOk     = state.sync !== null;
@@ -506,7 +505,6 @@ function polStudentRostering(cb) {
         cb.checked = false;
         if (ssoWarn) ssoWarn.style.display = 'block';
         if (orgWarn) orgWarn.style.display = 'none';
-        if (opts)    opts.style.display    = 'none';
         return;
     }
     if (ssoWarn) ssoWarn.style.display = 'none';
@@ -515,19 +513,12 @@ function polStudentRostering(cb) {
     } else {
         if (orgWarn) orgWarn.style.display = 'none';
     }
-    if (opts) opts.style.display = cb.checked ? 'block' : 'none';
 }
 
 // Save validation for student policy
-function polAutoAssignChange(cb) {
-    const warn = document.getElementById('s-auto-assign-warn');
-    if (warn) warn.style.display = (cb.checked && !state.sync) ? 'block' : 'none';
-}
-
 function polSaveStudent() {
     const mode        = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
     const rosterOn    = document.getElementById('s-roster-cb')?.checked || false;
-    const autoAssign  = document.getElementById('s-auto-assign-class')?.checked || false;
     const errContainer = document.getElementById('s-save-errors');
     if (!errContainer) return;
 
@@ -540,7 +531,7 @@ function polSaveStudent() {
             link: true
         });
     }
-    if ((rosterOn || autoAssign) && !state.sync) {
+    if (rosterOn && !state.sync) {
         errors.push({
             icon: 'fas fa-sync',
             msg: 'Policy cannot be saved until ClassLink Rostering is configured in Organization Settings.',
