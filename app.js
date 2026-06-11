@@ -519,9 +519,15 @@ function polStudentRostering(cb) {
 }
 
 // Save validation for student policy
+function polAutoAssignChange(cb) {
+    const warn = document.getElementById('s-auto-assign-warn');
+    if (warn) warn.style.display = (cb.checked && !state.sync) ? 'block' : 'none';
+}
+
 function polSaveStudent() {
-    const mode     = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
-    const rosterOn = document.getElementById('s-roster-cb')?.checked || false;
+    const mode        = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
+    const rosterOn    = document.getElementById('s-roster-cb')?.checked || false;
+    const autoAssign  = document.getElementById('s-auto-assign-class')?.checked || false;
     const errContainer = document.getElementById('s-save-errors');
     if (!errContainer) return;
 
@@ -534,7 +540,7 @@ function polSaveStudent() {
             link: true
         });
     }
-    if (rosterOn && !state.sync) {
+    if ((rosterOn || autoAssign) && !state.sync) {
         errors.push({
             icon: 'fas fa-sync',
             msg: 'Policy cannot be saved until ClassLink Rostering is configured in Organization Settings.',
