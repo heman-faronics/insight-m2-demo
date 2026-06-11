@@ -287,7 +287,11 @@ function polTeacherSignInMode(mode) {
     const rosterCb   = document.getElementById('t-roster-cb');
     const rosterWarn = document.getElementById('t-roster-sso-warn');
     const ssoOrgWarn = document.getElementById('t-sso-org-warn');
+    const ssoOpts    = document.getElementById('t-sso-opts');
     const isSso      = mode !== 'standard';
+
+    // Show/hide "Use logged-in computer account" sub-option
+    if (ssoOpts) ssoOpts.style.display = isSso ? 'block' : 'none';
 
     // Disable rostering checkbox in Standard mode so it can't be clicked
     if (rosterCb) {
@@ -464,18 +468,13 @@ function polStudentSignInMode(mode) {
     const ssoWarn       = document.getElementById('s-sso-org-warn');
     const rosterCb      = document.getElementById('s-roster-cb');
     const rosterSsoWarn = document.getElementById('s-roster-sso-warn');
-    const classId       = document.getElementById('s-class-id');
+    const ssoOpts       = document.getElementById('s-sso-opts');
     const isSso         = mode !== 'legacy';
-    const isReq         = mode === 'sso_required';
 
     if (ssoWarn) ssoWarn.style.display = (isSso && !state.teacher) ? 'block' : 'none';
 
-    // SSO Required: Class ID is auto-assigned, grey it out.
-    // SSO Preferred: student can still type manually — keep it editable.
-    if (classId) {
-        classId.disabled = isReq;
-        classId.style.background = isReq ? '#f0f0f0' : '';
-    }
+    // Show/hide "Auto-assign Class ID via Rostering" sub-option
+    if (ssoOpts) ssoOpts.style.display = isSso ? 'block' : 'none';
 
     // Disable rostering checkbox in Standard mode so it can't be clicked
     if (rosterCb) {
@@ -673,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ── Policy interactivity (Screens 4 & 5) ──────────────────────────────────────
 function onTeacherAuthChange() {
     const mode  = document.querySelector('input[name="teacherAuthMode"]:checked')?.value;
-    const isSso = mode === 'sso_preferred' || mode === 'sso_required';
+    const isSso = mode === 'sso_required';
     document.getElementById('sso-info-note').style.display       = isSso ? '' : 'none';
     document.getElementById('teacher-rostering-group').style.display = isSso ? '' : 'none';
 }
@@ -780,43 +779,18 @@ let simS2ClassIdVisible = false;
 const SIM_SCENARIOS = [
     {
         pill: '★ Class roster + sign-in',
-        card: 'Your IT admin has set up Microsoft sign-in. Sign in and your classes load automatically — no need to type a Class ID.',
-        steps: 3
-    },
-    {
-        pill: 'Class roster required',
-        card: "Microsoft sign-in is required and your class list must load from ClassLink to start. If ClassLink is unavailable, you can't start class.",
+        card: 'SSO Required with ClassLink: Sign in with Microsoft and your class list loads automatically — no Class ID needed.',
         steps: 3
     },
     {
         pill: 'Sign-in only',
-        card: "Microsoft sign-in is required, but you'll still type your Class ID after signing in.",
-        steps: 2
-    },
-    {
-        pill: 'Sign-in or Class ID',
-        card: "You can sign in with Microsoft to get your class list, or skip it and type your Class ID as usual.",
-        steps: 3
-    },
-    {
-        pill: 'Sign-in or Class ID (strict)',
-        card: "Same as above, but if ClassLink is unavailable after sign-in, you won't be able to start class.",
-        steps: 3
-    },
-    {
-        pill: 'Sign-in or Class ID (no roster)',
-        card: "You can sign in with Microsoft, but your class list won't load automatically — you'll still type your Class ID.",
+        card: "SSO Required without ClassLink: Microsoft sign-in is required, but you'll still type your Class ID after signing in.",
         steps: 2
     },
     {
         pill: 'Class ID only',
-        card: "No Microsoft sign-in. Enter your Class ID and optional password as usual. This is how Insight works today.",
+        card: "Standard mode: No Microsoft sign-in. Enter your Class ID and optional password as usual.",
         steps: 1
-    },
-    {
-        pill: 'What if sign-in fails?',
-        card: "See what the teacher experiences if Microsoft sign-in fails — and what recovery options are available.",
-        steps: 3
     }
 ];
 
@@ -930,8 +904,7 @@ function _s1Step1Html() {
 
 // Simulated sign-in button (all other scenarios)
 function _msBtn(label, onclick) {
-    return `<button class="sim-ms-btn" onclick="${onclick}">${_MS_SVG} ${esc(label)}</button>
-            <div class="sim-simulated">(simulated — no real sign-in happens here)</div>`;
+    return `<button class="sim-ms-btn" onclick="${onclick}">${_MS_SVG} ${esc(label)}</button>`;
 }
 
 // Class dropdown using real ClassLink data (Scenario 1 step 2 after real sign-in)
@@ -1006,11 +979,10 @@ function buildSimHtml() {
     const s    = activeSimScenario;
     const step = activeSimStep;
 
-    // ── S1: SSO Required + Rostering + Allow Manual  (REAL auth) ────────────
+    // ── S1: SSO Required + Rostering (REAL auth) ────────────────────────────
     if (s === 1) {
         if (step === 1) return _s1Step1Html();
         if (step === 2) {
-            // Use live ClassLink data after real sign-in, else demo data
             const pill = _signedInPill();
             const dropdown = (state.teacher && state.teacher.classes && state.teacher.classes.length > 0)
                 ? _realClassDropdown(state.teacher.classes)
@@ -1022,75 +994,24 @@ function buildSimHtml() {
             _classIdEntry('Enter your Class ID to continue', 'sim-cid-1', 'sim-sb-1');
     }
 
-    // ── S2: SSO Required + Rostering + Block ────────────────────────────────
+    // ── S2: SSO Required, no Rostering ──────────────────────────────────────
     if (s === 2) {
         if (step === 1) return _msBtn('Sign in with Microsoft', 'simAdvanceStep()') +
             `<div class="sim-grey-text">Your school requires Microsoft sign-in</div>`;
-        if (step === 2) return _signedInPill() + _classDropdown(true);
-        if (step === 3) return _signedInPill() +
-            `<div class="alert alert-danger py-2 px-3 small mb-3">✕ Your class list couldn't be loaded and your school requires it to start class. Please contact your IT administrator.</div>
-             <div style="text-align:right"><button class="sim-start-btn" disabled>Start Class</button></div>`;
+        if (step === 2) return _signedInPill() +
+            _classIdEntry('Enter your Class ID to begin', 'sim-cid-2', 'sim-sb-2');
     }
 
-    // ── S3: SSO Required + No Rostering ─────────────────────────────────────
+    // ── S3: Standard — Class ID only ────────────────────────────────────────
     if (s === 3) {
-        if (step === 1) return _msBtn('Sign in with Microsoft', 'simAdvanceStep()') +
-            `<div class="sim-grey-text">Your school requires Microsoft sign-in</div>`;
-        if (step === 2) return _signedInPill() +
-            _classIdEntry('Enter your Class ID to begin', 'sim-cid-3', 'sim-sb-3');
-    }
-
-    // ── S4: SSO Preferred + Rostering + Allow Manual ────────────────────────
-    if (s === 4) {
-        if (step === 1) return _msOrClassId('simAdvanceStep()', 'sim-cid-4a', 'sim-sb-4a');
-        if (step === 2) return _signedInPill() + _classDropdown(true);
-        if (step === 3) return _signedInPill() +
-            `<div class="alert alert-warning py-2 px-3 small mb-3">⚠ Couldn't load your class list right now. Enter your Class ID to continue.</div>` +
-            _classIdEntry('Enter your Class ID to continue', 'sim-cid-4b', 'sim-sb-4b');
-    }
-
-    // ── S5: SSO Preferred + Rostering + Block ───────────────────────────────
-    if (s === 5) {
-        if (step === 1) return _msOrClassId('simAdvanceStep()', 'sim-cid-5a', 'sim-sb-5a');
-        if (step === 2) return _signedInPill() + _classDropdown(true);
-        if (step === 3) return _signedInPill() +
-            `<div class="alert alert-danger py-2 px-3 small mb-3">✕ Your class list couldn't be loaded and your school requires it to start class. Please contact your IT administrator.</div>
-             <div style="text-align:right"><button class="sim-start-btn" disabled>Start Class</button></div>`;
-    }
-
-    // ── S6: SSO Preferred + No Rostering ────────────────────────────────────
-    if (s === 6) {
-        if (step === 1) return _msOrClassId('simAdvanceStep()', 'sim-cid-6a', 'sim-sb-6a');
-        if (step === 2) return _signedInPill() +
-            _classIdEntry('Enter your Class ID to begin', 'sim-cid-6b', 'sim-sb-6b');
-    }
-
-    // ── S7: Standard — Class ID only ────────────────────────────────────────
-    if (s === 7) {
         return `<label class="sim-label">Enter your Class ID</label>
-          <input id="sim-cid-7" type="text" class="sim-input" placeholder="e.g. Science101"
-                 oninput="simDynamicStart('sim-cid-7','sim-sb-7')">
+          <input id="sim-cid-3" type="text" class="sim-input" placeholder="e.g. Science101"
+                 oninput="simDynamicStart('sim-cid-3','sim-sb-3')">
           <label class="sim-label">Password <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
           <input type="password" class="sim-input" placeholder="Password">
           <div style="text-align:right">
-            <button class="sim-start-btn" id="sim-sb-7" disabled>Start Class</button>
+            <button class="sim-start-btn" id="sim-sb-3" disabled>Start Class</button>
           </div>`;
-    }
-
-    // ── S8: Sign-in failure ──────────────────────────────────────────────────
-    if (s === 8) {
-        if (step === 1) return _msBtn('Sign in with Microsoft', 'simAdvanceStep()') +
-            `<div class="sim-grey-text">Your school requires Microsoft sign-in</div>`;
-        if (step === 2) return `
-            <div class="alert alert-danger py-2 px-3 small mb-3">✕ Couldn't sign in with Microsoft. Check your internet connection and try again.</div>
-            ${_msBtn('Try again with Microsoft', 'simAdvanceStep()')}
-            <div style="text-align:center;margin-top:8px">
-              <button class="sim-link" onclick="sim8RevealClassId()">Use Class ID instead →</button>
-            </div>
-            ${sim8ClassIdVisible ? `<div class="mt-3">${_classIdEntry('Enter your Class ID to continue', 'sim-cid-8', 'sim-sb-8')}</div>` : ''}`;
-        if (step === 3) return _signedInPill() +
-            `<div class="alert alert-success py-2 px-3 mb-3" style="font-size:11px">✓ Sign-in succeeded on retry.</div>` +
-            _classDropdown(false);
     }
 
     return '';
@@ -1210,8 +1131,7 @@ function _s2Step1Html() {
 
 // Simulated orange MS button
 function _s2MsBtn(onclick) {
-    return `<button class="sc-ms-btn" onclick="${onclick}">${_MS_SVG_16} Sign in with Microsoft</button>
-            <div class="sim-simulated">(simulated — no real sign-in happens here)</div>`;
+    return `<button class="sc-ms-btn" onclick="${onclick}">${_MS_SVG_16} Sign in with Microsoft</button>`;
 }
 
 // Class ID form styled to match student client

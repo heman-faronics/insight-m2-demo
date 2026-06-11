@@ -1024,13 +1024,20 @@
                         Standard — Class ID + optional password
                       </label>
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="radio" name="t-signin-mode" value="sso_preferred" onchange="polTeacherSignInMode('sso_preferred')">
-                        SSO Preferred — show Microsoft sign-in, allow Class ID fallback
-                      </label>
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                         <input type="radio" name="t-signin-mode" value="sso_required" onchange="polTeacherSignInMode('sso_required')">
                         SSO Required — Microsoft sign-in only
                       </label>
+                      <!-- Sub-options shown when SSO Required is selected -->
+                      <div id="t-sso-opts" style="display:none;margin-left:20px">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                          <input type="checkbox" class="pol-cb" id="t-use-computer-acct">
+                          <strong>Use logged-in computer account</strong>
+                          <span class="pol-tooltip-wrap">
+                            <i class="fas fa-info-circle pol-info-icon" style="font-size:13px;cursor:pointer"></i>
+                            <span class="pol-tooltip-text"><em>Automatically sign in to the Insight Teacher Console using the account currently signed in to the computer.</em></span>
+                          </span>
+                        </label>
+                      </div>
                       <div id="t-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                         <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
                         Microsoft Entra ID SSO is not configured in Organization Settings.
@@ -1080,7 +1087,7 @@
                     <!-- SSO required warning -->
                     <div id="t-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                       <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Preferred or Required above first.
+                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Required above first.
                     </div>
                     <!-- ClassLink not configured in Org Settings warning -->
                     <div id="t-roster-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
@@ -1090,13 +1097,16 @@
                     </div>
                   </div>
 
-                  <!-- Rostering fallback options: indented, not bold, aligned with radios -->
+                  <!-- Rostering sub-option: Allow Class List fallback -->
                   <div id="t-roster-opts" style="display:none;margin-left:20px;margin-top:8px">
-                    <div style="font-size:12px;color:#555;margin-bottom:6px">When ClassLink is unavailable:</div>
-                    <div style="display:flex;flex-direction:column;gap:5px;margin-left:0">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="manual" checked> Allow teacher to enter Class ID manually</label>
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="t-fallback" value="block"> Block teacher from starting class</label>
-                    </div>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                      <input type="checkbox" class="pol-cb" id="t-class-list-fallback">
+                      <strong>Allow Class List fallback</strong>
+                      <span class="pol-tooltip-wrap">
+                        <i class="fas fa-info-circle pol-info-icon" style="font-size:13px;cursor:pointer"></i>
+                        <span class="pol-tooltip-text">When rostering is unavailable, or for ad hoc classes, teachers can create a Class List using student email addresses to populate the Teacher Console.</span>
+                      </span>
+                    </label>
                   </div>
 
                 </div>
@@ -1165,7 +1175,7 @@
       <div class="card border-0 bg-light mb-3"><div class="card-body p-3">
         <div class="fw-bold small mb-2 text-muted text-uppercase" style="letter-spacing:.5px">Try it</div>
         <ul class="small text-muted ps-3 mb-0" style="line-height:1.9">
-          <li>Switch Sign-In Mode to SSO Preferred or Required to unlock Rostering</li>
+          <li>Switch Sign-In Mode to SSO Required to unlock Rostering</li>
           <li>Enable Rostering — then try saving to see validation</li>
           <li>Complete Screen 1 (teacher sign-in) and Screen 3 (sync) first to pass validation</li>
         </ul>
@@ -1272,16 +1282,23 @@
                     <div class="pol-row-control" style="flex-direction:column;align-items:flex-start;gap:7px">
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                         <input type="radio" name="s-auth-mode" value="legacy" checked onchange="polStudentSignInMode('legacy')">
-                        Standard — student enters Class ID manually
-                      </label>
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                        <input type="radio" name="s-auth-mode" value="sso_preferred" onchange="polStudentSignInMode('sso_preferred')">
-                        SSO Preferred — Microsoft sign-in, manual Class ID fallback
+                        Standard — based on Class ID
                       </label>
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                         <input type="radio" name="s-auth-mode" value="sso_required" onchange="polStudentSignInMode('sso_required')">
-                        SSO Required — Microsoft sign-in, Class ID assigned from roster
+                        SSO Required — Microsoft sign-in only
                       </label>
+                      <!-- Sub-options shown when SSO Required is selected -->
+                      <div id="s-sso-opts" style="display:none;margin-left:20px">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                          <input type="checkbox" class="pol-cb" id="s-auto-assign-class">
+                          <strong>Auto-assign Class ID via Rostering</strong>
+                          <span class="pol-tooltip-wrap">
+                            <i class="fas fa-info-circle pol-info-icon" style="font-size:13px;cursor:pointer"></i>
+                            <span class="pol-tooltip-text">When enabled, the Class ID is automatically assigned via your rostering provider. Teachers will not need to manually enter or select a Class ID.</span>
+                          </span>
+                        </label>
+                      </div>
                       <div id="s-sso-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                         <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
                         Microsoft Entra ID SSO is not configured in Organization Settings.
@@ -1350,7 +1367,7 @@
                     <!-- SSO required warning -->
                     <div id="s-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                       <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
-                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Preferred or Required above first.
+                      Rostering requires Microsoft sign-in. Change Sign-In Mode to SSO Required above first.
                     </div>
                     <!-- ClassLink not configured warning -->
                     <div id="s-roster-org-warn" style="display:none;padding:5px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
