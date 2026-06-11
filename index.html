@@ -1290,6 +1290,14 @@
                       </label>
                       <!-- Sub-options shown when SSO Required is selected -->
                       <div id="s-sso-opts" style="display:none;margin-left:20px">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin-bottom:6px">
+                          <input type="checkbox" class="pol-cb" id="s-use-computer-acct">
+                          Use logged-in computer account
+                          <span class="pol-tooltip-wrap">
+                            <i class="fas fa-info-circle pol-info-icon" style="font-size:13px;cursor:pointer"></i>
+                            <span class="pol-tooltip-text">Automatically sign in to the Insight Student using the account currently signed in to the computer.</span>
+                          </span>
+                        </label>
                         <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                           <input type="checkbox" class="pol-cb" id="s-auto-assign-class" onchange="polAutoAssignChange(this)">
                           Auto-assign Class ID via Rostering
@@ -1446,6 +1454,22 @@
   <div class="d-flex gap-2">
     <button class="btn btn-outline-danger btn-sm" id="btn-start-over" onclick="startOver()" style="display:none"><i class="fas fa-redo me-1"></i>Start Over</button>
     <button class="btn btn-primary btn-sm" id="btn-next" onclick="navigate(1)">Next <i class="fas fa-arrow-right ms-1"></i></button>
+  </div>
+</div>
+
+<!-- Class List Modal (placeholder — content to be defined) -->
+<div id="class-list-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:8px;width:520px;max-width:94vw;box-shadow:0 8px 32px rgba(0,0,0,.25);overflow:hidden">
+    <div style="background:#2A6DB5;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-weight:600;font-size:15px">Class List</span>
+      <button onclick="closeClassListModal()" style="background:none;border:none;color:#fff;font-size:20px;line-height:1;cursor:pointer;padding:0 4px">×</button>
+    </div>
+    <div style="padding:24px 20px 20px">
+      <p style="font-size:13px;color:#555;margin:0">Class List creation interface — to be defined.</p>
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid #e5e7eb;text-align:right">
+      <button onclick="closeClassListModal()" style="background:#2A6DB5;color:#fff;border:none;border-radius:4px;padding:7px 20px;font-size:13px;cursor:pointer">Close</button>
+    </div>
   </div>
 </div>
 

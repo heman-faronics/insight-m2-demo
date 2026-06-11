@@ -854,10 +854,25 @@ function simRefresh() {
     setTimeout(() => { sel.style.opacity = ''; }, 700);
 }
 
+function openClassListModal() {
+    const m = document.getElementById('class-list-modal');
+    if (m) { m.style.display = 'flex'; }
+}
+function closeClassListModal() {
+    const m = document.getElementById('class-list-modal');
+    if (m) { m.style.display = 'none'; }
+}
+
 function simClassChange() {
-    simClassChosen = true;
+    const sel = document.getElementById('sim-class-sel');
+    if (sel && sel.value === 'class-list') {
+        sel.value = '';
+        openClassListModal();
+        return;
+    }
+    simClassChosen = !!(sel && sel.value !== '');
     const btn = document.getElementById('sim-start');
-    if (btn) btn.disabled = false;
+    if (btn) btn.disabled = !simClassChosen;
 }
 
 function simDynamicStart(inputId, btnId) {
@@ -920,6 +935,7 @@ function _realClassDropdown(classes) {
         const cc = cls.courseCode ? ` (${cls.courseCode})` : '';
         opts += `<option value="${i}">⟳ ${esc(cls.title)}${esc(cc)} — ${cls.studentCount} student${cls.studentCount !== 1 ? 's' : ''}</option>`;
     });
+    opts += `<option value="class-list" style="color:#2E78C1">+ Add students using Class List</option>`;
     return `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
           <span class="sim-label" style="margin:0">Select your class:</span>
@@ -944,6 +960,7 @@ function _classDropdown(showFallback) {
       <option>Science Lab · Period 2 · 14 students</option>
       <option>Mathematics 101 · Period 4 · 22 students</option>
       <option>English Literature · Period 6 · 18 students</option>
+      <option value="class-list" style="color:#2E78C1">+ Add students using Class List</option>
     </select>`;
     const bar = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
       <span class="sim-label" style="margin:0">Select your class:</span>
