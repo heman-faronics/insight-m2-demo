@@ -1080,10 +1080,13 @@
 
                   <!-- Rostering enable: left-aligned, no empty label column -->
                   <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                      <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
-                      Enable ClassLink Rostering — teacher selects class from a dropdown
-                    </label>
+                    <span id="t-roster-label-wrap" class="pol-tooltip-wrap" style="display:inline-flex;align-items:center">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
+                        Enable ClassLink Rostering — teacher selects class from a dropdown
+                      </label>
+                      <span class="pol-tooltip-text" style="width:260px;white-space:normal">SSO Required must be selected as the Sign-In Mode above to enable ClassLink Rostering.</span>
+                    </span>
                     <!-- SSO required warning -->
                     <div id="t-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                       <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
@@ -1360,10 +1363,13 @@
                 <div class="pol-group-head" onclick="polToggle(this)">Rostering <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
                   <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                      <input type="checkbox" class="pol-cb" id="s-roster-cb" onchange="polStudentRostering(this)">
-                      Enable ClassLink Rostering — student joins their rostered class automatically
-                    </label>
+                    <span id="s-roster-label-wrap" class="pol-tooltip-wrap" style="display:inline-flex;align-items:center">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="checkbox" class="pol-cb" id="s-roster-cb" onchange="polStudentRostering(this)">
+                        Enable ClassLink Rostering — student joins their rostered class automatically
+                      </label>
+                      <span class="pol-tooltip-text" style="width:260px;white-space:normal">SSO Required must be selected as the Sign-In Mode above to enable ClassLink Rostering.</span>
+                    </span>
                     <!-- SSO required warning -->
                     <div id="s-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                       <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>

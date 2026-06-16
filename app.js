@@ -288,8 +288,9 @@ function polTeacherSignInMode(mode) {
     const rosterWarn = document.getElementById('t-roster-sso-warn');
     const ssoOrgWarn = document.getElementById('t-sso-org-warn');
     const ssoOpts    = document.getElementById('t-sso-opts');
-    const pwdRow     = document.getElementById('t-pwd-row');
-    const isSso      = mode !== 'standard';
+    const pwdRow         = document.getElementById('t-pwd-row');
+    const rosterLabelWrap = document.getElementById('t-roster-label-wrap');
+    const isSso          = mode !== 'standard';
 
     // Show/hide "Use logged-in computer account" sub-option
     if (ssoOpts) ssoOpts.style.display = isSso ? 'block' : 'none';
@@ -303,6 +304,9 @@ function polTeacherSignInMode(mode) {
         rosterCb.style.opacity = isSso ? '' : '0.35';
         rosterCb.style.cursor  = isSso ? '' : 'not-allowed';
     }
+
+    // Show tooltip on the disabled rostering label only when SSO is not active
+    if (rosterLabelWrap) rosterLabelWrap.className = isSso ? '' : 'pol-tooltip-wrap';
 
     // Clear the SSO warning whenever mode changes (it'll re-show if user clicks while blocked)
     if (rosterWarn) rosterWarn.style.display = 'none';
@@ -469,11 +473,12 @@ function polToggleGroup(cb, groupId) {
 
 // Student Sign-In Mode change (mirrors polTeacherSignInMode)
 function polStudentSignInMode(mode) {
-    const ssoWarn       = document.getElementById('s-sso-org-warn');
-    const rosterCb      = document.getElementById('s-roster-cb');
-    const rosterSsoWarn = document.getElementById('s-roster-sso-warn');
-    const ssoOpts       = document.getElementById('s-sso-opts');
-    const isSso         = mode !== 'legacy';
+    const ssoWarn        = document.getElementById('s-sso-org-warn');
+    const rosterCb       = document.getElementById('s-roster-cb');
+    const rosterSsoWarn  = document.getElementById('s-roster-sso-warn');
+    const ssoOpts        = document.getElementById('s-sso-opts');
+    const rosterLabelWrap = document.getElementById('s-roster-label-wrap');
+    const isSso          = mode !== 'legacy';
 
     if (ssoWarn) ssoWarn.style.display = (isSso && !state.teacher) ? 'block' : 'none';
 
@@ -486,6 +491,9 @@ function polStudentSignInMode(mode) {
         rosterCb.style.opacity = isSso ? '' : '0.35';
         rosterCb.style.cursor  = isSso ? '' : 'not-allowed';
     }
+
+    // Show tooltip on the disabled rostering label only when SSO is not active
+    if (rosterLabelWrap) rosterLabelWrap.className = isSso ? '' : 'pol-tooltip-wrap';
 
     // Clear the SSO warning whenever mode changes
     if (rosterSsoWarn) rosterSsoWarn.style.display = 'none';
