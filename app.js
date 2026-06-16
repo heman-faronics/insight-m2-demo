@@ -322,6 +322,20 @@ function polTeacherSignInMode(mode) {
     }
 }
 
+// Disable chat: auto-check and disable the two sub-options when master is checked
+function polChatDisable(cb) {
+    const sub   = ['t-chat-inter-student', 't-chat-one-way'];
+    const on    = cb.checked;
+    sub.forEach(id => {
+        const el    = document.getElementById(id);
+        const label = document.getElementById(id + '-label');
+        if (!el) return;
+        el.checked  = on ? true : el.checked;
+        el.disabled = on;
+        if (label) label.style.opacity = on ? '0.45' : '';
+    });
+}
+
 // Show/hide password field
 function polShowPwd(inputId, cb) {
     const el = document.getElementById(inputId);

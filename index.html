@@ -1082,23 +1082,25 @@
               <div class="pol-group">
                 <div class="pol-group-head" onclick="polToggle(this)">Class Chat <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
-                  <div class="dfc-note" style="margin-top:0">
-                    <i class="fas fa-info-circle" style="flex-shrink:0;margin-top:1px;color:#666"></i>
-                    <span>These options are also available to teachers in <strong>Class Settings</strong>. When enforced here via policy, they appear greyed out in the Teacher Console and cannot be changed by the teacher.</span>
-                  </div>
-                  <div style="display:flex;flex-direction:column;gap:7px;margin-top:6px">
+                  <div style="display:flex;flex-direction:column;gap:7px">
                     <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                      <input type="checkbox" class="pol-cb" id="t-chat-disable">
+                      <input type="checkbox" class="pol-cb" id="t-chat-disable" onchange="polChatDisable(this)">
                       Disable chat
                     </label>
-                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                      <input type="checkbox" class="pol-cb" id="t-chat-inter-student">
-                      Disable Inter-Student chat
-                    </label>
-                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
-                      <input type="checkbox" class="pol-cb" id="t-chat-one-way">
-                      Disable Student replies (One-way chat)
-                    </label>
+                    <div id="t-chat-sub" style="display:flex;flex-direction:column;gap:7px;margin-left:18px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer" id="t-chat-inter-student-label">
+                        <input type="checkbox" class="pol-cb" id="t-chat-inter-student">
+                        Disable Inter-Student chat
+                      </label>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer" id="t-chat-one-way-label">
+                        <input type="checkbox" class="pol-cb" id="t-chat-one-way">
+                        Disable Student replies (One-way chat)
+                      </label>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:5px;margin-top:10px;font-size:11px;color:#757575">
+                    <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                    When Class Chat is enforced in the policy, these settings will be disabled in the Teacher Console.
                   </div>
                 </div>
               </div>
