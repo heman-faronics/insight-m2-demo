@@ -288,10 +288,14 @@ function polTeacherSignInMode(mode) {
     const rosterWarn = document.getElementById('t-roster-sso-warn');
     const ssoOrgWarn = document.getElementById('t-sso-org-warn');
     const ssoOpts    = document.getElementById('t-sso-opts');
+    const pwdRow     = document.getElementById('t-pwd-row');
     const isSso      = mode !== 'standard';
 
     // Show/hide "Use logged-in computer account" sub-option
     if (ssoOpts) ssoOpts.style.display = isSso ? 'block' : 'none';
+
+    // Hide Teacher Password when SSO Required (password is unused in SSO flow)
+    if (pwdRow) pwdRow.style.display = isSso ? 'none' : '';
 
     // Disable rostering checkbox in Standard mode so it can't be clicked
     if (rosterCb) {
