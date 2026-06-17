@@ -1310,7 +1310,9 @@ function saBadge(id, cb) {
 
 function saConnectorUnlock(cb) {
     const note = document.getElementById('sa-unlock-note');
+    const warn = document.getElementById('sa-lock-warn');
     if (note) note.style.display = cb.checked ? 'flex' : 'none';
+    if (warn) warn.style.display = cb.checked ? 'none' : 'flex';
 }
 
 function saSave() {

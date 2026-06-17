@@ -1805,7 +1805,7 @@
 
             <!-- INS Cloud Connector — key new flag for this demo -->
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap;padding:4px 10px;border:1px dashed #2E78C1;border-radius:4px;background:#f0f6ff">
-              <input type="checkbox" class="pol-cb" id="sa-ins-cc" onchange="saConnectorUnlock(this)">
+              <input type="checkbox" class="pol-cb" id="sa-ins-cc" checked onchange="saConnectorUnlock(this)">
               INS Cloud Connector
             </label>
 
@@ -1830,9 +1830,13 @@
       </div>
 
       <!-- Unlock note -->
-      <div id="sa-unlock-note" style="display:none;margin-top:10px;align-items:flex-start;gap:6px;padding:8px 12px;background:#e8f0fb;border:1px solid #b8d0f0;border-radius:4px;font-size:11px;color:#1a3451">
+      <div id="sa-unlock-note" style="display:flex;margin-top:10px;align-items:flex-start;gap:6px;padding:8px 12px;background:#e8f0fb;border:1px solid #b8d0f0;border-radius:4px;font-size:11px;color:#1a3451">
         <i class="fas fa-info-circle" style="flex-shrink:0;margin-top:1px;color:#2E78C1"></i>
-        <span>INS Cloud Connector is now enabled. The Insight Connector section in Teacher and Student Policies will accept an IP address and the policy can be saved.</span>
+        <span>INS Cloud Connector is enabled. The Insight Connector section in Teacher and Student Policies will accept an IP address and the policy can be saved.</span>
+      </div>
+      <div id="sa-lock-warn" style="display:none;margin-top:10px;align-items:flex-start;gap:6px;padding:8px 12px;background:#fff3cd;border:1px solid #fcd34d;border-radius:4px;font-size:11px;color:#78350f">
+        <i class="fas fa-exclamation-triangle" style="flex-shrink:0;margin-top:1px;color:#d97706"></i>
+        <span>INS Cloud Connector is disabled. Teachers and Students will not be able to enter a Connector IP address, and any saved IP addresses will no longer apply.</span>
       </div>
 
     </div>
