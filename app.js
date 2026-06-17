@@ -17,7 +17,7 @@ const state = {
     sync:    null    // { teacherCount, classCount, syncedAt }
 };
 // All screens freely navigable — sign-in enriches data but doesn't block navigation
-const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true };
+const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true };
 
 // ── MSAL setup (v2) ────────────────────────────────────────────────────────────
 // Uses MSAL Browser v2 CDN (v3 dropped the UMD bundle so CDN use requires v2)
@@ -65,7 +65,7 @@ async function clApi(op, email) {
 // ── Screen navigation ──────────────────────────────────────────────────────────
 function navigate(delta) {
     const next = state.currentScreen + delta;
-    if (next < 1 || next > 6) return;
+    if (next < 1 || next > 7) return;
     showScreen(next);
 }
 
@@ -74,7 +74,7 @@ function showScreen(n) {
     document.getElementById(`screen-${n}`).classList.add('active');
     state.currentScreen = n;
 
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 7; i++) {
         const dot = document.getElementById(`dot-${i}`);
         const lbl = document.getElementById(`lbl-${i}`);
         const con = document.getElementById(`conn-${i}`);
@@ -106,8 +106,8 @@ function updateNav() {
     const soBtn   = document.getElementById('btn-start-over');
     const hint    = document.getElementById('footer-hint');
     backBtn.style.display = n > 1 ? '' : 'none';
-    soBtn.style.display   = n === 6 ? '' : 'none';
-    if (n === 6) { nextBtn.style.display = 'none'; return; }
+    soBtn.style.display   = n === 7 ? '' : 'none';
+    if (n === 7) { nextBtn.style.display = 'none'; return; }
     nextBtn.style.display = '';
     nextBtn.disabled = false;
     hint.textContent = '';
@@ -483,6 +483,16 @@ function polSaveTeacher() {
         });
     }
 
+    // Connector: block save if checked but no IP entered
+    const tConnectorIP = (document.getElementById('t-connector-ip')?.value || '').trim();
+    if (!tConnectorIP) {
+        errors.push({
+            icon: 'fas fa-network-wired',
+            msg: 'Policy cannot be saved. The Insight Connector IP Address is required by your organisation.',
+            link: false
+        });
+    }
+
     if (errors.length === 0) {
         errContainer.style.display = 'none';
         errContainer.innerHTML = '';
@@ -589,6 +599,16 @@ function polSaveStudent() {
             icon: 'fas fa-sync',
             msg: 'Policy cannot be saved until ClassLink Rostering is configured in Organization Settings.',
             link: true
+        });
+    }
+
+    // Connector: block save if checked but no IP entered
+    const sConnectorIP = (document.getElementById('s-connector-ip')?.value || '').trim();
+    if (!sConnectorIP) {
+        errors.push({
+            icon: 'fas fa-network-wired',
+            msg: 'Policy cannot be saved. The Insight Connector IP Address is required by your organisation.',
+            link: false
         });
     }
 
@@ -1277,4 +1297,30 @@ function buildSimS2Html() {
     }
 
     return '';
+}
+
+// ── Screen 7: Site Admin Switch helpers ────────────────────────────────────────
+
+function saBadge(id, cb) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'sa-badge ' + (cb.checked ? 'on' : 'off');
+    el.textContent = cb.checked ? 'On' : 'Off';
+}
+
+function saConnectorUnlock(cb) {
+    const note = document.getElementById('sa-unlock-note');
+    if (note) note.style.display = cb.checked ? 'flex' : 'none';
+}
+
+function saSave() {
+    const btn = document.querySelector('#screen-7 .sa-save-btn');
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = 'Saved';
+    btn.style.background = '#1a7a3f';
+    setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+    }, 2000);
 }

@@ -414,6 +414,8 @@
     <div class="d-flex flex-column align-items-center" onclick="showScreen(5)" style="cursor:pointer"><div class="step-dot" id="dot-5">5</div><div class="step-label" id="lbl-5">Teacher<br>Policy</div></div>
     <div class="step-connector mt-4" id="conn-5"></div>
     <div class="d-flex flex-column align-items-center" onclick="showScreen(6)" style="cursor:pointer"><div class="step-dot" id="dot-6">6</div><div class="step-label" id="lbl-6">Student<br>Policy</div></div>
+    <div class="step-connector mt-4" id="conn-6"></div>
+    <div class="d-flex flex-column align-items-center" onclick="showScreen(7)" style="cursor:pointer"><div class="step-dot" id="dot-7">7</div><div class="step-label" id="lbl-7">Site Admin<br>Switch</div></div>
   </div>
 </div>
 
@@ -1402,9 +1404,12 @@
                     When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay - keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
                   </div>
                   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <input type="checkbox" class="pol-cb" id="t-connector" onchange="polToggleConnector(this)">
-                    <label for="t-connector" style="font-size:12px;cursor:pointer">Use Insight Connector</label>
-                    <input type="text" class="pol-input" id="t-connector-ip" disabled placeholder="Enter Connector IP address" style="width:220px;background:#f0f0f0">
+                    <span class="pol-tooltip-wrap" style="display:inline-flex;align-items:center;gap:6px">
+                      <input type="checkbox" class="pol-cb" id="t-connector" checked disabled style="opacity:0.5;cursor:not-allowed">
+                      <label for="t-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
+                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
+                    </span>
+                    <input type="text" class="pol-input" id="t-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
                   </div>
                   <div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#757575">
@@ -1672,9 +1677,12 @@
                     When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay - keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
                   </div>
                   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <input type="checkbox" class="pol-cb" id="s-connector" onchange="polStudentConnector(this)">
-                    <label for="s-connector" style="font-size:12px;cursor:pointer">Use Insight Connector</label>
-                    <input type="text" class="pol-input" id="s-connector-ip" disabled placeholder="Enter Connector IP address" style="width:220px;background:#f0f0f0">
+                    <span class="pol-tooltip-wrap" style="display:inline-flex;align-items:center;gap:6px">
+                      <input type="checkbox" class="pol-cb" id="s-connector" checked disabled style="opacity:0.5;cursor:not-allowed">
+                      <label for="s-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
+                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
+                    </span>
+                    <input type="text" class="pol-input" id="s-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
                   </div>
                   <div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#757575">
@@ -1709,6 +1717,132 @@
         <div class="fw-bold small mb-1" style="color:#664d03"><i class="fas fa-exclamation-triangle me-1"></i>Default: Disabled</div>
         <p class="small mb-0" style="color:#664d03;line-height:1.5">New settings default to off. Configure SSO and Rostering in Organization Settings before enabling here.</p>
       </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 7 — Site Admin Switch ══ -->
+<div class="demo-body screen" id="screen-7">
+  <h5 class="mb-1">Step 7 of 7 — Site Admin: Enable INS Cloud Connector</h5>
+  <p class="text-muted small mb-3">In the DFC Site Admin portal, locate the customer site and toggle on <strong>INS Cloud Connector</strong> to unlock the feature in the Insight policy.</p>
+
+  <div class="console-mockup" style="border-radius:4px;overflow:hidden">
+    <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Site Admin</span></div>
+
+    <!-- Site Admin header (same DFC chrome) -->
+    <div style="background:#153C6C;display:flex;align-items:center;padding:0 12px;height:36px;gap:10px">
+      <span style="font-weight:800;letter-spacing:.5px;font-size:11px;color:#fff;flex-shrink:0">FARONICS CLOUD — SITE ADMIN</span>
+      <span style="flex:1"></span>
+      <span style="font-size:10px;color:#b0c8e0">nasiteadmin.deepfreeze.com</span>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div style="background:#EDF3F7;border-bottom:1px solid #d4dde6;padding:5px 14px;font-size:10px;color:#555;display:flex;align-items:center;gap:4px">
+      <span style="color:#2E78C1">Site Admin</span>
+      <i class="fas fa-chevron-right" style="font-size:8px;color:#aaa"></i>
+      <span style="color:#2E78C1">Organizations</span>
+      <i class="fas fa-chevron-right" style="font-size:8px;color:#aaa"></i>
+      <span>South Side High School</span>
+    </div>
+
+    <!-- Main content -->
+    <div style="padding:16px;background:#f4f6f8">
+
+      <!-- Site info row -->
+      <div style="background:#fff;border:1px solid #dee2e6;border-radius:4px;padding:12px 16px;margin-bottom:14px;display:flex;gap:32px;font-size:11px">
+        <div><span style="color:#888">Site Name:</span> <strong>South Side High School</strong></div>
+        <div><span style="color:#888">CRM ID:</span> <strong>100065046</strong></div>
+        <div><span style="color:#888">Plan:</span> <strong>Insight Premium</strong></div>
+        <div><span style="color:#888">Status:</span> <span style="color:#166534;font-weight:700">Active</span></div>
+      </div>
+
+      <!-- Feature toggles section -->
+      <div class="pol-group" id="sa-features-group">
+        <div class="pol-group-head" onclick="polToggle(this)" style="background:#ddd">
+          Feature Flags <i class="fas fa-chevron-down pol-collapse-icon"></i>
+        </div>
+        <div class="pol-group-body">
+          <div style="font-size:10.5px;color:#666;margin-bottom:12px">Enable or disable product features for this site. Changes take effect on next agent check-in.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px 24px">
+
+            <!-- helper macro: each feature is a label+badge -->
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-dfe" onchange="saBadge('sa-dfe-badge',this)">
+              DFE Connector
+              <span id="sa-dfe-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-dfs" onchange="saBadge('sa-dfs-badge',this)">
+              DFS Connector
+              <span id="sa-dfs-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-pure" checked onchange="saBadge('sa-pure-badge',this)">
+              Pure Cloud Sites
+              <span id="sa-pure-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#d4edda;color:#155724;border:1px solid #c3e6cb">On</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-ws" checked onchange="saBadge('sa-ws-badge',this)">
+              WebSocket
+              <span id="sa-ws-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#d4edda;color:#155724;border:1px solid #c3e6cb">On</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-ndf" onchange="saBadge('sa-ndf-badge',this)">
+              Non-DF Policy
+              <span id="sa-ndf-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-aa" onchange="saBadge('sa-aa-badge',this)">
+              Advanced Alerts
+              <span id="sa-aa-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-ins-ob" onchange="saBadge('sa-ins-ob-badge',this)">
+              INS Onboarding
+              <span id="sa-ins-ob-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
+            </label>
+
+            <!-- INS Cloud Connector — key new flag for this demo -->
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap;padding:4px 10px;border:1px dashed #2E78C1;border-radius:4px;background:#f0f6ff">
+              <input type="checkbox" class="pol-cb" id="sa-ins-cc" onchange="saBadge('sa-ins-cc-badge',this);saConnectorUnlock(this)">
+              INS Cloud Connector
+              <span id="sa-ins-cc-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-iq" checked onchange="saBadge('sa-iq-badge',this)">
+              iQ
+              <span id="sa-iq-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#d4edda;color:#155724;border:1px solid #c3e6cb">On</span>
+            </label>
+
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" class="pol-cb" id="sa-iq-pro" onchange="saBadge('sa-iq-pro-badge',this)">
+              iQ Pro
+              <span id="sa-iq-pro-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
+            </label>
+
+          </div>
+
+          <!-- Save button -->
+          <div style="margin-top:14px;display:flex;align-items:center;gap:10px">
+            <button class="sa-save-btn" onclick="saSave()" style="background:#2E78C1;color:#fff;border:none;border-radius:3px;padding:6px 18px;font-size:11px;font-weight:700;cursor:pointer">Save</button>
+            <div id="sa-save-msg" style="display:none;font-size:11px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unlock note -->
+      <div id="sa-unlock-note" style="display:none;margin-top:10px;align-items:flex-start;gap:6px;padding:8px 12px;background:#e8f0fb;border:1px solid #b8d0f0;border-radius:4px;font-size:11px;color:#1a3451">
+        <i class="fas fa-info-circle" style="flex-shrink:0;margin-top:1px;color:#2E78C1"></i>
+        <span>INS Cloud Connector is now enabled. The Insight Connector section in Teacher and Student Policies will accept an IP address and the policy can be saved.</span>
+      </div>
+
     </div>
   </div>
 </div>
