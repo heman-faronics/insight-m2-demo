@@ -936,21 +936,21 @@
   <div class="console-mockup" style="border-radius:4px;overflow:hidden">
     <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Insight → Local Connector</span></div>
 
-    <!-- Simulated DFC cloud header bar -->
-    <div style="background:#153C6C;display:flex;align-items:center;gap:0;padding:0 10px;height:36px;font-size:10px;color:#fff;gap:10px">
-      <span style="font-weight:800;letter-spacing:.5px;font-size:11px;color:#fff;margin-right:6px">FARONICS CLOUD</span>
-      <div style="flex:1;background:#1e4d8c;border-radius:3px;height:22px;display:flex;align-items:center;padding:0 8px;gap:5px;max-width:280px">
+    <!-- DFC header bar -->
+    <div style="background:#153C6C;display:flex;align-items:center;padding:0 12px;height:36px;gap:10px">
+      <span style="font-weight:800;letter-spacing:.5px;font-size:11px;color:#fff;flex-shrink:0">FARONICS CLOUD</span>
+      <div style="background:#1e4d8c;border-radius:3px;height:22px;display:flex;align-items:center;padding:0 8px;gap:5px;width:220px">
         <i class="fas fa-search" style="font-size:9px;color:#8ab4d8"></i>
         <span style="font-size:10px;color:#8ab4d8">Search</span>
       </div>
       <span style="flex:1"></span>
-      <span style="font-size:10px;color:#b0c8e0"><i class="fas fa-download" style="margin-right:4px"></i>Download Agent</span>
-      <span style="font-size:10px;color:#b0c8e0;margin-left:10px"><i class="fas fa-school" style="margin-right:4px"></i>South Side High School <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
-      <span style="font-size:10px;color:#b0c8e0;margin-left:10px">hmehta@faronics.com <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
+      <span style="font-size:10px;color:#b0c8e0;white-space:nowrap"><i class="fas fa-download" style="margin-right:4px"></i>Download Agent</span>
+      <span style="font-size:10px;color:#b0c8e0;white-space:nowrap;margin-left:8px"><i class="fas fa-school" style="margin-right:4px"></i>South Side High School <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
+      <span style="font-size:10px;color:#b0c8e0;white-space:nowrap;margin-left:8px">hmehta@faronics.com <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
     </div>
 
-    <!-- Simulated DFC nav bar -->
-    <div style="background:#1a2533;display:flex;align-items:stretch;font-size:9.5px;font-weight:700;letter-spacing:.4px;color:#9bafc0;position:relative">
+    <!-- DFC nav bar — INSIGHT item is clickable and has a dropdown -->
+    <div style="background:#1a2533;display:flex;align-items:stretch;font-size:9.5px;font-weight:700;letter-spacing:.4px;color:#9bafc0;position:relative" id="ic-nav-bar">
       <span style="padding:8px 10px;cursor:default">COMPUTERS</span>
       <span style="padding:8px 10px;cursor:default">GROUPS</span>
       <span style="padding:8px 10px;cursor:default">POLICIES</span>
@@ -959,18 +959,18 @@
       <span style="padding:8px 10px;cursor:default">IMAGING</span>
       <span style="padding:8px 10px;cursor:default">INVENTORY</span>
       <span style="padding:8px 10px;cursor:default">TICKETS</span>
-      <!-- INSIGHT — active with open dropdown indicator -->
-      <span style="padding:8px 10px;cursor:default;color:#fff;background:#0f1820;border-top:2px solid #CE4900;position:relative">INSIGHT <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
+      <!-- INSIGHT — active, clickable, dropdown attached -->
+      <div style="position:relative;display:inline-flex" id="ic-insight-wrap">
+        <span id="ic-insight-nav" onclick="toggleInsightDropdown()" style="padding:8px 10px;cursor:pointer;color:#fff;border-bottom:2px solid #2E78C1;background:#111c26;user-select:none">INSIGHT <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
+        <div id="insight-dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1D2B38;border:1px solid #2e4a61;border-top:none;box-shadow:0 6px 16px rgba(0,0,0,.4);z-index:200;min-width:160px">
+          <div onclick="toggleInsightDropdown()" style="padding:10px 18px;cursor:pointer;color:#fff;background:#1a3451;font-size:10px;font-weight:700;letter-spacing:.4px;border-left:3px solid #2E78C1">LOCAL CONNECTOR</div>
+        </div>
+      </div>
       <span style="padding:8px 10px;cursor:default">USAGE STATS</span>
       <span style="padding:8px 10px;cursor:default">MDM</span>
       <span style="padding:8px 10px;cursor:default">REPORTS</span>
       <span style="padding:8px 10px;cursor:default">OTHERS</span>
       <span style="padding:8px 10px;cursor:default">IQ</span>
-    </div>
-    <!-- Dropdown from INSIGHT menu (shown open, positioned under INSIGHT) -->
-    <div style="background:#1e2d3d;border-top:1px solid #2e4a61;display:flex;font-size:10px;font-weight:700;letter-spacing:.4px;color:#9bafc0;padding:0 0 0 340px">
-      <span style="padding:9px 18px;cursor:default">MANAGE SCHEDULES</span>
-      <span style="padding:9px 18px;cursor:default;color:#fff;background:#CE4900;border-radius:0">LOCAL CONNECTOR</span>
     </div>
 
     <!-- Breadcrumb -->
@@ -986,152 +986,187 @@
       <!-- Page header row -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
         <div>
-          <div style="font-size:13px;font-weight:700;color:#CE4900;margin-bottom:4px">Insight Local Connector</div>
-          <div style="font-size:11px;color:#555;max-width:680px;line-height:1.6">
+          <div style="font-size:13px;font-weight:700;color:#2E3A40;margin-bottom:4px">Insight Local Connector</div>
+          <div style="font-size:11px;color:#555;max-width:640px;line-height:1.6">
             When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay — keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
           </div>
         </div>
         <button style="background:#2E78C1;color:#fff;border:none;border-radius:3px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:16px"><i class="fas fa-download" style="margin-right:5px"></i>DOWNLOAD CONNECTOR</button>
       </div>
 
-      <!-- Demo toggle pill -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:6px 12px;background:#fff3e0;border:1px solid #ffb74d;border-radius:4px;font-size:11px;color:#7c4a00;width:fit-content">
-        <i class="fas fa-flask" style="font-size:11px"></i>
-        <span>Demo: </span>
+      <!-- Demo toggle -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:6px 12px;background:#e8f0fb;border:1px solid #b8d0f0;border-radius:4px;font-size:11px;color:#1a3451;width:fit-content">
+        <i class="fas fa-flask" style="font-size:11px;color:#2E78C1"></i>
+        <span style="font-weight:600">Demo:</span>
         <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin:0">
           <input type="checkbox" id="ic-demo-toggle" onchange="toggleICView(this)">
           <span>Show installed connector</span>
         </label>
       </div>
 
-      <!-- EMPTY STATE: illustration shown by default -->
-      <div id="ic-empty-state">
-        <div style="background:#fff;border:1px solid #dee2e6;border-radius:4px;padding:30px;text-align:center">
-          <!-- SVG Illustration: Cloud → Connector → Workstations -->
-          <svg width="560" height="340" viewBox="0 0 560 340" style="max-width:100%;display:block;margin:0 auto" font-family="Arial,sans-serif">
-            <!-- Background -->
-            <rect width="560" height="340" rx="6" fill="#dce9f5"/>
-
-            <!-- Internet zone label -->
-            <text x="460" y="98" font-size="9" fill="#555" letter-spacing="1" font-weight="700">INTERNET</text>
-            <line x1="220" y1="102" x2="540" y2="102" stroke="#aac4d8" stroke-width="1"/>
-
-            <!-- Internal network zone label -->
-            <text x="430" y="172" font-size="9" fill="#555" letter-spacing="1" font-weight="700">INTERNAL NETWORK</text>
-            <line x1="220" y1="176" x2="540" y2="176" stroke="#aac4d8" stroke-width="1"/>
-
-            <!-- Cloud shape (top) -->
-            <ellipse cx="280" cy="44" rx="52" ry="28" fill="#153C6C"/>
-            <ellipse cx="254" cy="54" rx="30" ry="20" fill="#153C6C"/>
-            <ellipse cx="306" cy="54" rx="30" ry="20" fill="#153C6C"/>
-            <rect x="232" y="54" width="96" height="22" fill="#153C6C"/>
-            <text x="280" y="46" text-anchor="middle" font-size="7.5" font-weight="700" fill="#fff" letter-spacing=".5">FARONICS CLOUD</text>
-            <text x="280" y="57" text-anchor="middle" font-size="7.5" font-weight="700" fill="#fff" letter-spacing=".5">CONSOLE</text>
-
-            <!-- Dashed line: Cloud → Connector (through internet) -->
-            <line x1="280" y1="76" x2="280" y2="132" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
-
-            <!-- Server/Connector icon -->
-            <rect x="254" y="132" width="52" height="60" rx="4" fill="#2A6DB5"/>
-            <rect x="259" y="138" width="42" height="8" rx="2" fill="#1a4d8c"/>
-            <rect x="259" y="150" width="42" height="8" rx="2" fill="#1a4d8c"/>
-            <rect x="259" y="162" width="42" height="8" rx="2" fill="#1a4d8c"/>
-            <circle cx="292" cy="142" r="2" fill="#4fc3f7"/>
-            <circle cx="292" cy="154" r="2" fill="#81c784"/>
-            <circle cx="292" cy="166" r="2" fill="#81c784"/>
-            <text x="280" y="206" text-anchor="middle" font-size="7.5" font-weight="700" fill="#2E3A40" letter-spacing=".3">INSIGHT LOCAL</text>
-            <text x="280" y="216" text-anchor="middle" font-size="7.5" font-weight="700" fill="#2E3A40" letter-spacing=".3">CONNECTOR</text>
-
-            <!-- Dashed lines: Connector → 4 workstations -->
-            <line x1="270" y1="192" x2="90" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
-            <line x1="276" y1="192" x2="200" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
-            <line x1="284" y1="192" x2="360" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
-            <line x1="290" y1="192" x2="470" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
-
-            <!-- Workstation 1 -->
-            <rect x="60" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
-            <rect x="65" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
-            <!-- Bear face placeholder -->
-            <circle cx="90" cy="268" r="10" fill="#4a90d9"/>
-            <rect x="65" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
-            <text x="90" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">TEACHER</text>
-            <text x="90" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION</text>
-
-            <!-- Workstation 2 -->
-            <rect x="170" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
-            <rect x="175" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
-            <circle cx="200" cy="268" r="10" fill="#4a90d9"/>
-            <rect x="175" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
-            <text x="200" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">STUDENT</text>
-            <text x="200" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION 1</text>
-
-            <!-- Workstation 3 -->
-            <rect x="330" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
-            <rect x="335" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
-            <circle cx="360" cy="268" r="10" fill="#4a90d9"/>
-            <rect x="335" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
-            <text x="360" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">STUDENT</text>
-            <text x="360" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION 2</text>
-
-            <!-- Workstation 4 -->
-            <rect x="440" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
-            <rect x="445" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
-            <circle cx="470" cy="268" r="10" fill="#4a90d9"/>
-            <rect x="445" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
-            <text x="470" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">STUDENT</text>
-            <text x="470" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION 3</text>
-          </svg>
-          <div style="margin-top:12px;font-size:11px;color:#888">No Insight Local Connector installed.</div>
-        </div>
-        <!-- Offline note at bottom -->
-        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;font-size:10.5px;color:#555;width:fit-content">
-          <i class="fas fa-info-circle" style="color:#888"></i>
-          The Connector is considered Offline if it does not report back for more than 5 minutes.
-        </div>
+      <!-- Grid — always visible -->
+      <div style="background:#fff;border:1px solid #dee2e6;border-radius:4px;overflow:hidden;margin-bottom:16px">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="background:#2A6DB5;color:#fff">
+              <th style="padding:8px 12px;font-weight:700;text-align:left">Computer Name</th>
+              <th style="padding:8px 12px;font-weight:700;text-align:left">IP Address</th>
+              <th style="padding:8px 12px;font-weight:700;text-align:left">Version</th>
+              <th style="padding:8px 12px;font-weight:700;text-align:left">Status</th>
+              <th style="padding:8px 12px;font-weight:700;text-align:left">Last Reported</th>
+              <th style="padding:8px 12px;font-weight:700;text-align:left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Empty row — shown when no connector installed -->
+            <tr id="ic-empty-row">
+              <td colspan="6" style="padding:14px 12px;text-align:center;color:#888;font-style:italic">No Local Connector installed.</td>
+            </tr>
+            <!-- Data row — shown when demo toggle is on -->
+            <tr id="ic-data-row" style="display:none;border-bottom:1px solid #eee">
+              <td style="padding:9px 12px;font-weight:600;color:#2E3A40">INSIGHT-RELAY-01</td>
+              <td style="padding:9px 12px;color:#555">192.168.1.50</td>
+              <td style="padding:9px 12px">
+                <span style="color:#b45309;font-weight:600">6.16.2026 <span style="font-size:10px">(outdated)</span></span>
+              </td>
+              <td style="padding:9px 12px">
+                <span style="display:inline-flex;align-items:center;gap:4px;background:#dcfce7;color:#166534;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700">
+                  <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block"></span>Online
+                </span>
+              </td>
+              <td style="padding:9px 12px;color:#555">2 minutes ago</td>
+              <td style="padding:9px 12px">
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button onclick="this.textContent='Restarting…';setTimeout(()=>this.textContent='Restart Service',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Restart Service</button>
+                  <button onclick="this.textContent='Collecting…';setTimeout(()=>this.textContent='Collect Logs',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Collect Logs</button>
+                  <button onclick="this.textContent='Updating…';setTimeout(()=>{this.textContent='Updated ✓';this.style.background='#dcfce7';this.style.borderColor='#86efac';this.style.color='#166534'},2000)" style="background:#2A6DB5;border:1px solid #2A6DB5;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#fff;font-weight:600">Update</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <!-- TABLE STATE: shown when demo toggle is on -->
-      <div id="ic-table-state" style="display:none">
-        <div style="background:#fff;border:1px solid #dee2e6;border-radius:4px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse;font-size:11px">
-            <thead>
-              <tr style="background:#2A6DB5;color:#fff">
-                <th style="padding:8px 12px;font-weight:700;text-align:left">Computer Name</th>
-                <th style="padding:8px 12px;font-weight:700;text-align:left">IP Address</th>
-                <th style="padding:8px 12px;font-weight:700;text-align:left">Version</th>
-                <th style="padding:8px 12px;font-weight:700;text-align:left">Status</th>
-                <th style="padding:8px 12px;font-weight:700;text-align:left">Last Reported</th>
-                <th style="padding:8px 12px;font-weight:700;text-align:left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid #eee">
-                <td style="padding:9px 12px;font-weight:600;color:#2E3A40">INSIGHT-RELAY-01</td>
-                <td style="padding:9px 12px;color:#555">192.168.1.50</td>
-                <td style="padding:9px 12px">
-                  <span style="color:#d97706;font-weight:600">6.16.2026 <span style="font-size:10px">(outdated)</span></span>
-                </td>
-                <td style="padding:9px 12px">
-                  <span style="display:inline-flex;align-items:center;gap:4px;background:#dcfce7;color:#166534;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700">
-                    <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block"></span>Online
-                  </span>
-                </td>
-                <td style="padding:9px 12px;color:#555">2 minutes ago</td>
-                <td style="padding:9px 12px">
-                  <div style="display:flex;gap:6px;flex-wrap:wrap">
-                    <button onclick="this.textContent='Restarting…';setTimeout(()=>this.textContent='Restart Service',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Restart Service</button>
-                    <button onclick="this.textContent='Collecting…';setTimeout(()=>this.textContent='Collect Logs',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Collect Logs</button>
-                    <button onclick="this.textContent='Updating…';setTimeout(()=>{this.textContent='Updated ✓';this.style.background='#dcfce7';this.style.borderColor='#86efac'},2000)" style="background:#2A6DB5;border:1px solid #2A6DB5;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#fff;font-weight:600">Update</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;font-size:10.5px;color:#555;width:fit-content">
-          <i class="fas fa-info-circle" style="color:#888"></i>
-          The Connector is considered Offline if it does not report back for more than 5 minutes.
-        </div>
+      <!-- Offline note -->
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;padding:6px 10px;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;font-size:10.5px;color:#555;width:fit-content">
+        <i class="fas fa-info-circle" style="color:#888"></i>
+        The Connector is considered Offline if it does not report back for more than 5 minutes.
+      </div>
+
+      <!-- Illustration — shown when no connector installed -->
+      <div id="ic-illustration">
+        <svg width="600" height="310" viewBox="0 0 600 310" style="max-width:100%;display:block;margin:0 auto;border-radius:6px" font-family="Arial,sans-serif">
+          <!-- Background -->
+          <rect width="600" height="310" rx="6" fill="#dce9f5"/>
+
+          <!-- INTERNET zone -->
+          <line x1="16" y1="96" x2="584" y2="96" stroke="#aac4d8" stroke-width="1"/>
+          <text x="576" y="92" font-size="8" fill="#777" letter-spacing="1.2" font-weight="700" text-anchor="end">INTERNET</text>
+
+          <!-- INTERNAL NETWORK zone -->
+          <line x1="16" y1="198" x2="584" y2="198" stroke="#aac4d8" stroke-width="1"/>
+          <text x="584" y="194" font-size="8" fill="#777" letter-spacing="1.2" font-weight="700" text-anchor="end">INTERNAL NETWORK</text>
+
+          <!-- Cloud shape: DEEP FREEZE CLOUD CONSOLE -->
+          <circle cx="300" cy="32" r="26" fill="#153C6C"/>
+          <circle cx="270" cy="43" r="19" fill="#153C6C"/>
+          <circle cx="330" cy="43" r="19" fill="#153C6C"/>
+          <circle cx="248" cy="54" r="13" fill="#153C6C"/>
+          <circle cx="352" cy="54" r="13" fill="#153C6C"/>
+          <rect x="237" y="54" width="126" height="16" fill="#153C6C"/>
+          <text x="300" y="38" text-anchor="middle" font-size="8" font-weight="700" fill="#fff" letter-spacing=".6">DEEP FREEZE</text>
+          <text x="300" y="51" text-anchor="middle" font-size="8" font-weight="700" fill="#fff" letter-spacing=".6">CLOUD CONSOLE</text>
+
+          <!-- Cloud → Server dashed line -->
+          <line x1="300" y1="70" x2="300" y2="116" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+          <!-- Server rack icon -->
+          <rect x="274" y="116" width="52" height="58" rx="3" fill="#2A6DB5"/>
+          <rect x="279" y="122" width="42" height="9" rx="1.5" fill="#1a4d8c"/>
+          <rect x="279" y="135" width="42" height="9" rx="1.5" fill="#1a4d8c"/>
+          <rect x="279" y="148" width="42" height="9" rx="1.5" fill="#1a4d8c"/>
+          <rect x="279" y="161" width="42" height="9" rx="1.5" fill="#1a4d8c"/>
+          <circle cx="313" cy="126.5" r="2" fill="#4fc3f7"/>
+          <circle cx="313" cy="139.5" r="2" fill="#81c784"/>
+          <circle cx="313" cy="152.5" r="2" fill="#81c784"/>
+          <circle cx="313" cy="165.5" r="2" fill="#aaa"/>
+          <text x="300" y="188" text-anchor="middle" font-size="7.5" font-weight="700" fill="#2E3A40" letter-spacing=".3">INSIGHT LOCAL CONNECTOR</text>
+
+          <!-- Server → 4 workstations dashed lines -->
+          <line x1="292" y1="174" x2="75"  y2="212" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <line x1="297" y1="174" x2="225" y2="212" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <line x1="303" y1="174" x2="375" y2="212" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <line x1="308" y1="174" x2="525" y2="212" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+          <!-- ── WORKSTATION MACRO (repeated 4×) ──
+               Each: monitor body, screen, owl logo (ears+eyes+beak), stand, label
+               Centers: cx = 75, 225, 375, 525  screen top: y=212 -->
+
+          <!-- WS 1 — Teacher (cx=75) -->
+          <rect x="52"  y="212" width="46" height="36" rx="2" fill="#2A6DB5"/>
+          <rect x="55"  y="215" width="40" height="26" rx="1" fill="#1e3a6e"/>
+          <!-- owl ears -->
+          <polygon points="66,218  63,212  69,212" fill="#fff"/>
+          <polygon points="84,218  81,212  87,212" fill="#fff"/>
+          <!-- owl eyes -->
+          <circle cx="68" cy="225" r="5"  fill="#fff"/>
+          <circle cx="82" cy="225" r="5"  fill="#fff"/>
+          <circle cx="68" cy="225" r="2"  fill="#1e3a6e"/>
+          <circle cx="82" cy="225" r="2"  fill="#1e3a6e"/>
+          <!-- owl beak -->
+          <polygon points="75,229  72,234  78,234" fill="#fff"/>
+          <!-- stand -->
+          <rect x="69"  y="248" width="12" height="9"  rx="1" fill="#2A6DB5"/>
+          <rect x="62"  y="257" width="26" height="5"  rx="1" fill="#1a4d8c"/>
+          <!-- label -->
+          <text x="75"  y="272" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">TEACHER</text>
+          <text x="75"  y="281" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">WORKSTATION</text>
+
+          <!-- WS 2 — Student 1 (cx=225) -->
+          <rect x="202" y="212" width="46" height="36" rx="2" fill="#2A6DB5"/>
+          <rect x="205" y="215" width="40" height="26" rx="1" fill="#1e3a6e"/>
+          <polygon points="216,218  213,212  219,212" fill="#fff"/>
+          <polygon points="234,218  231,212  237,212" fill="#fff"/>
+          <circle cx="218" cy="225" r="5"  fill="#fff"/>
+          <circle cx="232" cy="225" r="5"  fill="#fff"/>
+          <circle cx="218" cy="225" r="2"  fill="#1e3a6e"/>
+          <circle cx="232" cy="225" r="2"  fill="#1e3a6e"/>
+          <polygon points="225,229  222,234  228,234" fill="#fff"/>
+          <rect x="219" y="248" width="12" height="9"  rx="1" fill="#2A6DB5"/>
+          <rect x="212" y="257" width="26" height="5"  rx="1" fill="#1a4d8c"/>
+          <text x="225" y="272" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">STUDENT</text>
+          <text x="225" y="281" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">WORKSTATION 1</text>
+
+          <!-- WS 3 — Student 2 (cx=375) -->
+          <rect x="352" y="212" width="46" height="36" rx="2" fill="#2A6DB5"/>
+          <rect x="355" y="215" width="40" height="26" rx="1" fill="#1e3a6e"/>
+          <polygon points="366,218  363,212  369,212" fill="#fff"/>
+          <polygon points="384,218  381,212  387,212" fill="#fff"/>
+          <circle cx="368" cy="225" r="5"  fill="#fff"/>
+          <circle cx="382" cy="225" r="5"  fill="#fff"/>
+          <circle cx="368" cy="225" r="2"  fill="#1e3a6e"/>
+          <circle cx="382" cy="225" r="2"  fill="#1e3a6e"/>
+          <polygon points="375,229  372,234  378,234" fill="#fff"/>
+          <rect x="369" y="248" width="12" height="9"  rx="1" fill="#2A6DB5"/>
+          <rect x="362" y="257" width="26" height="5"  rx="1" fill="#1a4d8c"/>
+          <text x="375" y="272" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">STUDENT</text>
+          <text x="375" y="281" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">WORKSTATION 2</text>
+
+          <!-- WS 4 — Student 3 (cx=525) -->
+          <rect x="502" y="212" width="46" height="36" rx="2" fill="#2A6DB5"/>
+          <rect x="505" y="215" width="40" height="26" rx="1" fill="#1e3a6e"/>
+          <polygon points="516,218  513,212  519,212" fill="#fff"/>
+          <polygon points="534,218  531,212  537,212" fill="#fff"/>
+          <circle cx="518" cy="225" r="5"  fill="#fff"/>
+          <circle cx="532" cy="225" r="5"  fill="#fff"/>
+          <circle cx="518" cy="225" r="2"  fill="#1e3a6e"/>
+          <circle cx="532" cy="225" r="2"  fill="#1e3a6e"/>
+          <polygon points="525,229  522,234  528,234" fill="#fff"/>
+          <rect x="519" y="248" width="12" height="9"  rx="1" fill="#2A6DB5"/>
+          <rect x="512" y="257" width="26" height="5"  rx="1" fill="#1a4d8c"/>
+          <text x="525" y="272" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">STUDENT</text>
+          <text x="525" y="281" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40">WORKSTATION 3</text>
+        </svg>
       </div>
 
     </div>

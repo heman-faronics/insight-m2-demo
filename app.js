@@ -338,8 +338,29 @@ function polChatDisable(cb) {
 
 // Insight Local Connector demo toggle
 function toggleICView(cb) {
-    document.getElementById('ic-empty-state').style.display = cb.checked ? 'none' : '';
-    document.getElementById('ic-table-state').style.display  = cb.checked ? ''     : 'none';
+    const emptyRow = document.getElementById('ic-empty-row');
+    const dataRow  = document.getElementById('ic-data-row');
+    const illus    = document.getElementById('ic-illustration');
+    if (emptyRow) emptyRow.style.display = cb.checked ? 'none' : '';
+    if (dataRow)  dataRow.style.display  = cb.checked ? ''     : 'none';
+    if (illus)    illus.style.display    = cb.checked ? 'none' : '';
+}
+
+// INSIGHT nav dropdown toggle
+function toggleInsightDropdown() {
+    const dd   = document.getElementById('insight-dropdown');
+    const open = dd.style.display !== 'none';
+    dd.style.display = open ? 'none' : 'block';
+    if (!open) {
+        setTimeout(() => {
+            document.addEventListener('click', function closeDD(e) {
+                if (!document.getElementById('ic-insight-wrap').contains(e.target)) {
+                    dd.style.display = 'none';
+                    document.removeEventListener('click', closeDD);
+                }
+            });
+        }, 0);
+    }
 }
 
 // Show/hide password field
