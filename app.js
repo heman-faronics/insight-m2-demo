@@ -17,7 +17,7 @@ const state = {
     sync:    null    // { teacherCount, classCount, syncedAt }
 };
 // All screens freely navigable — sign-in enriches data but doesn't block navigation
-const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true };
+const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true };
 
 // ── MSAL setup (v2) ────────────────────────────────────────────────────────────
 // Uses MSAL Browser v2 CDN (v3 dropped the UMD bundle so CDN use requires v2)
@@ -65,7 +65,7 @@ async function clApi(op, email) {
 // ── Screen navigation ──────────────────────────────────────────────────────────
 function navigate(delta) {
     const next = state.currentScreen + delta;
-    if (next < 1 || next > 5) return;
+    if (next < 1 || next > 6) return;
     showScreen(next);
 }
 
@@ -74,7 +74,7 @@ function showScreen(n) {
     document.getElementById(`screen-${n}`).classList.add('active');
     state.currentScreen = n;
 
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 6; i++) {
         const dot = document.getElementById(`dot-${i}`);
         const lbl = document.getElementById(`lbl-${i}`);
         const con = document.getElementById(`conn-${i}`);
@@ -86,11 +86,11 @@ function showScreen(n) {
         if (i > n)  { dot.textContent = i; }
     }
 
-    if (n === 4) {
+    if (n === 5) {
         const tMode = document.querySelector('input[name="t-signin-mode"]:checked')?.value || 'standard';
         polTeacherSignInMode(tMode);
     }
-    if (n === 5) {
+    if (n === 6) {
         updateSummary();
         const sMode = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
         polStudentSignInMode(sMode);
@@ -106,8 +106,8 @@ function updateNav() {
     const soBtn   = document.getElementById('btn-start-over');
     const hint    = document.getElementById('footer-hint');
     backBtn.style.display = n > 1 ? '' : 'none';
-    soBtn.style.display   = n === 5 ? '' : 'none';
-    if (n === 5) { nextBtn.style.display = 'none'; return; }
+    soBtn.style.display   = n === 6 ? '' : 'none';
+    if (n === 6) { nextBtn.style.display = 'none'; return; }
     nextBtn.style.display = '';
     nextBtn.disabled = false;
     hint.textContent = '';
@@ -334,6 +334,12 @@ function polChatDisable(cb) {
         el.disabled = on;
         if (label) label.style.opacity = on ? '0.45' : '';
     });
+}
+
+// Insight Local Connector demo toggle
+function toggleICView(cb) {
+    document.getElementById('ic-empty-state').style.display = cb.checked ? 'none' : '';
+    document.getElementById('ic-table-state').style.display  = cb.checked ? ''     : 'none';
 }
 
 // Show/hide password field

@@ -409,9 +409,11 @@
     <div class="step-connector mt-4" id="conn-2"></div>
     <div class="d-flex flex-column align-items-center" onclick="showScreen(3)" style="cursor:pointer"><div class="step-dot" id="dot-3">3</div><div class="step-label" id="lbl-3">DFC Org<br>Settings</div></div>
     <div class="step-connector mt-4" id="conn-3"></div>
-    <div class="d-flex flex-column align-items-center" onclick="showScreen(4)" style="cursor:pointer"><div class="step-dot" id="dot-4">4</div><div class="step-label" id="lbl-4">Teacher<br>Policy</div></div>
+    <div class="d-flex flex-column align-items-center" onclick="showScreen(4)" style="cursor:pointer"><div class="step-dot" id="dot-4">4</div><div class="step-label" id="lbl-4">Local<br>Connector</div></div>
     <div class="step-connector mt-4" id="conn-4"></div>
-    <div class="d-flex flex-column align-items-center" onclick="showScreen(5)" style="cursor:pointer"><div class="step-dot" id="dot-5">5</div><div class="step-label" id="lbl-5">Student<br>Policy</div></div>
+    <div class="d-flex flex-column align-items-center" onclick="showScreen(5)" style="cursor:pointer"><div class="step-dot" id="dot-5">5</div><div class="step-label" id="lbl-5">Teacher<br>Policy</div></div>
+    <div class="step-connector mt-4" id="conn-5"></div>
+    <div class="d-flex flex-column align-items-center" onclick="showScreen(6)" style="cursor:pointer"><div class="step-dot" id="dot-6">6</div><div class="step-label" id="lbl-6">Student<br>Policy</div></div>
   </div>
 </div>
 
@@ -926,9 +928,219 @@
   </div>
 </div>
 
-<!-- ══ SCREEN 4 ══ -->
+<!-- ══ SCREEN 4 — Insight Local Connector ══ -->
 <div class="demo-body screen" id="screen-4">
-  <h5 class="mb-1">Step 4 of 5 — Admin: Insight Policy — Teacher Settings</h5>
+  <h5 class="mb-1">Step 4 of 6 — Admin: Insight Local Connector</h5>
+  <p class="text-muted small mb-3">Navigate to <strong>Insight → Local Connector</strong> in the DFC Cloud Console to manage Insight Local Connectors on your network.</p>
+
+  <div class="console-mockup" style="border-radius:4px;overflow:hidden">
+    <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Insight → Local Connector</span></div>
+
+    <!-- Simulated DFC cloud header bar -->
+    <div style="background:#153C6C;display:flex;align-items:center;gap:0;padding:0 10px;height:36px;font-size:10px;color:#fff;gap:10px">
+      <span style="font-weight:800;letter-spacing:.5px;font-size:11px;color:#fff;margin-right:6px">FARONICS CLOUD</span>
+      <div style="flex:1;background:#1e4d8c;border-radius:3px;height:22px;display:flex;align-items:center;padding:0 8px;gap:5px;max-width:280px">
+        <i class="fas fa-search" style="font-size:9px;color:#8ab4d8"></i>
+        <span style="font-size:10px;color:#8ab4d8">Search</span>
+      </div>
+      <span style="flex:1"></span>
+      <span style="font-size:10px;color:#b0c8e0"><i class="fas fa-download" style="margin-right:4px"></i>Download Agent</span>
+      <span style="font-size:10px;color:#b0c8e0;margin-left:10px"><i class="fas fa-school" style="margin-right:4px"></i>South Side High School <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
+      <span style="font-size:10px;color:#b0c8e0;margin-left:10px">hmehta@faronics.com <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
+    </div>
+
+    <!-- Simulated DFC nav bar -->
+    <div style="background:#1a2533;display:flex;align-items:stretch;font-size:9.5px;font-weight:700;letter-spacing:.4px;color:#9bafc0;position:relative">
+      <span style="padding:8px 10px;cursor:default">COMPUTERS</span>
+      <span style="padding:8px 10px;cursor:default">GROUPS</span>
+      <span style="padding:8px 10px;cursor:default">POLICIES</span>
+      <span style="padding:8px 10px;cursor:default">APPLICATIONS</span>
+      <span style="padding:8px 10px;cursor:default">WINDOWS UPDATES</span>
+      <span style="padding:8px 10px;cursor:default">IMAGING</span>
+      <span style="padding:8px 10px;cursor:default">INVENTORY</span>
+      <span style="padding:8px 10px;cursor:default">TICKETS</span>
+      <!-- INSIGHT — active with open dropdown indicator -->
+      <span style="padding:8px 10px;cursor:default;color:#fff;background:#0f1820;border-top:2px solid #CE4900;position:relative">INSIGHT <i class="fas fa-caret-down" style="font-size:8px;margin-left:2px"></i></span>
+      <span style="padding:8px 10px;cursor:default">USAGE STATS</span>
+      <span style="padding:8px 10px;cursor:default">MDM</span>
+      <span style="padding:8px 10px;cursor:default">REPORTS</span>
+      <span style="padding:8px 10px;cursor:default">OTHERS</span>
+      <span style="padding:8px 10px;cursor:default">IQ</span>
+    </div>
+    <!-- Dropdown from INSIGHT menu (shown open, positioned under INSIGHT) -->
+    <div style="background:#1e2d3d;border-top:1px solid #2e4a61;display:flex;font-size:10px;font-weight:700;letter-spacing:.4px;color:#9bafc0;padding:0 0 0 340px">
+      <span style="padding:9px 18px;cursor:default">MANAGE SCHEDULES</span>
+      <span style="padding:9px 18px;cursor:default;color:#fff;background:#CE4900;border-radius:0">LOCAL CONNECTOR</span>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div style="background:#EDF3F7;border-bottom:1px solid #d4dde6;padding:5px 14px;font-size:10px;color:#555;display:flex;align-items:center;gap:4px">
+      <span style="color:#2E78C1">Insight</span>
+      <i class="fas fa-chevron-right" style="font-size:8px;color:#aaa"></i>
+      <span>Local Connector</span>
+    </div>
+
+    <!-- Main content area -->
+    <div style="padding:16px;background:#f4f6f8;min-height:400px">
+
+      <!-- Page header row -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#CE4900;margin-bottom:4px">Insight Local Connector</div>
+          <div style="font-size:11px;color:#555;max-width:680px;line-height:1.6">
+            When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay — keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
+          </div>
+        </div>
+        <button style="background:#2E78C1;color:#fff;border:none;border-radius:3px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:16px"><i class="fas fa-download" style="margin-right:5px"></i>DOWNLOAD CONNECTOR</button>
+      </div>
+
+      <!-- Demo toggle pill -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:6px 12px;background:#fff3e0;border:1px solid #ffb74d;border-radius:4px;font-size:11px;color:#7c4a00;width:fit-content">
+        <i class="fas fa-flask" style="font-size:11px"></i>
+        <span>Demo: </span>
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin:0">
+          <input type="checkbox" id="ic-demo-toggle" onchange="toggleICView(this)">
+          <span>Show installed connector</span>
+        </label>
+      </div>
+
+      <!-- EMPTY STATE: illustration shown by default -->
+      <div id="ic-empty-state">
+        <div style="background:#fff;border:1px solid #dee2e6;border-radius:4px;padding:30px;text-align:center">
+          <!-- SVG Illustration: Cloud → Connector → Workstations -->
+          <svg width="560" height="340" viewBox="0 0 560 340" style="max-width:100%;display:block;margin:0 auto" font-family="Arial,sans-serif">
+            <!-- Background -->
+            <rect width="560" height="340" rx="6" fill="#dce9f5"/>
+
+            <!-- Internet zone label -->
+            <text x="460" y="98" font-size="9" fill="#555" letter-spacing="1" font-weight="700">INTERNET</text>
+            <line x1="220" y1="102" x2="540" y2="102" stroke="#aac4d8" stroke-width="1"/>
+
+            <!-- Internal network zone label -->
+            <text x="430" y="172" font-size="9" fill="#555" letter-spacing="1" font-weight="700">INTERNAL NETWORK</text>
+            <line x1="220" y1="176" x2="540" y2="176" stroke="#aac4d8" stroke-width="1"/>
+
+            <!-- Cloud shape (top) -->
+            <ellipse cx="280" cy="44" rx="52" ry="28" fill="#153C6C"/>
+            <ellipse cx="254" cy="54" rx="30" ry="20" fill="#153C6C"/>
+            <ellipse cx="306" cy="54" rx="30" ry="20" fill="#153C6C"/>
+            <rect x="232" y="54" width="96" height="22" fill="#153C6C"/>
+            <text x="280" y="46" text-anchor="middle" font-size="7.5" font-weight="700" fill="#fff" letter-spacing=".5">FARONICS CLOUD</text>
+            <text x="280" y="57" text-anchor="middle" font-size="7.5" font-weight="700" fill="#fff" letter-spacing=".5">CONSOLE</text>
+
+            <!-- Dashed line: Cloud → Connector (through internet) -->
+            <line x1="280" y1="76" x2="280" y2="132" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+            <!-- Server/Connector icon -->
+            <rect x="254" y="132" width="52" height="60" rx="4" fill="#2A6DB5"/>
+            <rect x="259" y="138" width="42" height="8" rx="2" fill="#1a4d8c"/>
+            <rect x="259" y="150" width="42" height="8" rx="2" fill="#1a4d8c"/>
+            <rect x="259" y="162" width="42" height="8" rx="2" fill="#1a4d8c"/>
+            <circle cx="292" cy="142" r="2" fill="#4fc3f7"/>
+            <circle cx="292" cy="154" r="2" fill="#81c784"/>
+            <circle cx="292" cy="166" r="2" fill="#81c784"/>
+            <text x="280" y="206" text-anchor="middle" font-size="7.5" font-weight="700" fill="#2E3A40" letter-spacing=".3">INSIGHT LOCAL</text>
+            <text x="280" y="216" text-anchor="middle" font-size="7.5" font-weight="700" fill="#2E3A40" letter-spacing=".3">CONNECTOR</text>
+
+            <!-- Dashed lines: Connector → 4 workstations -->
+            <line x1="270" y1="192" x2="90" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="276" y1="192" x2="200" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="284" y1="192" x2="360" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="290" y1="192" x2="470" y2="248" stroke="#5a8fb5" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+            <!-- Workstation 1 -->
+            <rect x="60" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
+            <rect x="65" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
+            <!-- Bear face placeholder -->
+            <circle cx="90" cy="268" r="10" fill="#4a90d9"/>
+            <rect x="65" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
+            <text x="90" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">TEACHER</text>
+            <text x="90" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION</text>
+
+            <!-- Workstation 2 -->
+            <rect x="170" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
+            <rect x="175" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
+            <circle cx="200" cy="268" r="10" fill="#4a90d9"/>
+            <rect x="175" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
+            <text x="200" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">STUDENT</text>
+            <text x="200" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION 1</text>
+
+            <!-- Workstation 3 -->
+            <rect x="330" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
+            <rect x="335" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
+            <circle cx="360" cy="268" r="10" fill="#4a90d9"/>
+            <rect x="335" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
+            <text x="360" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">STUDENT</text>
+            <text x="360" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION 2</text>
+
+            <!-- Workstation 4 -->
+            <rect x="440" y="248" width="60" height="44" rx="3" fill="#2A6DB5"/>
+            <rect x="445" y="252" width="50" height="32" rx="2" fill="#1e3a6e"/>
+            <circle cx="470" cy="268" r="10" fill="#4a90d9"/>
+            <rect x="445" y="285" width="50" height="7" rx="2" fill="#1a4d8c"/>
+            <text x="470" y="308" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">STUDENT</text>
+            <text x="470" y="317" text-anchor="middle" font-size="6.5" font-weight="700" fill="#2E3A40" letter-spacing=".2">WORKSTATION 3</text>
+          </svg>
+          <div style="margin-top:12px;font-size:11px;color:#888">No Insight Local Connector installed.</div>
+        </div>
+        <!-- Offline note at bottom -->
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;font-size:10.5px;color:#555;width:fit-content">
+          <i class="fas fa-info-circle" style="color:#888"></i>
+          The Connector is considered Offline if it does not report back for more than 5 minutes.
+        </div>
+      </div>
+
+      <!-- TABLE STATE: shown when demo toggle is on -->
+      <div id="ic-table-state" style="display:none">
+        <div style="background:#fff;border:1px solid #dee2e6;border-radius:4px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead>
+              <tr style="background:#2A6DB5;color:#fff">
+                <th style="padding:8px 12px;font-weight:700;text-align:left">Computer Name</th>
+                <th style="padding:8px 12px;font-weight:700;text-align:left">IP Address</th>
+                <th style="padding:8px 12px;font-weight:700;text-align:left">Version</th>
+                <th style="padding:8px 12px;font-weight:700;text-align:left">Status</th>
+                <th style="padding:8px 12px;font-weight:700;text-align:left">Last Reported</th>
+                <th style="padding:8px 12px;font-weight:700;text-align:left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #eee">
+                <td style="padding:9px 12px;font-weight:600;color:#2E3A40">INSIGHT-RELAY-01</td>
+                <td style="padding:9px 12px;color:#555">192.168.1.50</td>
+                <td style="padding:9px 12px">
+                  <span style="color:#d97706;font-weight:600">6.16.2026 <span style="font-size:10px">(outdated)</span></span>
+                </td>
+                <td style="padding:9px 12px">
+                  <span style="display:inline-flex;align-items:center;gap:4px;background:#dcfce7;color:#166534;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700">
+                    <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block"></span>Online
+                  </span>
+                </td>
+                <td style="padding:9px 12px;color:#555">2 minutes ago</td>
+                <td style="padding:9px 12px">
+                  <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <button onclick="this.textContent='Restarting…';setTimeout(()=>this.textContent='Restart Service',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Restart Service</button>
+                    <button onclick="this.textContent='Collecting…';setTimeout(()=>this.textContent='Collect Logs',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Collect Logs</button>
+                    <button onclick="this.textContent='Updating…';setTimeout(()=>{this.textContent='Updated ✓';this.style.background='#dcfce7';this.style.borderColor='#86efac'},2000)" style="background:#2A6DB5;border:1px solid #2A6DB5;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#fff;font-weight:600">Update</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;font-size:10.5px;color:#555;width:fit-content">
+          <i class="fas fa-info-circle" style="color:#888"></i>
+          The Connector is considered Offline if it does not report back for more than 5 minutes.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 5 ══ -->
+<div class="demo-body screen" id="screen-5">
+  <h5 class="mb-1">Step 5 of 6 — Admin: Insight Policy — Teacher Settings</h5>
   <p class="text-muted small mb-3">The actual DFC Insight Policy page. Teacher Sign-In Mode replaces the old Class IDs field. Rostering is a separate section that requires SSO to be active first.</p>
   <div class="row g-3">
     <div class="col-lg-9">
@@ -1219,9 +1431,9 @@
   </div>
 </div>
 
-<!-- ══ SCREEN 5 ══ -->
-<div class="demo-body screen" id="screen-5">
-  <h5 class="mb-1">Step 5 of 5 — Admin: Insight Policy — Student Settings</h5>
+<!-- ══ SCREEN 6 ══ -->
+<div class="demo-body screen" id="screen-6">
+  <h5 class="mb-1">Step 6 of 6 — Admin: Insight Policy — Student Settings</h5>
   <p class="text-muted small mb-3">The actual DFC Student Policy page. Enable <strong>Authentication &amp; Rostering</strong> to configure SSO and auto-join behaviour for students.</p>
   <div class="row g-3">
     <div class="col-lg-9">
