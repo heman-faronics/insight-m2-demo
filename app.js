@@ -302,7 +302,7 @@ function polTeacherSignInMode(mode) {
     if (rosterCb) {
         rosterCb.disabled = !isSso;
         rosterCb.style.opacity = isSso ? '' : '0.35';
-        rosterCb.style.cursor  = isSso ? '' : 'not-allowed';
+        rosterCb.style.cursor  = '';
     }
 
     // Show tooltip on the disabled rostering label only when SSO is not active
@@ -540,7 +540,7 @@ function polStudentSignInMode(mode) {
     if (rosterCb) {
         rosterCb.disabled = !isSso;
         rosterCb.style.opacity = isSso ? '' : '0.35';
-        rosterCb.style.cursor  = isSso ? '' : 'not-allowed';
+        rosterCb.style.cursor  = '';
     }
 
     // Show tooltip on the disabled rostering label only when SSO is not active

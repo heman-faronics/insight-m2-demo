@@ -237,9 +237,11 @@
   .pol-group-head { background:#ddd; padding:5px 10px; font-size:12px; font-weight:700; color:#2E3A40; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; border-radius:4px 4px 0 0; }
   /* Rostering tooltip opens downward so it stays inside the scroll container */
   #t-roster-label-wrap .pol-tooltip-text,
-  #s-roster-label-wrap .pol-tooltip-text { bottom:auto; top:calc(100% + 7px); }
+  #s-roster-label-wrap .pol-tooltip-text { bottom:auto; top:calc(100% + 7px); left:50%; transform:translateX(-50%); }
   #t-roster-label-wrap .pol-tooltip-text::after,
-  #s-roster-label-wrap .pol-tooltip-text::after { top:auto; bottom:100%; border-top-color:transparent; border-bottom-color:#2E3A40; }
+  #s-roster-label-wrap .pol-tooltip-text::after { top:auto; bottom:100%; border-top-color:transparent; border-bottom-color:#2E3A40; left:50%; transform:translateX(-50%); }
+  /* Remove not-allowed cursor on disabled rostering checkboxes */
+  #t-roster-cb:disabled, #s-roster-cb:disabled { cursor:default; }
   .pol-group-head .pol-collapse-icon { font-size:10px; color:#666; transition:transform .2s; }
   .pol-group-head.collapsed .pol-collapse-icon { transform:rotate(-90deg); }
   .pol-group-body { background:#fff; padding:10px 12px; overflow:visible; }
@@ -1361,13 +1363,13 @@
 
                   <!-- Rostering enable: left-aligned, no empty label column -->
                   <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
-                    <span id="t-roster-label-wrap" class="pol-tooltip-wrap" style="display:inline-flex;align-items:center">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span id="t-roster-label-wrap" class="pol-tooltip-wrap">
                         <input type="checkbox" class="pol-cb" id="t-roster-cb" onchange="polTeacherRostering(this)">
-                        Enable ClassLink Rostering — teacher selects class from a dropdown
-                      </label>
-                      <span class="pol-tooltip-text" style="width:260px;white-space:normal">SSO Required must be selected as the Sign-In Mode above to enable ClassLink Rostering.</span>
-                    </span>
+                        <span class="pol-tooltip-text" style="width:260px;white-space:normal">SSO Required must be selected as the Sign-In Mode above to enable ClassLink Rostering.</span>
+                      </span>
+                      <label for="t-roster-cb" style="font-size:12px;cursor:pointer">Enable ClassLink Rostering — teacher selects class from a dropdown</label>
+                    </div>
                     <!-- SSO required warning -->
                     <div id="t-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                       <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
@@ -1407,7 +1409,7 @@
                     <span class="pol-tooltip-wrap" style="display:inline-flex;align-items:center;gap:6px">
                       <input type="checkbox" class="pol-cb" id="t-connector" checked disabled style="opacity:0.5;cursor:not-allowed">
                       <label for="t-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
-                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
+                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px);left:0;transform:none">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
                     </span>
                     <input type="text" class="pol-input" id="t-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
@@ -1647,13 +1649,13 @@
                 <div class="pol-group-head" onclick="polToggle(this)">Rostering <i class="fas fa-chevron-down pol-collapse-icon"></i></div>
                 <div class="pol-group-body">
                   <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
-                    <span id="s-roster-label-wrap" class="pol-tooltip-wrap" style="display:inline-flex;align-items:center">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span id="s-roster-label-wrap" class="pol-tooltip-wrap">
                         <input type="checkbox" class="pol-cb" id="s-roster-cb" onchange="polStudentRostering(this)">
-                        Enable ClassLink Rostering — student joins their rostered class automatically
-                      </label>
-                      <span class="pol-tooltip-text" style="width:260px;white-space:normal">SSO Required must be selected as the Sign-In Mode above to enable ClassLink Rostering.</span>
-                    </span>
+                        <span class="pol-tooltip-text" style="width:260px;white-space:normal">SSO Required must be selected as the Sign-In Mode above to enable ClassLink Rostering.</span>
+                      </span>
+                      <label for="s-roster-cb" style="font-size:12px;cursor:pointer">Enable ClassLink Rostering — student joins their rostered class automatically</label>
+                    </div>
                     <!-- SSO required warning -->
                     <div id="s-roster-sso-warn" style="display:none;padding:5px 10px;background:#fff3cd;border:1px solid #fcd34d;border-radius:3px;font-size:11px;color:#92400e;white-space:nowrap">
                       <i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>
@@ -1680,7 +1682,7 @@
                     <span class="pol-tooltip-wrap" style="display:inline-flex;align-items:center;gap:6px">
                       <input type="checkbox" class="pol-cb" id="s-connector" checked disabled style="opacity:0.5;cursor:not-allowed">
                       <label for="s-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
-                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
+                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px);left:0;transform:none">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
                     </span>
                     <input type="text" class="pol-input" id="s-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
@@ -1730,7 +1732,7 @@
     <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Site Admin</span></div>
 
     <!-- Site Admin header (same DFC chrome) -->
-    <div style="background:#153C6C;display:flex;align-items:center;padding:0 12px;height:36px;gap:10px">
+    <div style="background:#D60006;display:flex;align-items:center;padding:0 12px;height:36px;gap:10px">
       <span style="font-weight:800;letter-spacing:.5px;font-size:11px;color:#fff;flex-shrink:0">FARONICS CLOUD — SITE ADMIN</span>
       <span style="flex:1"></span>
       <span style="font-size:10px;color:#b0c8e0">nasiteadmin.deepfreeze.com</span>
@@ -1762,69 +1764,59 @@
           Feature Flags <i class="fas fa-chevron-down pol-collapse-icon"></i>
         </div>
         <div class="pol-group-body">
-          <div style="font-size:10.5px;color:#666;margin-bottom:12px">Enable or disable product features for this site. Changes take effect on next agent check-in.</div>
+          <div style="font-size:10.5px;color:#666;margin-bottom:12px">Enable or disable product features for this site.</div>
           <div style="display:flex;flex-wrap:wrap;gap:10px 24px">
 
             <!-- helper macro: each feature is a label+badge -->
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-dfe" onchange="saBadge('sa-dfe-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-dfe">
               DFE Connector
-              <span id="sa-dfe-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-dfs" onchange="saBadge('sa-dfs-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-dfs">
               DFS Connector
-              <span id="sa-dfs-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-pure" checked onchange="saBadge('sa-pure-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-pure" checked>
               Pure Cloud Sites
-              <span id="sa-pure-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#d4edda;color:#155724;border:1px solid #c3e6cb">On</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-ws" checked onchange="saBadge('sa-ws-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-ws" checked>
               WebSocket
-              <span id="sa-ws-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#d4edda;color:#155724;border:1px solid #c3e6cb">On</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-ndf" onchange="saBadge('sa-ndf-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-ndf">
               Non-DF Policy
-              <span id="sa-ndf-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-aa" onchange="saBadge('sa-aa-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-aa">
               Advanced Alerts
-              <span id="sa-aa-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-ins-ob" onchange="saBadge('sa-ins-ob-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-ins-ob">
               INS Onboarding
-              <span id="sa-ins-ob-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
             </label>
 
             <!-- INS Cloud Connector — key new flag for this demo -->
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap;padding:4px 10px;border:1px dashed #2E78C1;border-radius:4px;background:#f0f6ff">
-              <input type="checkbox" class="pol-cb" id="sa-ins-cc" onchange="saBadge('sa-ins-cc-badge',this);saConnectorUnlock(this)">
+              <input type="checkbox" class="pol-cb" id="sa-ins-cc" onchange="saConnectorUnlock(this)">
               INS Cloud Connector
-              <span id="sa-ins-cc-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-iq" checked onchange="saBadge('sa-iq-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-iq" checked>
               iQ
-              <span id="sa-iq-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#d4edda;color:#155724;border:1px solid #c3e6cb">On</span>
             </label>
 
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;white-space:nowrap">
-              <input type="checkbox" class="pol-cb" id="sa-iq-pro" onchange="saBadge('sa-iq-pro-badge',this)">
+              <input type="checkbox" class="pol-cb" id="sa-iq-pro">
               iQ Pro
-              <span id="sa-iq-pro-badge" style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:#f0f0f0;color:#888;border:1px solid #ddd">Off</span>
             </label>
 
           </div>
