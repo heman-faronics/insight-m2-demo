@@ -1047,6 +1047,7 @@
                   <button onclick="this.textContent='Restarting…';setTimeout(()=>this.textContent='Restart Service',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Restart Service</button>
                   <button onclick="this.textContent='Collecting…';setTimeout(()=>this.textContent='Collect Logs',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Collect Logs</button>
                   <button onclick="this.textContent='Updating…';setTimeout(()=>{this.textContent='Updated ✓';this.style.background='#dcfce7';this.style.borderColor='#86efac';this.style.color='#166534'},2000)" style="background:#2A6DB5;border:1px solid #2A6DB5;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#fff;font-weight:600">Update</button>
+                  <button onclick="if(confirm('Uninstall the Insight Local Connector from this machine?')){this.textContent='Uninstalling…';setTimeout(()=>{this.textContent='Uninstalled';this.disabled=true;this.style.opacity='.5'},2000)}" style="background:#fff0f0;border:1px solid #fca5a5;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#b91c1c">Uninstall</button>
                 </div>
               </td>
             </tr>
