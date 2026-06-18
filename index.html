@@ -235,11 +235,11 @@
   /* Policy section panels (matching actual DFC styling) */
   .pol-group { border:1px solid #dee2e6; border-radius:4px; margin-bottom:10px; overflow:visible; }
   .pol-group-head { background:#ddd; padding:5px 10px; font-size:12px; font-weight:700; color:#2E3A40; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; border-radius:4px 4px 0 0; }
-  /* Rostering tooltip opens downward so it stays inside the scroll container */
+  /* Rostering tooltip opens downward, anchored to left edge of checkbox */
   #t-roster-label-wrap .pol-tooltip-text,
-  #s-roster-label-wrap .pol-tooltip-text { bottom:auto; top:calc(100% + 7px); left:50%; transform:translateX(-50%); }
+  #s-roster-label-wrap .pol-tooltip-text { bottom:auto; top:calc(100% + 7px); left:0; transform:none; }
   #t-roster-label-wrap .pol-tooltip-text::after,
-  #s-roster-label-wrap .pol-tooltip-text::after { top:auto; bottom:100%; border-top-color:transparent; border-bottom-color:#2E3A40; left:50%; transform:translateX(-50%); }
+  #s-roster-label-wrap .pol-tooltip-text::after { top:auto; bottom:100%; border-top-color:transparent; border-bottom-color:#2E3A40; left:8px; transform:none; }
   /* Remove not-allowed cursor on disabled rostering checkboxes */
   #t-roster-cb:disabled, #s-roster-cb:disabled { cursor:default; }
   /* Connector tooltip: arrow pinned left to align with checkbox */
