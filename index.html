@@ -242,6 +242,9 @@
   #s-roster-label-wrap .pol-tooltip-text::after { top:auto; bottom:100%; border-top-color:transparent; border-bottom-color:#2E3A40; left:50%; transform:translateX(-50%); }
   /* Remove not-allowed cursor on disabled rostering checkboxes */
   #t-roster-cb:disabled, #s-roster-cb:disabled { cursor:default; }
+  /* Connector tooltip: arrow pinned left to align with checkbox */
+  .pol-tooltip-anchor-left { left:0; transform:none; }
+  .pol-tooltip-anchor-left::after { left:8px; transform:none; }
   .pol-group-head .pol-collapse-icon { font-size:10px; color:#666; transition:transform .2s; }
   .pol-group-head.collapsed .pol-collapse-icon { transform:rotate(-90deg); }
   .pol-group-body { background:#fff; padding:10px 12px; overflow:visible; }
@@ -1059,7 +1062,8 @@
 
       <!-- Illustration — shown when no connector installed -->
       <div id="ic-illustration">
-        <svg width="600" height="310" viewBox="0 0 600 310" style="max-width:100%;display:block;margin:0 auto;border-radius:6px" font-family="Arial,sans-serif">
+        <img src="DFC-Infographic.png" alt="Insight Local Connector diagram" style="max-width:100%;display:block;margin:0 auto;border-radius:6px">
+        <svg width="600" height="310" viewBox="0 0 600 310" style="display:none" font-family="Arial,sans-serif">
           <!-- Background -->
           <rect width="600" height="310" rx="6" fill="#dce9f5"/>
 
@@ -1406,11 +1410,13 @@
                     When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay - keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
                   </div>
                   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <span class="pol-tooltip-wrap" style="display:inline-flex;align-items:center;gap:6px">
-                      <input type="checkbox" class="pol-cb" id="t-connector" checked disabled style="opacity:0.5;cursor:not-allowed">
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span class="pol-tooltip-wrap">
+                        <input type="checkbox" class="pol-cb" id="t-connector" checked disabled style="opacity:0.5;cursor:default">
+                        <span class="pol-tooltip-text pol-tooltip-anchor-left" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
+                      </span>
                       <label for="t-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
-                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px);left:0;transform:none">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
-                    </span>
+                    </div>
                     <input type="text" class="pol-input" id="t-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
                   </div>
@@ -1679,11 +1685,13 @@
                     When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay - keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
                   </div>
                   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <span class="pol-tooltip-wrap" style="display:inline-flex;align-items:center;gap:6px">
-                      <input type="checkbox" class="pol-cb" id="s-connector" checked disabled style="opacity:0.5;cursor:not-allowed">
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span class="pol-tooltip-wrap">
+                        <input type="checkbox" class="pol-cb" id="s-connector" checked disabled style="opacity:0.5;cursor:default">
+                        <span class="pol-tooltip-text pol-tooltip-anchor-left" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
+                      </span>
                       <label for="s-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
-                      <span class="pol-tooltip-text" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px);left:0;transform:none">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
-                    </span>
+                    </div>
                     <input type="text" class="pol-input" id="s-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
                   </div>
@@ -1832,11 +1840,11 @@
       <!-- Unlock note -->
       <div id="sa-unlock-note" style="display:flex;margin-top:10px;align-items:flex-start;gap:6px;padding:8px 12px;background:#e8f0fb;border:1px solid #b8d0f0;border-radius:4px;font-size:11px;color:#1a3451">
         <i class="fas fa-info-circle" style="flex-shrink:0;margin-top:1px;color:#2E78C1"></i>
-        <span>INS Cloud Connector is enabled. The Insight Connector section in Teacher and Student Policies will accept an IP address and the policy can be saved.</span>
+        <span>INS Cloud Connector is enabled. Teachers and Students will be able to connect to the Insight Cloud Connector for communication outside the local network. Hybrid teaching situations will be supported now.</span>
       </div>
       <div id="sa-lock-warn" style="display:none;margin-top:10px;align-items:flex-start;gap:6px;padding:8px 12px;background:#fff3cd;border:1px solid #fcd34d;border-radius:4px;font-size:11px;color:#78350f">
         <i class="fas fa-exclamation-triangle" style="flex-shrink:0;margin-top:1px;color:#d97706"></i>
-        <span>INS Cloud Connector is disabled. Teachers and Students will not be able to enter a Connector IP address, and any saved IP addresses will no longer apply.</span>
+        <span>INS Cloud Connector is disabled. Teachers and Students will not be able to connect to the Insight Cloud Connector for communication outside the local network. Hybrid teaching situations will not be supported.</span>
       </div>
 
     </div>
