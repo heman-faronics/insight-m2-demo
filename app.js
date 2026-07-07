@@ -266,6 +266,16 @@ async function triggerSync() {
     }
 }
 
+function toggleSyncBadge() {
+    const badge = document.getElementById('sync-status-badge');
+    if (!badge) return;
+    const isSuccess = badge.classList.contains('dfc-badge-success');
+    badge.className = isSuccess ? 'dfc-badge-failed' : 'dfc-badge-success';
+    badge.innerHTML = isSuccess
+        ? '<i class="fas fa-times" style="font-size:8px"></i> Failed'
+        : '<i class="fas fa-check" style="font-size:8px"></i> Success';
+}
+
 // ── Screens 4 & 5: Policy page interactions ───────────────────────────────────
 
 function polToggle(headEl) {

@@ -171,7 +171,8 @@
   /* Sync status bar */
   .dfc-sync-bar { display:flex; align-items:center; gap:8px; padding:6px 10px; background:#f8f9fa; border:1px solid #e8e8e8; border-radius:3px; font-size:11px; flex-wrap:wrap; margin-bottom:10px; }
   .dfc-sync-counts { font-size:10px; color:#9ca3af; font-family:'Consolas','Courier New',monospace; margin-left:auto; }
-  .dfc-badge-success { display:inline-flex; align-items:center; gap:3px; background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; border-radius:10px; font-size:9px; font-weight:700; padding:1px 6px; }
+  .dfc-badge-success { display:inline-flex; align-items:center; gap:3px; background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; border-radius:10px; font-size:9px; font-weight:700; padding:1px 6px; cursor:pointer; }
+  .dfc-badge-failed  { display:inline-flex; align-items:center; gap:3px; background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; border-radius:10px; font-size:9px; font-weight:700; padding:1px 6px; cursor:pointer; }
   .dfc-badge-verified { display:inline-flex; align-items:center; gap:3px; background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; border-radius:10px; font-size:10px; font-weight:600; padding:1px 8px; }
 
   /* Early access form */
@@ -859,13 +860,13 @@
                         <button class="dfc-btn-outline" id="btn-sync-now" onclick="triggerSync()">
                           <i class="fas fa-sync me-1" id="sync-icon" style="font-size:9px"></i><i class="fas fa-spinner fa-spin me-1 d-none" id="sync-spinner" style="font-size:9px"></i>Sync Now
                         </button>
-                        <span id="sync-status-badge" class="dfc-badge-success" style="display:none"><i class="fas fa-check" style="font-size:8px"></i> Success</span>
+                        <span id="sync-status-badge" class="dfc-badge-success" style="display:none" onclick="toggleSyncBadge()"><i class="fas fa-check" style="font-size:8px"></i> Success</span>
                         <span id="sync-message" style="font-size:10px;color:#9ca3af"></span>
                       </div>
                       <!-- Last sync row — always shows counts from last successful sync -->
                       <div style="display:flex;align-items:center;gap:7px;font-size:11px;padding:5px 8px;background:#f8f9fa;border:1px solid #e8e8e8;border-radius:3px">
                         <i class="fas fa-history" style="color:#9ca3af;font-size:10px"></i>
-                        <span style="color:#6b7280;font-size:10px;font-weight:600">Last sync:</span>
+                        <span style="color:#6b7280;font-size:10px;font-weight:600">Last successful sync:</span>
                         <span id="last-sync-time" style="color:#555;font-size:11px">Not yet synced</span>
                         <span id="sync-counts" class="dfc-sync-counts" style="display:none"></span>
                       </div>
