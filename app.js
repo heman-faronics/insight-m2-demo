@@ -850,6 +850,8 @@ let activeSimScenario = 1;
 let activeSimStep     = 1;
 let simClassChosen    = false;
 let sim8ClassIdVisible = false;
+let simListAgeHours   = 0;
+const LIST_AGE_STEPS  = [0, 2, 5];
 
 // ── Screen 2 sim state ────────────────────────────────────────────────────────
 let activeSimScenarioS2 = 1;
@@ -890,10 +892,17 @@ function switchSim(n) {
     activeSimStep      = 1;
     simClassChosen     = false;
     sim8ClassIdVisible = false;
+    simListAgeHours    = 0;
 
     // Pills
     document.querySelectorAll('.scenario-pill').forEach((p, i) =>
         p.classList.toggle('active', i + 1 === n));
+
+    // "Simulate stale list" control only applies to Scenario 1 (class dropdown)
+    const ageCtrl  = document.getElementById('list-age-control');
+    const ageLabel = document.getElementById('list-age-toggle');
+    if (ageCtrl)  ageCtrl.style.display = (n === 1) ? '' : 'none';
+    if (ageLabel) ageLabel.textContent = 'Just refreshed';
 
     // Description card fade
     const card = document.getElementById('scenario-card');
@@ -922,10 +931,26 @@ function simGoFallback() {
 }
 
 function simRefresh() {
+    if (simListAgeHours > 1) {
+        simListAgeHours = 0;
+        const label = document.getElementById('list-age-toggle');
+        if (label) label.textContent = 'Just refreshed';
+        renderSim(true);
+        return;
+    }
     const sel = document.getElementById('sim-class-sel');
     if (!sel) return;
     sel.style.opacity = '.35';
     setTimeout(() => { sel.style.opacity = ''; }, 700);
+}
+
+// Cycles the "simulate stale list" demo control through 0 → 2 → 5 hours old
+function simCycleListAge() {
+    const i = LIST_AGE_STEPS.indexOf(simListAgeHours);
+    simListAgeHours = LIST_AGE_STEPS[(i + 1) % LIST_AGE_STEPS.length];
+    const label = document.getElementById('list-age-toggle');
+    if (label) label.textContent = simListAgeHours === 0 ? 'Just refreshed' : `${simListAgeHours} hours old`;
+    renderSim(false);
 }
 
 function openClassListModal() {
@@ -1002,6 +1027,14 @@ function _msBtn(label, onclick) {
     return `<button class="sim-ms-btn" onclick="${onclick}">${_MS_SVG} ${esc(label)}</button>`;
 }
 
+// Stale-list notice — shown under "Select your class" when the list is >1hr old
+function _staleListNotice() {
+    if (simListAgeHours <= 1) return '';
+    return `<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#b45309;margin:-2px 0 8px;text-align:left">
+      <i class="fas fa-clock" style="font-size:10px"></i><span>List last refreshed ${simListAgeHours} hours ago</span>
+    </div>`;
+}
+
 // Class dropdown using real ClassLink data (Scenario 1 step 2 after real sign-in)
 function _realClassDropdown(classes) {
     let opts = '<option value="">— Choose a class —</option>';
@@ -1015,6 +1048,7 @@ function _realClassDropdown(classes) {
           <span class="sim-label" style="margin:0">Select your class:</span>
           <button class="sim-link" onclick="simRefresh()">⟳ Refresh list</button>
         </div>
+        ${_staleListNotice()}
         <select id="sim-class-sel" class="sim-select" onchange="simClassChange()">${opts}</select>
         <div style="text-align:center;margin:6px 0">
           <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
@@ -1045,7 +1079,7 @@ function _classDropdown(showFallback) {
              <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
            </div>`
         : '';
-    return `${bar}${sel}${fallback}
+    return `${bar}${_staleListNotice()}${sel}${fallback}
       <div style="text-align:right;margin-top:10px">
         <button class="sim-start-btn" id="sim-start" ${simClassChosen ? '' : 'disabled'}>Start Class</button>
       </div>`;
