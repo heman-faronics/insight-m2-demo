@@ -1027,12 +1027,9 @@ function _msBtn(label, onclick) {
     return `<button class="sim-ms-btn" onclick="${onclick}">${_MS_SVG} ${esc(label)}</button>`;
 }
 
-// Stale-list notice — shown under "Select your class" when the list is >1hr old
-function _staleListNotice() {
-    if (simListAgeHours <= 1) return '';
-    return `<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#b45309;margin:-2px 0 8px;text-align:left">
-      <i class="fas fa-clock" style="font-size:10px"></i><span>List last refreshed ${simListAgeHours} hours ago</span>
-    </div>`;
+// "Refresh list" label — swaps to "Refreshed N hours ago" when the list is stale (>1hr old)
+function _refreshLinkText() {
+    return simListAgeHours > 1 ? `⟳ Refreshed ${simListAgeHours} hours ago` : '⟳ Refresh list';
 }
 
 // Class dropdown using real ClassLink data (Scenario 1 step 2 after real sign-in)
@@ -1046,9 +1043,8 @@ function _realClassDropdown(classes) {
     return `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
           <span class="sim-label" style="margin:0">Select your class:</span>
-          <button class="sim-link" onclick="simRefresh()">⟳ Refresh list</button>
+          <button class="sim-link" onclick="simRefresh()">${_refreshLinkText()}</button>
         </div>
-        ${_staleListNotice()}
         <select id="sim-class-sel" class="sim-select" onchange="simClassChange()">${opts}</select>
         <div style="text-align:center;margin:6px 0">
           <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
@@ -1072,14 +1068,14 @@ function _classDropdown(showFallback) {
     </select>`;
     const bar = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
       <span class="sim-label" style="margin:0">Select your class:</span>
-      <button class="sim-link" onclick="simRefresh()">⟳ Refresh list</button>
+      <button class="sim-link" onclick="simRefresh()">${_refreshLinkText()}</button>
     </div>`;
     const fallback = showFallback
         ? `<div style="text-align:center;margin:6px 0">
              <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
            </div>`
         : '';
-    return `${bar}${_staleListNotice()}${sel}${fallback}
+    return `${bar}${sel}${fallback}
       <div style="text-align:right;margin-top:10px">
         <button class="sim-start-btn" id="sim-start" ${simClassChosen ? '' : 'disabled'}>Start Class</button>
       </div>`;
