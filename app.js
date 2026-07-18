@@ -350,10 +350,29 @@ function polChatDisable(cb) {
 function toggleICView(cb) {
     const emptyRow = document.getElementById('ic-empty-row');
     const dataRow  = document.getElementById('ic-data-row');
-    const illus    = document.getElementById('ic-illustration');
     if (emptyRow) emptyRow.style.display = cb.checked ? 'none' : '';
     if (dataRow)  dataRow.style.display  = cb.checked ? ''     : 'none';
-    if (illus)    illus.style.display    = cb.checked ? 'none' : '';
+}
+
+// School Network → Connector Mapping: add a blank row
+function icAddMappingRow() {
+    const tbody = document.getElementById('ic-mapping-rows');
+    if (!tbody) return;
+    const tr = document.createElement('tr');
+    tr.style.borderTop = '1px solid #eee';
+    tr.innerHTML = `
+      <td style="padding:7px 12px"><input type="text" class="pol-input" style="width:100%;height:30px" placeholder="e.g. Lincoln Elementary"></td>
+      <td style="padding:7px 12px"><input type="text" class="pol-input" style="width:100%;height:30px" placeholder="e.g. 10.12.6.0/24"></td>
+      <td style="padding:7px 12px">
+        <select class="pol-select" style="width:100%;height:30px;font-size:11px">
+          <option>INSIGHT-RELAY-01 (192.168.1.50)</option>
+          <option>INSIGHT-RELAY-02 (10.12.4.10)</option>
+        </select>
+      </td>
+      <td style="padding:7px 12px;text-align:center">
+        <button onclick="this.closest('tr').remove()" title="Remove mapping" style="background:none;border:none;color:#b91c1c;cursor:pointer;font-size:12px"><i class="fas fa-trash"></i></button>
+      </td>`;
+    tbody.appendChild(tr);
 }
 
 // INSIGHT nav dropdown toggle
