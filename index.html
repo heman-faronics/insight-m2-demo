@@ -1423,17 +1423,43 @@
                   <div style="font-size:12px;color:#333;margin-bottom:12px;line-height:1.6">
                     When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay - keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
                   </div>
-                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <div style="display:flex;align-items:center;gap:6px">
-                      <span class="pol-tooltip-wrap">
-                        <input type="checkbox" class="pol-cb" id="t-connector" checked disabled style="opacity:0.5;cursor:default">
-                        <span class="pol-tooltip-text pol-tooltip-anchor-left" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
-                      </span>
-                      <label for="t-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+                    <span class="pol-tooltip-wrap">
+                      <input type="checkbox" class="pol-cb" id="t-connector" checked disabled style="opacity:0.5;cursor:default">
+                      <span class="pol-tooltip-text pol-tooltip-anchor-left" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must configure the Insight Connector below to save the policy — this is an Org-wide requirement.</span>
+                    </span>
+                    <label for="t-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
+                  </div>
+
+                  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px">
+                    <div>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="t-connector-mode" value="static" id="t-connector-mode-static" checked onchange="polConnectorMode('t','static')">
+                        Enter Connector IP Address
+                      </label>
+                      <div id="t-connector-static-opts" style="margin-left:20px;margin-top:6px">
+                        <input type="text" class="pol-input" id="t-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
+                      </div>
                     </div>
-                    <input type="text" class="pol-input" id="t-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
+
+                    <div>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="t-connector-mode" value="dynamic" id="t-connector-mode-dynamic" onchange="polConnectorMode('t','dynamic')">
+                        Dynamically Switch Connector based on IP address
+                      </label>
+                      <div id="t-connector-dynamic-opts" style="display:none;margin-left:20px;margin-top:6px;max-width:420px">
+                        <div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#757575;line-height:1.5">
+                          <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                          <span>The Teacher device will automatically detect its current school network and connect to the matching Connector — no manual IP entry as devices move between schools. Manage per-school Connector IP mappings on the <a href="#" onclick="showScreen(4);return false;" style="color:#2E78C1;font-weight:600">Local Connector</a> page.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="margin-bottom:10px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
                   </div>
+
                   <div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#757575">
                     <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
                     To remain licensed, your computer must connect to the Internet at least once every 30 days.
@@ -1698,17 +1724,43 @@
                   <div style="font-size:12px;color:#333;margin-bottom:12px;line-height:1.6">
                     When student and teacher devices reside on different VLANs or subnets, Insight Connector acts as a local relay - keeping traffic inside your network and avoiding extra hops that slow down screen-sharing and classroom commands. <a href="#" style="color:#2E78C1">Learn more</a>
                   </div>
-                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <div style="display:flex;align-items:center;gap:6px">
-                      <span class="pol-tooltip-wrap">
-                        <input type="checkbox" class="pol-cb" id="s-connector" checked disabled style="opacity:0.5;cursor:default">
-                        <span class="pol-tooltip-text pol-tooltip-anchor-left" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must specify the Insight Connector IP Address to save the policy — this is an Org-wide requirement.</span>
-                      </span>
-                      <label for="s-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+                    <span class="pol-tooltip-wrap">
+                      <input type="checkbox" class="pol-cb" id="s-connector" checked disabled style="opacity:0.5;cursor:default">
+                      <span class="pol-tooltip-text pol-tooltip-anchor-left" style="width:280px;white-space:normal;bottom:auto;top:calc(100% + 7px)">You must configure the Insight Connector below to save the policy — this is an Org-wide requirement.</span>
+                    </span>
+                    <label for="s-connector" style="font-size:12px;color:#888;cursor:default">Use Insight Connector</label>
+                  </div>
+
+                  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px">
+                    <div>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="s-connector-mode" value="static" id="s-connector-mode-static" checked onchange="polConnectorMode('s','static')">
+                        Enter Connector IP Address
+                      </label>
+                      <div id="s-connector-static-opts" style="margin-left:20px;margin-top:6px">
+                        <input type="text" class="pol-input" id="s-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
+                      </div>
                     </div>
-                    <input type="text" class="pol-input" id="s-connector-ip" placeholder="Enter Connector IP address" style="width:220px">
+
+                    <div>
+                      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                        <input type="radio" name="s-connector-mode" value="dynamic" id="s-connector-mode-dynamic" onchange="polConnectorMode('s','dynamic')">
+                        Dynamically Switch Connector based on IP address
+                      </label>
+                      <div id="s-connector-dynamic-opts" style="display:none;margin-left:20px;margin-top:6px;max-width:420px">
+                        <div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#757575;line-height:1.5">
+                          <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
+                          <span>The Student device will automatically detect its current school network and connect to the matching Connector — no manual IP entry as devices move between schools. Manage per-school Connector IP mappings on the <a href="#" onclick="showScreen(4);return false;" style="color:#2E78C1;font-weight:600">Local Connector</a> page.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="margin-bottom:10px">
                     <button style="background:#3b6fad;color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap">Download Connector</button>
                   </div>
+
                   <div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#757575">
                     <i class="fas fa-info-circle" style="font-size:12px;margin-top:1px;flex-shrink:0;color:#929292"></i>
                     To remain licensed, your computer must connect to the Internet at least once every 30 days.

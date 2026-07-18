@@ -523,6 +523,17 @@ function polSaveTeacher() {
     errContainer.innerHTML = html;
 }
 
+// Insight Connector: static IP entry vs. dynamic (subnet-based) switching
+function polConnectorMode(prefix, mode) {
+    const staticOpts  = document.getElementById(`${prefix}-connector-static-opts`);
+    const dynamicOpts = document.getElementById(`${prefix}-connector-dynamic-opts`);
+    const ipInput     = document.getElementById(`${prefix}-connector-ip`);
+    const isDynamic = mode === 'dynamic';
+    if (staticOpts)  staticOpts.style.display  = isDynamic ? 'none' : '';
+    if (dynamicOpts) dynamicOpts.style.display = isDynamic ? '' : 'none';
+    if (ipInput) ipInput.disabled = isDynamic;
+}
+
 // Toggle entire group on/off (for on-prem section)
 function polToggleGroup(cb, groupId) {
     const group = document.getElementById(groupId);
