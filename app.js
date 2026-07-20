@@ -350,8 +350,10 @@ function polChatDisable(cb) {
 function toggleICView(cb) {
     const emptyRow = document.getElementById('ic-empty-row');
     const dataRow  = document.getElementById('ic-data-row');
+    const dataRow2 = document.getElementById('ic-data-row-2');
     if (emptyRow) emptyRow.style.display = cb.checked ? 'none' : '';
     if (dataRow)  dataRow.style.display  = cb.checked ? ''     : 'none';
+    if (dataRow2) dataRow2.style.display = cb.checked ? ''     : 'none';
 }
 
 // School Network → Connector Mapping: add a blank row

@@ -1064,6 +1064,34 @@
                 </div>
               </td>
             </tr>
+            <!-- Data row 2 — shown when demo toggle is on -->
+            <tr id="ic-data-row-2" style="display:none;border-bottom:1px solid #eee">
+              <td style="padding:9px 12px;font-weight:600;color:#2E3A40">INSIGHT-RELAY-02</td>
+              <td style="padding:9px 12px">
+                <a href="#" onclick="return false" title="View these computers on the Computers page" style="color:#2E78C1;font-weight:600">7</a>
+              </td>
+              <td style="padding:9px 12px">
+                <a href="#" onclick="return false" title="View these computers on the Computers page" style="color:#2E78C1;font-weight:600">164</a>
+              </td>
+              <td style="padding:9px 12px;color:#555">10.12.4.10</td>
+              <td style="padding:9px 12px">
+                <span style="color:#166534;font-weight:600">7.2.2026</span>
+              </td>
+              <td style="padding:9px 12px">
+                <span style="display:inline-flex;align-items:center;gap:4px;background:#dcfce7;color:#166534;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700">
+                  <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block"></span>Online
+                </span>
+              </td>
+              <td style="padding:9px 12px;color:#555">5 minutes ago</td>
+              <td style="padding:9px 12px">
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button onclick="this.textContent='Restarting…';setTimeout(()=>this.textContent='Restart Service',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Restart Service</button>
+                  <button onclick="this.textContent='Collecting…';setTimeout(()=>this.textContent='Collect Logs',2000)" style="background:#f0f4f8;border:1px solid #cdd5df;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#2E3A40">Collect Logs</button>
+                  <button onclick="this.textContent='Updating…';setTimeout(()=>{this.textContent='Updated ✓';this.style.background='#dcfce7';this.style.borderColor='#86efac';this.style.color='#166534'},2000)" style="background:#2A6DB5;border:1px solid #2A6DB5;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#fff;font-weight:600">Update</button>
+                  <button onclick="if(confirm('Uninstall the Insight Local Connector from this machine?')){this.textContent='Uninstalling…';setTimeout(()=>{this.textContent='Uninstalled';this.disabled=true;this.style.opacity='.5'},2000)}" style="background:#fff0f0;border:1px solid #fca5a5;border-radius:3px;padding:3px 9px;font-size:10px;cursor:pointer;color:#b91c1c">Uninstall</button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
