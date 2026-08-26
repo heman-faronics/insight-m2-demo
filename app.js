@@ -1389,7 +1389,7 @@ function saConnectorUnlock(cb) {
 }
 
 function saSave() {
-    const btn = document.querySelector('#screen-7 .sa-save-btn');
+    const btn = document.querySelector('#screen-8 .sa-save-btn');
     if (!btn) return;
     const orig = btn.textContent;
     btn.textContent = 'Saved';

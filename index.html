@@ -432,7 +432,7 @@
 
   <!-- Page title -->
   <div class="demo-body pb-1 pt-2">
-    <h5 class="mb-1">Step 1 of 5 — Teacher Sign-In</h5>
+    <h5 class="mb-1">Step 1 of 8 — Teacher Sign-In</h5>
     <p class="text-muted small mb-1">Try each setup below to see how the Teacher Console login screen changes. Then use the live section to authenticate for real.</p>
   </div>
 
@@ -523,7 +523,7 @@
 
   <!-- Page title -->
   <div class="demo-body pb-1 pt-2">
-    <h5 class="mb-1">Step 2 of 5 — Student Sign-In</h5>
+    <h5 class="mb-1">Step 2 of 8 — Student Sign-In</h5>
     <p class="text-muted small mb-1">Try each setup below to see how the Student Client login screen changes. Then use the live section to authenticate for real.</p>
   </div>
 
@@ -598,7 +598,7 @@
 
 <!-- ══ SCREEN 3 ══ -->
 <div class="demo-body screen" id="screen-3">
-  <h5 class="mb-1">Step 3 of 5 — Admin: DFC Organization Settings</h5>
+  <h5 class="mb-1">Step 3 of 8 — Admin: DFC Organization Settings</h5>
   <p class="text-muted small mb-3">Explore each section below — all tabs, toggles, and provider selections are interactive. Click "Sync Now" on the Rostering tab to fetch live ClassLink data.</p>
 
   <div class="row g-3">
@@ -944,7 +944,7 @@
 
 <!-- ══ SCREEN 4 — Insight Local Connector ══ -->
 <div class="demo-body screen" id="screen-4">
-  <h5 class="mb-1">Step 4 of 6 — Admin: Insight Local Connector</h5>
+  <h5 class="mb-1">Step 4 of 8 — Admin: Insight Local Connector</h5>
   <p class="text-muted small mb-3">Navigate to <strong>Insight → Local Connector</strong> in the DFC Cloud Console to manage Insight Local Connectors on your network.</p>
 
   <div class="console-mockup" style="border-radius:4px;overflow:hidden">
@@ -1348,16 +1348,16 @@
                       <div style="display:flex;flex-direction:column;gap:7px">
                         <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                           <input type="checkbox" class="pol-cb" id="t-chat-disable" onchange="polChatDisable(this)">
-                          Disable chat
+                          Disable Chat
                         </label>
                         <div id="t-chat-sub" style="display:flex;flex-direction:column;gap:7px;margin-left:18px">
                           <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer" id="t-chat-inter-student-label">
                             <input type="checkbox" class="pol-cb" id="t-chat-inter-student">
-                            Disable Inter-Student chat
+                            Disable Inter-Student Chat
                           </label>
                           <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer" id="t-chat-one-way-label">
                             <input type="checkbox" class="pol-cb" id="t-chat-one-way">
-                            Disable Student replies (One-way chat)
+                            Disable Student Replies (One-way Chat)
                           </label>
                         </div>
                       </div>
@@ -1481,8 +1481,8 @@
   </div>
 </div>
 
-<!-- ══ SCREEN 6 ══ -->
-<div class="demo-body screen" id="screen-8">
+<!-- ══ SCREEN 7 — Admin: Insight Policy — Student Settings ══ -->
+<div class="demo-body screen" id="screen-7">
   <h5 class="mb-1">Step 7 of 8 — Admin: Insight Policy — Student Settings</h5>
   <p class="text-muted small mb-3">The actual DFC Student Policy page. Enable <strong>Authentication &amp; Rostering</strong> to configure SSO and auto-join behaviour for students.</p>
   <div class="row g-3">
@@ -1759,8 +1759,6 @@
   </div>
 </div>
 
-<!-- ══ SCREEN 7 — Site Admin Switch ══ -->
-
 <!-- ══ SCREEN 6 — Teacher Console: Class Settings ══ -->
 <div class="demo-body screen" id="screen-6">
   <h5 class="mb-1">Step 6 of 8 — Teacher Console: Class Settings</h5>
@@ -1772,69 +1770,101 @@
     <div class="col-12">
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-white fw-semibold" style="font-size:13px;border-bottom:1px solid #eee">
-          <i class="fas fa-comment-alt me-2 text-primary" style="font-size:12px"></i>Class Chat
+          <i class="fas fa-comment-alt me-2 text-primary" style="font-size:12px"></i>Chat
         </div>
         <div class="card-body p-0">
           <div class="row g-0">
 
             <!-- Left: Teacher Console mockup -->
             <div class="col-md-7 border-end">
-              <div style="background:#f8f9fa;padding:8px 12px;font-size:10px;font-weight:700;color:#888;letter-spacing:.5px;border-bottom:1px solid #eee">TEACHER CONSOLE — CLASS SETTINGS</div>
-              <div style="display:flex;min-height:200px">
-                <!-- sidebar -->
-                <div style="width:160px;border-right:1px solid #eee;padding:8px 0;flex-shrink:0">
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">Share Screen</div>
-                  <div id="tc-chat-sidebar" style="padding:7px 14px;font-size:12px;font-weight:700;color:#0091ff;background:#eff6ff;border-right:2px solid #0091ff;cursor:pointer">Chat</div>
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">Lock Screen</div>
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">Banned Word Alert</div>
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">File Transfer</div>
+              <div style="background:#f8f9fa;padding:8px 12px;font-size:11px;font-weight:700;color:#777;border-bottom:1px solid #eee">Teacher Console — Class Settings</div>
+              <div class="cs-dlg">
+                <div class="cs-dlg-hd">
+                  <span class="cs-dlg-title">CLASS SETTINGS -&nbsp; Default</span>
+                  <span class="cs-dlg-x">&times;</span>
                 </div>
-                <!-- content -->
-                <div style="flex:1;padding:16px" id="tc-chat-content">
-                  <div style="display:flex;flex-direction:column;gap:14px">
-                    <div style="display:flex;align-items:center;justify-content:space-between">
-                      <span id="tc-chat-lbl-disable" style="font-size:13px;color:#333">Disable chat</span>
-                      <div class="tc-toggle" id="tc-toggle-disable" style="opacity:0.4;pointer-events:none">
-                        <div class="tc-toggle-track off"><div class="tc-toggle-thumb"></div></div>
-                      </div>
+                <div class="cs-colhd">
+                  <div class="cs-colhd-c1">Categories</div>
+                  <div class="cs-colhd-c2">Chat</div>
+                </div>
+                <div class="cs-main" style="min-height:230px">
+                  <!-- sidebar -->
+                  <div class="cs-side">
+                    <div class="cs-cat">Share Screen</div>
+                    <div class="cs-cat active" id="tc-chat-sidebar">Chat</div>
+                    <div class="cs-cat">Lock Screen</div>
+                    <div class="cs-cat">Banned Word Alert</div>
+                    <div class="cs-cat">File Transfer Location</div>
+                    <div class="cs-cat">Screen Recording Location</div>
+                    <div class="cs-cat">Thumbnail</div>
+                    <div class="cs-cat">Student Info</div>
+                    <div class="cs-sep"></div>
+                    <div class="cs-catrow">Block Applications
+                      <span class="tc-toggle cs-mini"><span class="tc-toggle-track on"><span class="tc-toggle-thumb"></span></span></span>
                     </div>
-                    <div id="tc-chat-inter-wrap" style="display:flex;align-items:center;justify-content:space-between;padding-left:16px">
-                      <span id="tc-chat-lbl-inter" style="font-size:13px;color:#333">Disable Inter-Student chat</span>
-                      <div class="tc-toggle" id="tc-toggle-inter" onclick="tcChatToggle('inter')">
-                        <div class="tc-toggle-track off" id="tc-track-inter"><div class="tc-toggle-thumb"></div></div>
-                      </div>
+                    <div class="cs-catrow">Web Filtering
+                      <span class="tc-toggle cs-mini"><span class="tc-toggle-track off"><span class="tc-toggle-thumb"></span></span></span>
                     </div>
-                    <div id="tc-chat-oneway-wrap" style="display:flex;align-items:center;justify-content:space-between;padding-left:16px">
-                      <span id="tc-chat-lbl-oneway" style="font-size:13px;color:#333">Disable Student replies (One-way chat)</span>
-                      <div class="tc-toggle" id="tc-toggle-oneway" onclick="tcChatToggle('oneway')">
-                        <div class="tc-toggle-track off" id="tc-track-oneway"><div class="tc-toggle-thumb"></div></div>
-                      </div>
+                    <div class="cs-catrow">Disable Drives
+                      <span class="tc-toggle cs-mini"><span class="tc-toggle-track off"><span class="tc-toggle-thumb"></span></span></span>
                     </div>
-                    <div id="tc-chat-org-note" style="display:none;align-items:flex-start;gap:5px;padding:8px 10px;background:#f0f4fa;border-radius:4px;font-size:11px;color:#555;margin-top:4px">
+                    <div class="cs-sep"></div>
+                    <div class="cs-cat">Notification</div>
+                  </div>
+                  <!-- content -->
+                  <div class="cs-pane" id="tc-chat-content">
+                    <!-- org-controlled notice — kept at the TOP of the pane, same
+                         position as the File Transfer notice -->
+                    <div id="tc-chat-org-note" style="display:none;align-items:flex-start;gap:5px;padding:8px 10px;background:#f0f4fa;border-radius:4px;font-size:11px;color:#555;margin-bottom:14px">
                       <i class="fas fa-info-circle" style="color:#0091ff;margin-top:1px;flex-shrink:0"></i>
                       <span>Chat settings are controlled by the organization.</span>
                     </div>
+                    <!-- master row -->
+                    <div class="cs-row cs-row-main" id="tc-chat-wrap">
+                      <div class="tc-toggle" id="tc-toggle-disable" onclick="tcChatToggle('chat')">
+                        <div class="tc-toggle-track on" id="tc-track-chat"><div class="tc-toggle-thumb"></div></div>
+                      </div>
+                      <span id="tc-chat-lbl-disable" class="cs-lbl cs-lbl-main">Chat Enabled</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:14px">
+                      <div id="tc-chat-inter-wrap" class="cs-row">
+                        <div class="tc-toggle" id="tc-toggle-inter" onclick="tcChatToggle('inter')">
+                          <div class="tc-toggle-track on" id="tc-track-inter"><div class="tc-toggle-thumb"></div></div>
+                        </div>
+                        <span id="tc-chat-lbl-inter" class="cs-lbl">Inter-Student Chat Enabled</span>
+                      </div>
+                      <div id="tc-chat-oneway-wrap" class="cs-row">
+                        <div class="tc-toggle" id="tc-toggle-oneway" onclick="tcChatToggle('oneway')">
+                          <div class="tc-toggle-track on" id="tc-track-oneway"><div class="tc-toggle-thumb"></div></div>
+                        </div>
+                        <span id="tc-chat-lbl-oneway" class="cs-lbl">Student Replies Enabled</span>
+                      </div>
+                    </div>
                   </div>
+                </div>
+                <div class="cs-dlg-ft">
+                  <button class="cs-btn cs-btn-cancel">CANCEL</button>
+                  <button class="cs-btn cs-btn-save">SAVE AND APPLY</button>
                 </div>
               </div>
             </div>
 
             <!-- Right: DFC policy controls -->
             <div class="col-md-5 bg-light">
-              <div style="padding:8px 12px;font-size:10px;font-weight:700;color:#888;letter-spacing:.5px;border-bottom:1px solid #eee;background:#f0f2f5">DFC POLICY — CLASS CHAT</div>
+              <div style="padding:8px 12px;font-size:11px;font-weight:700;color:#777;border-bottom:1px solid #eee;background:#f0f2f5">DFC Policy — Chat</div>
               <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;font-weight:600">
                   <input type="checkbox" class="pol-cb" id="pol-chat-disable" onchange="syncChatPolicy()">
-                  Disable chat
+                  Disable Chat
                 </label>
                 <div style="margin-left:18px;display:flex;flex-direction:column;gap:7px" id="pol-chat-sub">
                   <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer">
                     <input type="checkbox" class="pol-cb" id="pol-chat-inter" onchange="syncChatPolicy()">
-                    Disable Inter-Student chat
+                    Disable Inter-Student Chat
                   </label>
                   <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer">
                     <input type="checkbox" class="pol-cb" id="pol-chat-oneway" onchange="syncChatPolicy()">
-                    Disable Student replies (One-way chat)
+                    Disable Student Replies (One-way Chat)
                   </label>
                 </div>
                 <div style="margin-top:4px;font-size:11px;color:#757575;display:flex;gap:5px;align-items:flex-start">
@@ -1860,28 +1890,52 @@
 
             <!-- Left: Teacher Console mockup -->
             <div class="col-md-7 border-end">
-              <div style="background:#f8f9fa;padding:8px 12px;font-size:10px;font-weight:700;color:#888;letter-spacing:.5px;border-bottom:1px solid #eee">TEACHER CONSOLE — CLASS SETTINGS</div>
-              <div style="display:flex;min-height:260px">
+              <div style="background:#f8f9fa;padding:8px 12px;font-size:11px;font-weight:700;color:#777;border-bottom:1px solid #eee">Teacher Console — Class Settings</div>
+              <div class="cs-dlg">
+                <div class="cs-dlg-hd">
+                  <span class="cs-dlg-title">CLASS SETTINGS -&nbsp; Default</span>
+                  <span class="cs-dlg-x">&times;</span>
+                </div>
+                <div class="cs-colhd">
+                  <div class="cs-colhd-c1">Categories</div>
+                  <div class="cs-colhd-c2">File Transfer Location</div>
+                </div>
+                <div class="cs-main" style="min-height:300px">
                 <!-- sidebar -->
-                <div style="width:160px;border-right:1px solid #eee;padding:8px 0;flex-shrink:0">
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">Share Screen</div>
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">Chat</div>
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">Lock Screen</div>
-                  <div style="padding:7px 14px;font-size:12px;color:#555;cursor:pointer">Banned Word Alert</div>
-                  <div id="tc-ft-sidebar" style="padding:7px 14px;font-size:12px;font-weight:700;color:#0091ff;background:#eff6ff;border-right:2px solid #0091ff;cursor:pointer">File Transfer</div>
+                <div class="cs-side">
+                  <div class="cs-cat">Share Screen</div>
+                  <div class="cs-cat">Chat</div>
+                  <div class="cs-cat">Lock Screen</div>
+                  <div class="cs-cat">Banned Word Alert</div>
+                  <div class="cs-cat active" id="tc-ft-sidebar">File Transfer Location</div>
+                  <div class="cs-cat">Screen Recording Location</div>
+                  <div class="cs-cat">Thumbnail</div>
+                  <div class="cs-cat">Student Info</div>
+                  <div class="cs-sep"></div>
+                  <div class="cs-catrow">Block Applications
+                    <span class="tc-toggle cs-mini"><span class="tc-toggle-track on"><span class="tc-toggle-thumb"></span></span></span>
+                  </div>
+                  <div class="cs-catrow">Web Filtering
+                    <span class="tc-toggle cs-mini"><span class="tc-toggle-track off"><span class="tc-toggle-thumb"></span></span></span>
+                  </div>
+                  <div class="cs-catrow">Disable Drives
+                    <span class="tc-toggle cs-mini"><span class="tc-toggle-track off"><span class="tc-toggle-thumb"></span></span></span>
+                  </div>
+                  <div class="cs-sep"></div>
+                  <div class="cs-cat">Notification</div>
                 </div>
                 <!-- content -->
-                <div style="flex:1;padding:16px" id="tc-ft-content">
+                <div class="cs-pane" id="tc-ft-content">
                   <div id="tc-ft-org-banner" style="display:none;align-items:flex-start;gap:5px;padding:8px 10px;background:#f0f4fa;border-radius:4px;font-size:11px;color:#555;margin-bottom:14px">
                     <i class="fas fa-info-circle" style="color:#0091ff;margin-top:1px;flex-shrink:0"></i>
                     <span>File transfer is disabled by the organization.</span>
                   </div>
-                  <!-- Disable toggle row -->
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #eee">
-                    <span style="font-size:13px;color:#333;font-weight:600">Disable File Transfer</span>
-                    <div class="tc-toggle" id="tc-ft-toggle" onclick="tcFtToggle()" style="">
-                      <div class="tc-toggle-track off" id="tc-ft-track"><div class="tc-toggle-thumb"></div></div>
+                  <!-- master row -->
+                  <div class="cs-row cs-row-main">
+                    <div class="tc-toggle" id="tc-ft-toggle" onclick="tcFtToggle()">
+                      <div class="tc-toggle-track on" id="tc-ft-track"><div class="tc-toggle-thumb"></div></div>
                     </div>
+                    <span id="tc-ft-lbl" class="cs-lbl cs-lbl-main">File Transfer Enabled</span>
                   </div>
                   <div id="tc-ft-body">
                     <div style="margin-bottom:12px">
@@ -1908,12 +1962,17 @@
                     </div>
                   </div>
                 </div>
+                </div>
+                <div class="cs-dlg-ft">
+                  <button class="cs-btn cs-btn-cancel">CANCEL</button>
+                  <button class="cs-btn cs-btn-save">SAVE AND APPLY</button>
+                </div>
               </div>
             </div>
 
             <!-- Right: DFC policy control -->
             <div class="col-md-5 bg-light">
-              <div style="padding:8px 12px;font-size:10px;font-weight:700;color:#888;letter-spacing:.5px;border-bottom:1px solid #eee;background:#f0f2f5">DFC POLICY — FILE TRANSFER</div>
+              <div style="padding:8px 12px;font-size:11px;font-weight:700;color:#777;border-bottom:1px solid #eee;background:#f0f2f5">DFC Policy — File Transfer</div>
               <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;font-weight:600">
                   <input type="checkbox" class="pol-cb" id="pol-ft-disable" onchange="syncFtPolicy()">
@@ -1935,94 +1994,142 @@
 </div><!-- /screen-6 -->
 
 <style>
-.tc-toggle { cursor:pointer; display:inline-flex; align-items:center; }
+.tc-toggle { cursor:pointer; display:inline-flex; align-items:center; flex-shrink:0; }
 .tc-toggle-track { width:40px; height:22px; border-radius:11px; background:#ccc; position:relative; transition:background .2s; }
 .tc-toggle-track.on  { background:#0091ff; }
 .tc-toggle-thumb { width:18px; height:18px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
 .tc-toggle-track.on .tc-toggle-thumb { left:20px; }
+
+/* ── Teacher Console "Class Settings" dialog chrome (mirrors the real dialog) ── */
+.cs-dlg        { background:#fff; }
+.cs-dlg-hd     { display:flex; align-items:center; padding:11px 14px; }
+.cs-dlg-title  { font-size:12.5px; font-weight:800; color:#0091ff; letter-spacing:.3px; }
+.cs-dlg-x      { margin-left:auto; color:#888; font-size:13px; line-height:1; cursor:pointer; }
+.cs-colhd      { display:flex; background:#f2f2f2; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;
+                 font-size:11px; font-weight:700; color:#333; }
+.cs-colhd-c1   { width:150px; padding:6px 14px; flex-shrink:0; }
+.cs-colhd-c2   { flex:1; padding:6px 14px; }
+.cs-main       { display:flex; }
+.cs-side       { width:150px; border-right:1px solid #e5e5e5; padding:7px 0; flex-shrink:0; }
+.cs-cat        { padding:5px 14px; font-size:11.5px; color:#444; cursor:pointer; }
+.cs-cat.active { font-weight:700; color:#0091ff; background:#eff6ff; box-shadow:inset -2px 0 0 #0091ff; }
+.cs-catrow     { display:flex; align-items:center; justify-content:space-between; gap:8px;
+                 padding:5px 14px; font-size:11.5px; color:#444; }
+.cs-sep        { height:1px; background:#e5e5e5; margin:7px 14px; }
+.cs-pane       { flex:1; padding:16px; }
+.cs-dlg-ft     { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-top:1px solid #e5e5e5; }
+.cs-btn        { border-radius:16px; font-size:10.5px; font-weight:700; letter-spacing:.4px; padding:6px 18px; cursor:pointer; }
+.cs-btn-cancel { background:#fff; border:1px solid #0091ff; color:#0091ff; }
+.cs-btn-save   { background:#0091ff; border:1px solid #0091ff; color:#fff; }
+/* toggle on the LEFT, state label on the right */
+.cs-row        { display:flex; align-items:center; gap:10px; }
+.cs-row-main   { padding-bottom:12px; border-bottom:1px solid #eee; margin-bottom:16px; }
+.cs-lbl        { font-size:13px; color:#333; }
+.cs-lbl-main   { font-weight:600; }
+.cs-hint       { color:#888; font-weight:400; }
+/* mini toggle used by the sidebar category rows */
+.cs-mini .tc-toggle-track { width:30px; height:16px; border-radius:8px; }
+.cs-mini .tc-toggle-thumb { width:12px; height:12px; top:2px; left:2px; }
+.cs-mini .tc-toggle-track.on .tc-toggle-thumb { left:16px; }
 </style>
 
 <script>
-// ── Screen 6: Chat policy sync ──────────────────────────────────────────────
+// ── Screen 6: shared row renderer ───────────────────────────────────────────
+// Toggle ON (blue) == feature ENABLED. `locked` means the DFC policy is
+// enforcing the value, so the teacher cannot change it.
+function tcSetRow(toggleId, trackId, lblId, name, on, locked, disabledHint) {
+  var track = document.getElementById(trackId);
+  track.className = 'tc-toggle-track ' + (on ? 'on' : 'off');
+
+  var lbl = document.getElementById(lblId);
+  lbl.textContent = name + (on ? ' Enabled' : ' Disabled');
+  if (!on && disabledHint) {
+    var hint = document.createElement('span');
+    hint.className = 'cs-hint';
+    hint.textContent = ' ' + disabledHint;
+    lbl.appendChild(hint);
+  }
+
+  var toggle = document.getElementById(toggleId);
+  toggle.style.pointerEvents = locked ? 'none' : '';
+  toggle.style.cursor        = locked ? 'not-allowed' : 'pointer';
+}
+
+// ── Screen 6: Chat ──────────────────────────────────────────────────────────
+// Teacher's own choices. Policy enforcement is layered on top at render time.
+var tcChat = { chat: true, inter: true, oneway: true };
+
+// Single source of truth for "what does the policy currently enforce". Both the
+// renderer and the click handler read this, so a locked row can never be
+// changed — CSS pointer-events alone would not stop a programmatic click.
+function tcChatState() {
+  var polChat   = document.getElementById('pol-chat-disable').checked;
+  var polInter  = document.getElementById('pol-chat-inter').checked;
+  var polOneway = document.getElementById('pol-chat-oneway').checked;
+
+  // A policy "disable" always wins over the teacher's choice, and killing all
+  // chat implicitly kills both sub-settings.
+  var chatOn = polChat ? false : tcChat.chat;
+  return {
+    anyPolicy:    polChat || polInter || polOneway,
+    chatOn:       chatOn,
+    interOn:      (polChat || polInter  || !chatOn) ? false : tcChat.inter,
+    onewayOn:     (polChat || polOneway || !chatOn) ? false : tcChat.oneway,
+    chatLocked:   polChat,
+    interLocked:  polChat || polInter  || !chatOn,
+    onewayLocked: polChat || polOneway || !chatOn
+  };
+}
+
+function tcChatToggle(key) {
+  if (tcChatState()[key + 'Locked']) return;   // enforced by policy — ignore
+  tcChat[key] = !tcChat[key];
+  syncChatPolicy();
+}
+
 function syncChatPolicy() {
-  var orgDisable   = document.getElementById('pol-chat-disable').checked;
-  var orgInter     = document.getElementById('pol-chat-inter').checked;
-  var orgOneway    = document.getElementById('pol-chat-oneway').checked;
+  var st = tcChatState();
 
-  var disableEl    = document.getElementById('tc-toggle-disable');
-  var interWrap    = document.getElementById('tc-chat-inter-wrap');
-  var onewayWrap   = document.getElementById('tc-chat-oneway-wrap');
-  var orgNote      = document.getElementById('tc-chat-org-note');
-  var trackInter   = document.getElementById('tc-track-inter');
-  var trackOneway  = document.getElementById('tc-track-oneway');
-  var interToggle  = document.getElementById('tc-toggle-inter');
-  var onewayToggle = document.getElementById('tc-toggle-oneway');
+  tcSetRow('tc-toggle-disable', 'tc-track-chat',  'tc-chat-lbl-disable', 'Chat',               st.chatOn,   st.chatLocked);
+  tcSetRow('tc-toggle-inter',   'tc-track-inter', 'tc-chat-lbl-inter',   'Inter-Student Chat', st.interOn,  st.interLocked);
+  tcSetRow('tc-toggle-oneway',  'tc-track-oneway','tc-chat-lbl-oneway',  'Student Replies',    st.onewayOn, st.onewayLocked, '(One-way chat)');
 
-  if (orgDisable) {
-    // All chat disabled by org — grey everything, show note
-    disableEl.style.opacity = '0.4';
-    disableEl.style.pointerEvents = 'none';
-    disableEl.querySelector('.tc-toggle-track').className = 'tc-toggle-track off';
-    interWrap.style.opacity  = '0.4';
-    onewayWrap.style.opacity = '0.4';
-    interToggle.style.pointerEvents  = 'none';
-    onewayToggle.style.pointerEvents = 'none';
-    orgNote.style.display = 'flex';
-  } else {
-    disableEl.style.opacity = '0.4';
-    disableEl.style.pointerEvents = 'none';
-    interWrap.style.opacity  = orgInter  ? '0.5' : '1';
-    onewayWrap.style.opacity = orgOneway ? '0.5' : '1';
-    interToggle.style.pointerEvents  = orgInter  ? 'none' : '';
-    onewayToggle.style.pointerEvents = orgOneway ? 'none' : '';
-    if (orgInter)  { trackInter.classList.add('on'); trackInter.classList.remove('off'); } 
-    if (!orgInter) { /* leave as user toggled */ }
-    if (orgOneway) { trackOneway.classList.add('on'); trackOneway.classList.remove('off'); }
-    orgNote.style.display = (orgInter || orgOneway) ? 'flex' : 'none';
-  }
+  document.getElementById('tc-chat-inter-wrap').style.opacity  = st.interLocked  ? '0.45' : '1';
+  document.getElementById('tc-chat-oneway-wrap').style.opacity = st.onewayLocked ? '0.45' : '1';
+  document.getElementById('tc-toggle-disable').style.opacity   = st.chatLocked   ? '0.45' : '1';
+
+  document.getElementById('tc-chat-org-note').style.display = st.anyPolicy ? 'flex' : 'none';
 }
 
-function tcChatToggle(id) {
-  var track = document.getElementById('tc-track-' + id);
-  var isOn = track.classList.contains('on');
-  track.classList.toggle('on', !isOn);
-  track.classList.toggle('off', isOn);
-}
-
-// ── Screen 6: File Transfer policy sync ────────────────────────────────────
-function syncFtPolicy() {
-  var orgDisable = document.getElementById('pol-ft-disable').checked;
-  var banner  = document.getElementById('tc-ft-org-banner');
-  var body    = document.getElementById('tc-ft-body');
-  var ftToggle = document.getElementById('tc-ft-toggle');
-  var ftTrack  = document.getElementById('tc-ft-track');
-
-  if (orgDisable) {
-    banner.style.display = 'flex';
-    body.style.opacity   = '0.35';
-    body.style.pointerEvents = 'none';
-    ftToggle.style.pointerEvents = 'none';
-    ftTrack.classList.add('on'); ftTrack.classList.remove('off');
-  } else {
-    banner.style.display = 'none';
-    body.style.opacity   = '1';
-    body.style.pointerEvents = '';
-    ftToggle.style.pointerEvents = '';
-  }
-}
+// ── Screen 6: File Transfer ────────────────────────────────────────────────
+var tcFt = { on: true };
 
 function tcFtToggle() {
-  var track = document.getElementById('tc-ft-track');
-  var isOn = track.classList.contains('on');
-  track.classList.toggle('on', !isOn);
-  track.classList.toggle('off', isOn);
-  var body = document.getElementById('tc-ft-body');
-  body.style.opacity = isOn ? '1' : '0.35';
-  body.style.pointerEvents = isOn ? '' : 'none';
+  if (document.getElementById('pol-ft-disable').checked) return;  // enforced by policy
+  tcFt.on = !tcFt.on;
+  syncFtPolicy();
 }
+
+function syncFtPolicy() {
+  var polFt = document.getElementById('pol-ft-disable').checked;
+  var ftOn  = polFt ? false : tcFt.on;
+
+  tcSetRow('tc-ft-toggle', 'tc-ft-track', 'tc-ft-lbl', 'File Transfer', ftOn, polFt);
+  document.getElementById('tc-ft-toggle').style.opacity = polFt ? '0.45' : '1';
+  document.getElementById('tc-ft-org-banner').style.display = polFt ? 'flex' : 'none';
+
+  var body = document.getElementById('tc-ft-body');
+  body.style.opacity       = ftOn ? '1' : '0.35';
+  body.style.pointerEvents = ftOn ? '' : 'none';
+}
+
+// Paint initial state (labels + toggle positions) on load.
+syncChatPolicy();
+syncFtPolicy();
 </script>
 
-<div class="demo-body screen" id="screen-7">
+<!-- ══ SCREEN 8 — Site Admin Switch ══ -->
+<div class="demo-body screen" id="screen-8">
   <h5 class="mb-1">Step 8 of 8 — Site Admin: Enable INS Cloud Connector</h5>
   <p class="text-muted small mb-3">In the DFC Site Admin portal, locate the customer site and toggle on <strong>INS Cloud Connector</strong> to unlock the feature in the Insight policy.</p>
 
