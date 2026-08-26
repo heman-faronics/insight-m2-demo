@@ -17,7 +17,7 @@ const state = {
     sync:    null    // { teacherCount, classCount, syncedAt }
 };
 // All screens freely navigable — sign-in enriches data but doesn't block navigation
-const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true };
+const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true };
 
 // ── MSAL setup (v2) ────────────────────────────────────────────────────────────
 // Uses MSAL Browser v2 CDN (v3 dropped the UMD bundle so CDN use requires v2)
@@ -65,7 +65,7 @@ async function clApi(op, email) {
 // ── Screen navigation ──────────────────────────────────────────────────────────
 function navigate(delta) {
     const next = state.currentScreen + delta;
-    if (next < 1 || next > 7) return;
+    if (next < 1 || next > 8) return;
     showScreen(next);
 }
 
@@ -74,10 +74,11 @@ function showScreen(n) {
     document.getElementById(`screen-${n}`).classList.add('active');
     state.currentScreen = n;
 
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 8; i++) {
         const dot = document.getElementById(`dot-${i}`);
         const lbl = document.getElementById(`lbl-${i}`);
         const con = document.getElementById(`conn-${i}`);
+        if (!dot) continue;
         dot.classList.remove('active', 'done');
         lbl.classList.remove('active');
         if (con) con.classList.remove('done');
@@ -90,7 +91,7 @@ function showScreen(n) {
         const tMode = document.querySelector('input[name="t-signin-mode"]:checked')?.value || 'standard';
         polTeacherSignInMode(tMode);
     }
-    if (n === 6) {
+    if (n === 7) {
         updateSummary();
         const sMode = document.querySelector('input[name="s-auth-mode"]:checked')?.value || 'legacy';
         polStudentSignInMode(sMode);
@@ -106,8 +107,8 @@ function updateNav() {
     const soBtn   = document.getElementById('btn-start-over');
     const hint    = document.getElementById('footer-hint');
     backBtn.style.display = n > 1 ? '' : 'none';
-    soBtn.style.display   = n === 7 ? '' : 'none';
-    if (n === 7) { nextBtn.style.display = 'none'; return; }
+    soBtn.style.display   = n === 8 ? '' : 'none';
+    if (n === 8) { nextBtn.style.display = 'none'; return; }
     nextBtn.style.display = '';
     nextBtn.disabled = false;
     hint.textContent = '';
