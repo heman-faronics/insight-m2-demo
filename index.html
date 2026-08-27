@@ -1344,7 +1344,6 @@
                   <div style="display:flex;flex-direction:column;gap:12px">
                     <!-- Chat -->
                     <div>
-                      <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Class Chat</div>
                       <div style="display:flex;flex-direction:column;gap:7px">
                         <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                           <input type="checkbox" class="pol-cb" id="t-chat-disable" onchange="polChatDisable(this)">
@@ -1359,12 +1358,19 @@
                             <input type="checkbox" class="pol-cb" id="t-chat-one-way">
                             Disable Student Replies (One-way Chat)
                           </label>
+                          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer" id="t-chat-raised-hand-label">
+                            <input type="checkbox" class="pol-cb" id="t-chat-raised-hand">
+                            Disable Raised Hand
+                            <span class="pol-tooltip-wrap">
+                              <i class="fas fa-info-circle pol-info-icon" style="font-size:13px;cursor:pointer"></i>
+                              <span class="pol-tooltip-text">Raised Hand lets a student raise their hand to ask the teacher a question. Disabling it removes the option from the student's Insight client.</span>
+                            </span>
+                          </label>
                         </div>
                       </div>
                     </div>
                     <!-- File Transfer -->
                     <div style="border-top:1px solid #eee;padding-top:10px">
-                      <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">File Transfer</div>
                       <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
                         <input type="checkbox" class="pol-cb" id="t-filetransfer-disable">
                         Disable File Transfer
@@ -1839,6 +1845,12 @@
                         </div>
                         <span id="tc-chat-lbl-oneway" class="cs-lbl">Student Replies Enabled</span>
                       </div>
+                      <div id="tc-chat-hand-wrap" class="cs-row">
+                        <div class="tc-toggle" id="tc-toggle-hand" onclick="tcChatToggle('hand')">
+                          <div class="tc-toggle-track on" id="tc-track-hand"><div class="tc-toggle-thumb"></div></div>
+                        </div>
+                        <span id="tc-chat-lbl-hand" class="cs-lbl">Raised Hand Enabled</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1865,6 +1877,10 @@
                   <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer">
                     <input type="checkbox" class="pol-cb" id="pol-chat-oneway" onchange="syncChatPolicy()">
                     Disable Student Replies (One-way Chat)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer">
+                    <input type="checkbox" class="pol-cb" id="pol-chat-hand" onchange="syncChatPolicy()">
+                    Disable Raised Hand
                   </label>
                 </div>
                 <div style="margin-top:4px;font-size:11px;color:#757575;display:flex;gap:5px;align-items:flex-start">
@@ -2057,7 +2073,7 @@ function tcSetRow(toggleId, trackId, lblId, name, on, locked, disabledHint) {
 
 // ── Screen 6: Chat ──────────────────────────────────────────────────────────
 // Teacher's own choices. Policy enforcement is layered on top at render time.
-var tcChat = { chat: true, inter: true, oneway: true };
+var tcChat = { chat: true, inter: true, oneway: true, hand: true };
 
 // Single source of truth for "what does the policy currently enforce". Both the
 // renderer and the click handler read this, so a locked row can never be
@@ -2066,18 +2082,21 @@ function tcChatState() {
   var polChat   = document.getElementById('pol-chat-disable').checked;
   var polInter  = document.getElementById('pol-chat-inter').checked;
   var polOneway = document.getElementById('pol-chat-oneway').checked;
+  var polHand   = document.getElementById('pol-chat-hand').checked;
 
   // A policy "disable" always wins over the teacher's choice, and killing all
-  // chat implicitly kills both sub-settings.
+  // chat implicitly kills every sub-setting.
   var chatOn = polChat ? false : tcChat.chat;
   return {
-    anyPolicy:    polChat || polInter || polOneway,
+    anyPolicy:    polChat || polInter || polOneway || polHand,
     chatOn:       chatOn,
     interOn:      (polChat || polInter  || !chatOn) ? false : tcChat.inter,
     onewayOn:     (polChat || polOneway || !chatOn) ? false : tcChat.oneway,
+    handOn:       (polChat || polHand   || !chatOn) ? false : tcChat.hand,
     chatLocked:   polChat,
     interLocked:  polChat || polInter  || !chatOn,
-    onewayLocked: polChat || polOneway || !chatOn
+    onewayLocked: polChat || polOneway || !chatOn,
+    handLocked:   polChat || polHand   || !chatOn
   };
 }
 
@@ -2093,9 +2112,11 @@ function syncChatPolicy() {
   tcSetRow('tc-toggle-disable', 'tc-track-chat',  'tc-chat-lbl-disable', 'Chat',               st.chatOn,   st.chatLocked);
   tcSetRow('tc-toggle-inter',   'tc-track-inter', 'tc-chat-lbl-inter',   'Inter-Student Chat', st.interOn,  st.interLocked);
   tcSetRow('tc-toggle-oneway',  'tc-track-oneway','tc-chat-lbl-oneway',  'Student Replies',    st.onewayOn, st.onewayLocked, '(One-way chat)');
+  tcSetRow('tc-toggle-hand',    'tc-track-hand',  'tc-chat-lbl-hand',    'Raised Hand',        st.handOn,   st.handLocked);
 
   document.getElementById('tc-chat-inter-wrap').style.opacity  = st.interLocked  ? '0.45' : '1';
   document.getElementById('tc-chat-oneway-wrap').style.opacity = st.onewayLocked ? '0.45' : '1';
+  document.getElementById('tc-chat-hand-wrap').style.opacity   = st.handLocked   ? '0.45' : '1';
   document.getElementById('tc-toggle-disable').style.opacity   = st.chatLocked   ? '0.45' : '1';
 
   document.getElementById('tc-chat-org-note').style.display = st.anyPolicy ? 'flex' : 'none';

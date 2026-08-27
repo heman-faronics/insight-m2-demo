@@ -335,7 +335,7 @@ function polTeacherSignInMode(mode) {
 
 // Disable chat: auto-check and disable the two sub-options when master is checked
 function polChatDisable(cb) {
-    const sub   = ['t-chat-inter-student', 't-chat-one-way'];
+    const sub   = ['t-chat-inter-student', 't-chat-one-way', 't-chat-raised-hand'];
     const on    = cb.checked;
     sub.forEach(id => {
         const el    = document.getElementById(id);
