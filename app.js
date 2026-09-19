@@ -151,12 +151,13 @@ async function teacherSignIn() {
             displayName:  msalResult.displayName,
             sourcedId:    clData.sourcedId,
             classes:      clData.classes || [],
-            selectedClass: clData.classes && clData.classes.length > 0 ? clData.classes[0] : null
+            selectedClass:  null,   // set by the class picker on Screen 1
+            selectedClasses: []
         };
 
         // Advance Scenario 1 to step 2 — step 2 will use state.teacher.classes for real data
         activeSimStep  = 2;
-        simClassChosen = false;
+        simResetClassSel();
         renderSim(true);
         
         updateNav();
@@ -797,11 +798,15 @@ function onStudentAuthChange() {
 // ── Summary + Start Over ───────────────────────────────────────────────────────
 function updateSummary() {
     if (state.teacher) {
-        const cls = state.teacher.selectedClass;
-        const el  = document.getElementById('summary-teacher-text');
+        const picked = (state.teacher.selectedClasses && state.teacher.selectedClasses.length)
+            ? state.teacher.selectedClasses
+            : (state.teacher.selectedClass ? [state.teacher.selectedClass] : []);
+        const el = document.getElementById('summary-teacher-text');
         if (el) el.innerHTML =
             `Teacher: <strong>${esc(state.teacher.email)}</strong>` +
-            (cls ? ` — class: <strong>${esc(cls.title)}</strong>` : '');
+            (picked.length
+                ? ` — class${picked.length > 1 ? 'es' : ''}: <strong>${picked.map(c => esc(c.title)).join(', ')}</strong>`
+                : '');
     }
     if (state.student) {
         const cls = state.student.enrolledClass;
@@ -816,7 +821,7 @@ function startOver() {
     state.teacher = null; state.student = null; state.sync = null;
 
     // Reset Screen 1 scenario switcher
-    activeSimScenario = 1; activeSimStep = 1; simClassChosen = false; sim8ClassIdVisible = false;
+    activeSimScenario = 1; activeSimStep = 1; simResetClassSel(); sim8ClassIdVisible = false;
     document.querySelectorAll('#scenario-pills-row .scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
     const card1 = document.getElementById('scenario-card');
     if (card1) card1.textContent = SIM_SCENARIOS[0].card;
@@ -872,6 +877,10 @@ document.addEventListener('DOMContentLoaded', () => {
     showScreen(1);
     initSimSwitcher();
     initSimSwitcherS2();
+    document.addEventListener('click', (e) => {
+        const w = document.getElementById('sim-class-msel');
+        if (simClassPanelOpen && w && !w.contains(e.target)) simCloseClassPanel();
+    });
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -882,6 +891,9 @@ document.addEventListener('DOMContentLoaded', () => {
 let activeSimScenario = 1;
 let activeSimStep     = 1;
 let simClassChosen    = false;
+let simSelectedClasses = [];   // indices into simClassItems — a teacher may tick one class or several
+let simClassPanelOpen  = false;
+let simClassItems      = [];   // [{ label, count, synced }] currently shown in the picker
 let sim8ClassIdVisible = false;
 let simListAgeHours   = 0;
 const LIST_AGE_STEPS  = [0, 2, 5];
@@ -923,7 +935,7 @@ function initSimSwitcher() {
 function switchSim(n) {
     activeSimScenario  = n;
     activeSimStep      = 1;
-    simClassChosen     = false;
+    simResetClassSel();
     sim8ClassIdVisible = false;
     simListAgeHours    = 0;
 
@@ -951,14 +963,14 @@ function switchSim(n) {
 }
 
 function simAdvanceStep() {
-    simClassChosen = false;
+    simResetClassSel();
     const maxSteps = SIM_SCENARIOS[activeSimScenario - 1].steps;
     if (activeSimStep < maxSteps) activeSimStep++;
     renderSim(true);
 }
 
 function simGoFallback() {
-    simClassChosen = false;
+    simResetClassSel();
     activeSimStep  = 3;
     renderSim(true);
 }
@@ -971,10 +983,10 @@ function simRefresh() {
         renderSim(true);
         return;
     }
-    const sel = document.getElementById('sim-class-sel');
-    if (!sel) return;
-    sel.style.opacity = '.35';
-    setTimeout(() => { sel.style.opacity = ''; }, 700);
+    const picker = document.getElementById('sim-class-msel');
+    if (!picker) return;
+    picker.style.opacity = '.35';
+    setTimeout(() => { picker.style.opacity = ''; }, 700);
 }
 
 // Cycles the "simulate stale list" demo control through 0 → 2 → 5 hours old
@@ -995,16 +1007,123 @@ function closeClassListModal() {
     if (m) { m.style.display = 'none'; }
 }
 
-function simClassChange() {
-    const sel = document.getElementById('sim-class-sel');
-    if (sel && sel.value === 'class-list') {
-        sel.value = '';
-        openClassListModal();
-        return;
+// ── Class picker (single or multiple classes) ─────────────────────────────────
+
+function simResetClassSel() {
+    simSelectedClasses = [];
+    simClassPanelOpen  = false;
+    simClassChosen     = false;
+}
+
+// Every label in the picker is derived from the current selection, so the
+// closed control, the summary line and the Start button never disagree.
+function simClassPickerText() {
+    const picked = simSelectedClasses.filter(i => i < simClassItems.length);
+    const total  = picked.reduce((n, i) => n + (simClassItems[i].count || 0), 0);
+    const s      = n => n !== 1 ? 's' : '';
+    if (picked.length === 0) return {
+        btn:     '— Choose your class —',
+        empty:   true,
+        summary: 'Tick more than one class to teach them together.',
+        start:   'Start Class'
+    };
+    if (picked.length === 1) return {
+        btn:     simClassItems[picked[0]].label,
+        empty:   false,
+        summary: `${total} student${s(total)}`,
+        start:   'Start Class'
+    };
+    return {
+        btn:     `${picked.length} classes · ${total} student${s(total)}`,
+        empty:   false,
+        summary: picked.map(i => simClassItems[i].label).join('  ·  '),
+        start:   `Start Class (${picked.length})`
+    };
+}
+
+function simToggleClassPanel(e) {
+    if (e) e.stopPropagation();
+    simClassPanelOpen = !simClassPanelOpen;
+    const w = document.getElementById('sim-class-msel');
+    if (w) w.classList.toggle('open', simClassPanelOpen);
+    if (simClassPanelOpen) simFitClassPanel();
+}
+
+const SIM_PANEL_MAX = 196;   // .sim-msel-panel max-height (186) + padding/border
+
+// The console frame is overflow:hidden, so an open panel would be clipped on a
+// long class list. Drop it upward — or cap its height — to keep it fully visible.
+function simFitClassPanel() {
+    const w = document.getElementById('sim-class-msel');
+    if (!w) return;
+    const panel = w.querySelector('.sim-msel-panel');
+    const frame = w.closest('.console-mockup');
+    if (!panel || !frame) return;
+
+    w.classList.remove('drop-up');
+    panel.style.maxHeight = '';
+
+    const f = frame.getBoundingClientRect();
+    const c = w.getBoundingClientRect();
+    const need  = Math.min(panel.scrollHeight + 10, SIM_PANEL_MAX);  // never taller than the design cap
+    const below = f.bottom - c.bottom - 12;
+    const above = c.top - f.top - 12;
+
+    if (need <= below) return;
+    const space = Math.max(above, below);
+    if (above > below) w.classList.add('drop-up');
+    if (need > space) panel.style.maxHeight = Math.max(80, Math.min(SIM_PANEL_MAX, space)) + 'px';
+}
+
+function simCloseClassPanel() {
+    if (!simClassPanelOpen) return;
+    simClassPanelOpen = false;
+    const w = document.getElementById('sim-class-msel');
+    if (w) w.classList.remove('open');
+}
+
+// Patches the picker in place rather than re-rendering, so the panel stays
+// open while the teacher ticks several classes.
+function simClassToggle(i, el) {
+    if (el && el.checked) {
+        if (!simSelectedClasses.includes(i)) simSelectedClasses.push(i);
+    } else {
+        simSelectedClasses = simSelectedClasses.filter(n => n !== i);
     }
-    simClassChosen = !!(sel && sel.value !== '');
-    const btn = document.getElementById('sim-start');
-    if (btn) btn.disabled = !simClassChosen;
+    simSelectedClasses.sort((a, b) => a - b);
+    simClassChosen = simSelectedClasses.length > 0;
+    simSyncClassPickerUi();
+    simSyncTeacherState();
+}
+
+function simSyncClassPickerUi() {
+    const t   = simClassPickerText();
+    const txt = document.getElementById('sim-msel-txt');
+    if (txt) {
+        txt.textContent = t.btn;
+        if (txt.parentElement) txt.parentElement.classList.toggle('placeholder', t.empty);
+    }
+    const sum = document.getElementById('sim-msel-summary');
+    if (sum) sum.textContent = t.summary;
+    const start = document.getElementById('sim-start');
+    if (start) { start.disabled = !simClassChosen; start.textContent = t.start; }
+}
+
+function simClassListPick() {
+    simCloseClassPanel();
+    openClassListModal();
+}
+
+// Mirrors the picker selection into state so the run summary stays accurate.
+function simSyncTeacherState() {
+    if (!state.teacher || !Array.isArray(state.teacher.classes) || !state.teacher.classes.length) return;
+    if (activeSimScenario !== 1 || activeSimStep !== 2) return;
+    const picked = simSelectedClasses
+        .filter(i => i < state.teacher.classes.length)
+        .map(i => state.teacher.classes[i]);
+    state.teacher.selectedClasses = picked;
+    state.teacher.selectedClass   = picked[0] || null;
+    updateSummary();
 }
 
 function simDynamicStart(inputId, btnId) {
@@ -1025,6 +1144,7 @@ function renderSim(animate) {
         zone.innerHTML = buildSimHtml();
         updateSimDots();
         zone.classList.remove('transitioning');
+        if (simClassPanelOpen) simFitClassPanel();
     };
     if (animate) {
         zone.classList.add('transitioning');
@@ -1065,26 +1185,58 @@ function _refreshLinkText() {
     return simListAgeHours > 1 ? `⟳ Refreshed ${simListAgeHours} hours ago` : '⟳ Refresh list';
 }
 
-// Class dropdown using real ClassLink data (Scenario 1 step 2 after real sign-in)
-function _realClassDropdown(classes) {
-    let opts = '<option value="">— Choose a class —</option>';
-    classes.forEach((cls, i) => {
-        const cc = cls.courseCode ? ` (${cls.courseCode})` : '';
-        opts += `<option value="${i}">⟳ ${esc(cls.title)}${esc(cc)} — ${cls.studentCount} student${cls.studentCount !== 1 ? 's' : ''}</option>`;
-    });
-    opts += `<option value="class-list" style="color:#2E78C1">+ Add students using Class List</option>`;
-    return `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+// Class picker — a teacher picks one class, or ticks several to run them together.
+// items: [{ label, count, synced }]
+function _classPicker(items, showFallback) {
+    simClassItems = items;
+    // Drop stale indices in case the class list shrank since the last render
+    simSelectedClasses = simSelectedClasses.filter(i => i < items.length);
+    simClassChosen = simSelectedClasses.length > 0;
+    const t = simClassPickerText();
+
+    const opts = items.map((it, i) => `
+          <label class="sim-msel-opt">
+            <input type="checkbox" ${simSelectedClasses.includes(i) ? 'checked' : ''} onchange="simClassToggle(${i}, this)">
+            <span class="sim-msel-name">${it.synced ? '⟳ ' : ''}${esc(it.label)}</span>
+            <span class="sim-msel-count">${it.count} student${it.count !== 1 ? 's' : ''}</span>
+          </label>`).join('');
+
+    const bar = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
           <span class="sim-label" style="margin:0">Select your class:</span>
           <button class="sim-link" onclick="simRefresh()">${_refreshLinkText()}</button>
-        </div>
-        <select id="sim-class-sel" class="sim-select" onchange="simClassChange()">${opts}</select>
-        <div style="text-align:center;margin:6px 0">
-          <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
-        </div>
-        <div style="text-align:right;margin-top:10px">
-          <button class="sim-start-btn" id="sim-start" ${simClassChosen ? '' : 'disabled'}>Start Class</button>
         </div>`;
+
+    const fallback = showFallback
+        ? `<div style="text-align:center;margin:6px 0">
+             <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
+           </div>`
+        : '';
+
+    return `${bar}
+        <div class="sim-msel${simClassPanelOpen ? ' open' : ''}" id="sim-class-msel">
+          <button type="button" class="sim-msel-btn${t.empty ? ' placeholder' : ''}" onclick="simToggleClassPanel(event)">
+            <span class="sim-msel-txt" id="sim-msel-txt">${esc(t.btn)}</span>
+            <i class="fas fa-chevron-down sim-msel-caret"></i>
+          </button>
+          <div class="sim-msel-panel">${opts}
+            <div class="sim-msel-sep"></div>
+            <button type="button" class="sim-msel-action" onclick="simClassListPick()">+ Add students using Class List</button>
+          </div>
+        </div>
+        <div class="sim-msel-summary" id="sim-msel-summary">${esc(t.summary)}</div>
+        ${fallback}
+        <div style="text-align:right;margin-top:10px">
+          <button class="sim-start-btn" id="sim-start" ${simClassChosen ? '' : 'disabled'}>${esc(t.start)}</button>
+        </div>`;
+}
+
+// Class picker using real ClassLink data (Scenario 1 step 2 after real sign-in)
+function _realClassDropdown(classes) {
+    return _classPicker(classes.map(cls => ({
+        label:  cls.title + (cls.courseCode ? ` (${cls.courseCode})` : ''),
+        count:  cls.studentCount,
+        synced: true
+    })), true);
 }
 
 function _signedInPill() {
@@ -1092,26 +1244,11 @@ function _signedInPill() {
 }
 
 function _classDropdown(showFallback) {
-    const sel = `<select id="sim-class-sel" class="sim-select" onchange="simClassChange()">
-      <option value="">— Choose a class —</option>
-      <option>Science Lab · Period 2 · 14 students</option>
-      <option>Mathematics 101 · Period 4 · 22 students</option>
-      <option>English Literature · Period 6 · 18 students</option>
-      <option value="class-list" style="color:#2E78C1">+ Add students using Class List</option>
-    </select>`;
-    const bar = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-      <span class="sim-label" style="margin:0">Select your class:</span>
-      <button class="sim-link" onclick="simRefresh()">${_refreshLinkText()}</button>
-    </div>`;
-    const fallback = showFallback
-        ? `<div style="text-align:center;margin:6px 0">
-             <button class="sim-link" style="color:#d97706" onclick="simGoFallback()">⚠ What if ClassLink is down?</button>
-           </div>`
-        : '';
-    return `${bar}${sel}${fallback}
-      <div style="text-align:right;margin-top:10px">
-        <button class="sim-start-btn" id="sim-start" ${simClassChosen ? '' : 'disabled'}>Start Class</button>
-      </div>`;
+    return _classPicker([
+        { label: 'Science Lab · Period 2',        count: 14 },
+        { label: 'Mathematics 101 · Period 4',    count: 22 },
+        { label: 'English Literature · Period 6', count: 18 }
+    ], showFallback);
 }
 
 function _classIdEntry(label, inputId, btnId) {

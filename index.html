@@ -332,6 +332,46 @@
     width:100%; height:40px; border-radius:20px; border:1px solid #1F5C99;
     font-size:12px; padding:0 14px; font-family:inherit; background:#fff; margin-bottom:4px;
   }
+  /* Multi-class picker — teacher may tick one class or several */
+  .sim-msel { position:relative; margin-bottom:2px; }
+  .sim-msel-btn {
+    width:100%; height:40px; border-radius:20px; border:1px solid #1F5C99;
+    font-size:12px; padding:0 14px; font-family:inherit; background:#fff; color:#374151;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    cursor:pointer; text-align:left; box-sizing:border-box;
+  }
+  .sim-msel-btn.placeholder { color:#9ca3af; }
+  .sim-msel-txt { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sim-msel-caret { font-size:10px; color:#1F5C99; flex-shrink:0; transition:transform .15s ease; }
+  .sim-msel.open .sim-msel-caret { transform:rotate(180deg); }
+  .sim-msel-panel {
+    display:none; position:absolute; top:44px; left:0; right:0; z-index:30;
+    background:#fff; border:1px solid #cbd5e1; border-radius:10px;
+    box-shadow:0 8px 24px rgba(0,0,0,.15); padding:4px; max-height:186px; overflow-y:auto;
+    text-align:left;
+  }
+  .sim-msel.open .sim-msel-panel { display:block; }
+  /* Console frame is overflow:hidden — flip the panel up when it would be clipped */
+  .sim-msel.drop-up .sim-msel-panel { top:auto; bottom:44px; }
+  .sim-msel-opt {
+    display:flex; align-items:center; gap:8px; padding:7px 9px; border-radius:6px;
+    font-size:12px; color:#374151; cursor:pointer; margin:0;
+  }
+  .sim-msel-opt:hover { background:#eff6ff; }
+  .sim-msel-opt input { accent-color:#1F5C99; margin:0; flex-shrink:0; cursor:pointer; }
+  .sim-msel-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sim-msel-count { font-size:11px; color:#9ca3af; flex-shrink:0; }
+  .sim-msel-sep { height:1px; background:#e5e7eb; margin:4px 6px; }
+  .sim-msel-action {
+    display:block; width:100%; text-align:left; background:none; border:none;
+    font-family:inherit; font-size:12px; font-weight:600; color:#2E78C1;
+    padding:7px 9px; border-radius:6px; cursor:pointer;
+  }
+  .sim-msel-action:hover { background:#eff6ff; }
+  .sim-msel-summary {
+    font-size:11px; color:#6b7280; text-align:left; margin:0 4px 2px; min-height:16px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
   .sim-label { font-size:12px; font-weight:700; color:#374151; margin-bottom:6px; text-align:left; display:block; }
   .sim-link { font-size:11px; color:#9ca3af; cursor:pointer; background:none; border:none; text-decoration:none; font-family:inherit; }
   .sim-link:hover { color:#6b7280; text-decoration:underline; }
