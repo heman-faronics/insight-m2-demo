@@ -822,6 +822,7 @@ function startOver() {
 
     // Reset Screen 1 scenario switcher
     activeSimScenario = 1; activeSimStep = 1; simResetClassSel(); sim8ClassIdVisible = false;
+    simDemoSignInOpen = false; simDemoEmail = null; tccExit();
     document.querySelectorAll('#scenario-pills-row .scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
     const card1 = document.getElementById('scenario-card');
     if (card1) card1.textContent = SIM_SCENARIOS[0].card;
@@ -880,6 +881,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
         const w = document.getElementById('sim-class-msel');
         if (simClassPanelOpen && w && !w.contains(e.target)) simCloseClassPanel();
+        const d = document.getElementById('tcc-layout-drop');
+        if (tccLayoutOpen && d && !d.contains(e.target)) tccCloseLayout();
     });
 });
 
@@ -894,6 +897,8 @@ let simClassChosen    = false;
 let simSelectedClasses = [];   // indices into simClassItems — a teacher may tick one class or several
 let simClassPanelOpen  = false;
 let simClassItems      = [];   // [{ label, count, synced }] currently shown in the picker
+let simDemoSignInOpen  = false;  // demo bypass: credential form instead of the MSAL button
+let simDemoEmail       = null;   // whatever the teacher typed into the demo form
 let sim8ClassIdVisible = false;
 let simListAgeHours   = 0;
 const LIST_AGE_STEPS  = [0, 2, 5];
@@ -936,6 +941,9 @@ function switchSim(n) {
     activeSimScenario  = n;
     activeSimStep      = 1;
     simResetClassSel();
+    simDemoSignInOpen  = false;
+    simDemoEmail       = null;
+    tccExit();
     sim8ClassIdVisible = false;
     simListAgeHours    = 0;
 
@@ -1008,6 +1016,22 @@ function closeClassListModal() {
 }
 
 // ── Class picker (single or multiple classes) ─────────────────────────────────
+
+function simDemoSignIn() {
+    simDemoSignInOpen = true;
+    activeSimStep = 1;
+    renderSim(true);
+}
+
+function simDemoSignInSubmit() {
+    const em = document.getElementById('sim-demo-email');
+    simDemoEmail      = (em && em.value.trim()) || 'teacher1@faronicsna.onmicrosoft.com';
+    simDemoSignInOpen = false;
+    state.teacher     = null;   // demo bypass uses the sample class list, not live ClassLink
+    activeSimStep     = 2;
+    simResetClassSel();
+    renderSim(true);
+}
 
 function simResetClassSel() {
     simSelectedClasses = [];
@@ -1172,7 +1196,25 @@ const _MS_SVG = `<svg width="14" height="14" viewBox="0 0 21 21" style="flex-shr
 // Real sign-in button (Scenario 1 only — no "simulated" label)
 function _s1Step1Html() {
     return `<button class="sim-ms-btn" onclick="teacherSignIn()">${_MS_SVG} Sign in with Microsoft</button>
-            <div class="sim-grey-text">Your school requires Microsoft sign-in</div>`;
+            <div class="sim-grey-text">Your school requires Microsoft sign-in</div>
+            <div style="text-align:center;margin-top:10px">
+              <button class="sim-link" style="text-decoration:underline" onclick="simDemoSignIn()">Demo: sign in without Microsoft</button>
+            </div>`;
+}
+
+// Demo bypass — a Microsoft-style credential form that accepts anything typed,
+// so the rostering and multi-class flow can be shown without a real Entra account.
+function _s1DemoSignInHtml() {
+    return `<div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:12px">
+              ${_MS_SVG}<span style="font-size:13px;font-weight:600;color:#374151">Sign in</span>
+            </div>
+            <input id="sim-demo-email" type="email" class="sim-input" value="teacher1@faronicsna.onmicrosoft.com">
+            <input id="sim-demo-pwd" type="password" class="sim-input" placeholder="Password" value="demo">
+            <div class="sim-grey-text" style="margin:0 0 10px">Demo mode — any credentials are accepted</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <button class="sim-link" onclick="switchSim(1)">← Back</button>
+              <button class="sim-start-btn" onclick="simDemoSignInSubmit()">Sign in</button>
+            </div>`;
 }
 
 // Simulated sign-in button (all other scenarios)
@@ -1226,7 +1268,7 @@ function _classPicker(items, showFallback) {
         <div class="sim-msel-summary" id="sim-msel-summary">${esc(t.summary)}</div>
         ${fallback}
         <div style="text-align:right;margin-top:10px">
-          <button class="sim-start-btn" id="sim-start" ${simClassChosen ? '' : 'disabled'}>${esc(t.start)}</button>
+          <button class="sim-start-btn" id="sim-start" onclick="simStartClass()" ${simClassChosen ? '' : 'disabled'}>${esc(t.start)}</button>
         </div>`;
 }
 
@@ -1240,7 +1282,8 @@ function _realClassDropdown(classes) {
 }
 
 function _signedInPill() {
-    return `<div class="sim-signed-pill"><span style="color:#16a34a">●</span> Signed in as teacher1@faronicsna.onmicrosoft.com</div>`;
+    const who = simDemoEmail || (state.teacher && state.teacher.email) || 'teacher1@faronicsna.onmicrosoft.com';
+    return `<div class="sim-signed-pill"><span style="color:#16a34a">●</span> Signed in as ${esc(who)}</div>`;
 }
 
 function _classDropdown(showFallback) {
@@ -1278,7 +1321,7 @@ function buildSimHtml() {
 
     // ── S1: SSO Required + Rostering (REAL auth) ────────────────────────────
     if (s === 1) {
-        if (step === 1) return _s1Step1Html();
+        if (step === 1) return simDemoSignInOpen ? _s1DemoSignInHtml() : _s1Step1Html();
         if (step === 2) {
             const pill = _signedInPill();
             const dropdown = (state.teacher && state.teacher.classes && state.teacher.classes.length > 0)
@@ -1312,6 +1355,170 @@ function buildSimHtml() {
     }
 
     return '';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RUNNING TEACHER CONSOLE — Screen 1, shown after Start Class
+// Mirrors the shipping console: toolbars, student thumbnails and the LAYOUT
+// dropdown, plus a new Thumbnail Text Size control.
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Sample roster used for the thumbnails — deliberately mixes short and long
+// labels so the hover-on-truncation behaviour is visible at the larger sizes.
+const TCC_ROSTER = [
+    { logon: 'User',                 name: 'Ava Nguyen',                   desk: 'harbour' },
+    { logon: 'User',                 name: 'Liam Patel',                   desk: 'harbour-dlg' },
+    { logon: 'Admin',                name: 'Noah Kim',                     desk: 'win-dlg' },
+    { logon: 'A.Papadopoulos-Reyes', name: 'Alexandra Papadopoulos-Reyes', desk: 'harbour-dlg' },
+    { logon: 'User',                 name: 'Mia Okonkwo',                  desk: 'win-dlg' },
+    { logon: 'M.Fitzgerald-Okonkwo', name: 'Marcus Fitzgerald-Okonkwo',    desk: 'harbour' }
+];
+const TCC_PER_CLASS = 3;   // thumbnails shown per selected class in this mockup
+
+let tccStudents    = [];
+let tccTextSize    = 's';  // XS | S | M | L — S matches today's console
+let tccLayoutOpen  = false;
+let tccSortState   = null;
+
+// One card per student, grouped by the classes the teacher ticked
+function tccBuildStudents() {
+    const picked = simSelectedClasses.filter(i => i < simClassItems.length);
+    const out = [];
+    picked.forEach((ci, n) => {
+        for (let i = 0; i < TCC_PER_CLASS; i++) {
+            const seat = n * TCC_PER_CLASS + i;
+            const r    = TCC_ROSTER[seat % TCC_ROSTER.length];
+            out.push({
+                logon:    r.logon,
+                name:     r.name,
+                desk:     r.desk,
+                computer: `DEMOLATAM-WIN-${seat + 1}`,
+                cls:      simClassItems[ci].label
+            });
+        }
+    });
+    return out;
+}
+
+function tccDeskHtml(kind) {
+    const icons = `<div class="tcc-icons">${'<span></span>'.repeat(5)}</div>`;
+    const dlg   = `<div class="tcc-dlg">
+                     <div class="l m"></div><div class="l s"></div><div class="l"></div>
+                     <div class="tiles"><span></span><span></span><span></span></div>
+                   </div><div class="tcc-dlg2"></div>`;
+    if (kind === 'harbour')     return `<div class="tcc-desk harbour">${icons}</div>`;
+    if (kind === 'harbour-dlg') return `<div class="tcc-desk harbour">${icons}${dlg}</div>`;
+    return `<div class="tcc-desk win">${icons}${dlg}</div>`;
+}
+
+function tccCardHtml(st) {
+    const label = `${st.logon} (${st.computer})`;
+    return `<div class="tcc-card" title="${esc(st.cls)}">
+      <div class="tcc-card-top"><i class="fas fa-expand"></i></div>
+      <div class="tcc-thumb">${tccDeskHtml(st.desk)}</div>
+      <div class="tcc-foot">
+        <span class="dots">•••</span>
+        <span class="tcc-nm">
+          <span class="tcc-badge">ABC</span>
+          <span class="tcc-name">${esc(label)}</span>
+          <span class="tcc-tip">${esc(label)}</span>
+        </span>
+      </div>
+    </div>`;
+}
+
+function tccRenderGrid() {
+    const grid = document.getElementById('tcc-grid');
+    if (!grid) return;
+    grid.dataset.text = tccTextSize;
+    grid.innerHTML = tccStudents.map(tccCardHtml).join('');
+    requestAnimationFrame(tccMarkTruncated);
+}
+
+// A name only gets a hover tooltip when it is actually cut off — which is what
+// happens to the longer labels once the text size is raised to M or L.
+function tccMarkTruncated() {
+    document.querySelectorAll('#tcc-grid .tcc-nm').forEach(nm => {
+        const n = nm.querySelector('.tcc-name');
+        nm.classList.toggle('truncated', !!n && n.scrollWidth > n.clientWidth + 1);
+    });
+}
+
+function tccSetTextSize(v) {
+    tccTextSize = v;
+    const grid = document.getElementById('tcc-grid');
+    if (grid) grid.dataset.text = v;
+    document.querySelectorAll('#tcc-text-sizes .tcc-size').forEach(b =>
+        b.classList.toggle('active', b.textContent.trim().toLowerCase() === v));
+    requestAnimationFrame(tccMarkTruncated);
+}
+
+function tccFlip(el) { el.classList.toggle('on'); }
+
+function tccPick(el) {
+    el.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function tccSort(key, dir, el) {
+    tccSortState = { key, dir };
+    document.querySelectorAll('#tcc-layout-drop .tcc-ab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    const f = dir === 'asc' ? 1 : -1;
+    tccStudents.sort((a, b) => f * String(a[key]).localeCompare(String(b[key]), undefined, { numeric: true }));
+    tccRenderGrid();
+}
+
+function tccToggleLayout(e) {
+    if (e) e.stopPropagation();
+    tccLayoutOpen = !tccLayoutOpen;
+    const d = document.getElementById('tcc-layout-drop');
+    if (d) d.classList.toggle('open', tccLayoutOpen);
+}
+
+function tccCloseLayout() {
+    if (!tccLayoutOpen) return;
+    tccLayoutOpen = false;
+    const d = document.getElementById('tcc-layout-drop');
+    if (d) d.classList.remove('open');
+}
+
+function simStartClass() {
+    if (!simClassChosen) return;
+    const picked = simSelectedClasses.filter(i => i < simClassItems.length);
+    const labels = picked.map(i => simClassItems[i].label);
+
+    tccStudents  = tccBuildStudents();
+    tccSortState = null;
+    tccSetTextSize('s');
+    document.querySelectorAll('#tcc-layout-drop .tcc-ab').forEach(b => b.classList.remove('active'));
+
+    const bar = document.getElementById('tcc-bar-classes');
+    if (bar) bar.textContent = `${labels.join('  ·  ')}  ·  ${tccStudents.length} students`;
+
+    const cl = document.getElementById('tcc-class-label');
+    if (cl) {
+        const txt = labels.length > 1 ? `${labels.length} Classes` : (labels[0] || '6A');
+        cl.title = labels.join(', ');
+        cl.innerHTML = `${esc(txt)} <i class="fas fa-caret-down" style="font-size:9px"></i>`;
+    }
+
+    tccRenderGrid();
+    tccSetView(true);
+}
+
+function tccExit() { tccCloseLayout(); tccSetView(false); }
+
+function tccSetView(on) {
+    const sw   = document.getElementById('s1-switcher');
+    const dbar = document.getElementById('tcc-demo-bar');
+    const win  = document.querySelector('#screen-1 .tc-outer');
+    const body = document.getElementById('tc-console-body');
+    if (!sw || !dbar || !win || !body) return;
+    sw.style.display   = on ? 'none' : '';
+    dbar.style.display = on ? '' : 'none';
+    win.style.display  = on ? 'none' : '';
+    body.classList.toggle('show', on);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

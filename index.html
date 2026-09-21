@@ -292,6 +292,111 @@
   }
   .scenario-card.fading { opacity:0; }
 
+  /* ══ RUNNING TEACHER CONSOLE (Screen 1, after Start Class) ══════════════════ */
+  #tc-console-body { display:none; background:#fff; position:relative; }
+  #tc-console-body.show { display:block; }
+
+  .tcc-bar { display:flex; align-items:center; flex-wrap:wrap; gap:18px; padding:14px 18px 10px; }
+  .tcc-bar-2 { padding:6px 18px 14px; }
+  .tcc-sep { width:1px; height:26px; background:#e5e7eb; }
+  .tcc-ctl { line-height:1.3; }
+  .tcc-ctl-t { font-size:12.5px; font-weight:700; color:#22303c; }
+  .tcc-ctl-h { font-size:12.5px; color:#3f4a56; }
+  .tcc-ctl-v { font-size:11.5px; font-weight:700; color:#1b7fd4; cursor:pointer;
+                max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tcc-ctl-v.muted { color:#e2661a; }
+  .tcc-play { color:#22c55e; font-size:13px; margin-left:2px; }
+  .tcc-bar-right { margin-left:auto; display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+
+  /* Toolbar pills — REMOTE / SHARE / ACTIONS / CLASSROOMS / ASSESS / FOCUS */
+  .tcc-pill { display:inline-flex; align-items:stretch; height:30px; border:1px solid; border-radius:16px;
+              background:#fff; font-family:inherit; font-size:11px; font-weight:700; letter-spacing:.6px;
+              overflow:hidden; cursor:pointer; }
+  .tcc-pill .lbl { display:flex; align-items:center; padding:0 15px; }
+  .tcc-pill .crt { display:flex; align-items:center; padding:0 9px; border-left:1px solid; font-size:10px; }
+  .tcc-pill.b { border-color:#1b7fd4; color:#1b7fd4; } .tcc-pill.b .crt { border-left-color:#1b7fd4; }
+  .tcc-pill.g { border-color:#37a84a; color:#37a84a; } .tcc-pill.g .crt { border-left-color:#37a84a; }
+  .tcc-pill.o { border-color:#e2661a; color:#e2661a; } .tcc-pill.o .crt { border-left-color:#e2661a; }
+  .tcc-pill.p { border-color:#f2b9c0; color:#df9199; cursor:default; }
+
+  .tcc-search { display:flex; align-items:center; width:130px; height:30px; border:1px solid #cbd5e1;
+                border-radius:4px; padding:0 9px; color:#9aa7b4; font-size:12px; }
+  .tcc-tog-label { font-size:12px; color:#3f4a56; }
+  .tcc-toggle { width:34px; height:18px; border-radius:9px; background:#cbd5e1; position:relative;
+                cursor:pointer; flex-shrink:0; transition:background .15s; border:none; padding:0; }
+  .tcc-toggle::after { content:''; position:absolute; top:2px; left:2px; width:14px; height:14px;
+                       border-radius:50%; background:#fff; transition:left .15s; }
+  .tcc-toggle.on { background:#1b7fd4; }
+  .tcc-toggle.on::after { left:18px; }
+  .tcc-refresh { width:30px; height:30px; border-radius:50%; border:1px solid #cbd5e1; background:#fff;
+                 color:#3f4a56; font-size:12px; cursor:pointer; }
+
+  /* LAYOUT dropdown */
+  .tcc-drop { position:relative; }
+  .tcc-panel { display:none; position:absolute; top:38px; right:0; width:302px; background:#fff;
+               border:1px solid #e3e7eb; border-radius:6px; box-shadow:0 10px 30px rgba(0,0,0,.18);
+               z-index:35; padding:4px 0 10px; text-align:left; }
+  .tcc-drop.open .tcc-panel { display:block; }
+  .tcc-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 16px; }
+  .tcc-rule { height:1px; background:#eef1f4; margin:0 16px; }
+  .tcc-h { font-size:12.5px; font-weight:700; color:#22303c; }
+  .tcc-sub { font-size:12px; color:#3f4a56; }
+  .tcc-sizes { display:flex; gap:11px; padding:2px 16px 12px; }
+  .tcc-size { width:31px; height:31px; border-radius:50%; border:1px solid #1b7fd4; background:#fff;
+              color:#1b7fd4; font-size:11px; font-weight:600; font-family:inherit; cursor:pointer; padding:0; }
+  .tcc-size.active { background:#1b7fd4; color:#fff; }
+  .tcc-size.locked { cursor:default; }
+  .tcc-ab { border:1px solid #1b7fd4; color:#1b7fd4; background:#fff; border-radius:11px;
+            font-size:10px; font-weight:600; padding:3px 11px; cursor:pointer; font-family:inherit; }
+  .tcc-ab.active { background:#1b7fd4; color:#fff; }
+  .tcc-mon { border:1px solid #1b7fd4; color:#1b7fd4; background:#fff; border-radius:16px; width:64px;
+             height:30px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .tcc-mon.active { background:#1b7fd4; color:#fff; }
+
+  /* Student cards */
+  .tcc-grid { display:flex; flex-wrap:wrap; gap:18px; padding:6px 18px 20px; align-content:flex-start; min-height:470px; }
+  .tcc-card { width:336px; border:1px solid #d7dbe0; background:#fff; }
+  .tcc-card-top { height:26px; background:#eceef0; display:flex; align-items:center; justify-content:flex-end;
+                  padding:0 9px; color:#6b7280; font-size:11px; }
+  .tcc-thumb { height:168px; position:relative; overflow:hidden; border-top:1px solid #d7dbe0; }
+  .tcc-foot { background:#173a63; color:#fff; height:36px; display:flex; align-items:center; gap:8px; padding:0 10px; }
+  .tcc-foot .dots { font-size:13px; letter-spacing:1px; line-height:0; padding-bottom:6px; }
+  .tcc-nm { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; position:relative; min-width:0; }
+  .tcc-badge { background:#fff; color:#173a63; font-size:8px; font-weight:800; border-radius:2px;
+               padding:1px 3px; flex-shrink:0; letter-spacing:.3px; }
+  .tcc-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+  .tcc-grid[data-text="xs"] .tcc-name { font-size:9px; }
+  .tcc-grid[data-text="s"]  .tcc-name { font-size:11px; }
+  .tcc-grid[data-text="m"]  .tcc-name { font-size:13.5px; }
+  .tcc-grid[data-text="l"]  .tcc-name { font-size:16px; }
+  /* Full name on hover, but only when the label is actually cut off */
+  .tcc-tip { display:none; position:absolute; bottom:calc(100% + 9px); left:50%; transform:translateX(-50%);
+             background:#0f1a24; color:#fff; font-size:11px; line-height:1.3; white-space:nowrap;
+             padding:5px 10px; border-radius:4px; box-shadow:0 4px 14px rgba(0,0,0,.3); z-index:40; pointer-events:none; }
+  .tcc-nm.truncated:hover .tcc-tip { display:block; }
+
+  .tcc-tray { display:flex; align-items:center; justify-content:space-between; padding:0 18px 16px; }
+  .tcc-tray i { color:#3f4a56; font-size:17px; }
+  .tcc-tray .chat { width:30px; height:30px; border-radius:50%; background:#1b7fd4; color:#fff;
+                    display:flex; align-items:center; justify-content:center; font-size:13px; }
+
+  /* Fake remote desktop thumbnails */
+  .tcc-desk { position:absolute; inset:0; }
+  .tcc-desk.harbour { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 336 168' preserveAspectRatio='none'%3E%3Cpath d='M0 84 L54 52 L98 80 L146 44 L200 86 L252 60 L306 88 L336 74 L336 168 L0 168Z' fill='%234a7189' opacity='.55'/%3E%3Cpath d='M0 104 L62 80 L124 108 L186 84 L248 110 L310 88 L336 104 L336 168 L0 168Z' fill='%23335367' opacity='.7'/%3E%3C/svg%3E") center/cover no-repeat,
+                      linear-gradient(#a9cde9 0%, #cfe2f0 34%, #8fa8b8 44%, #6d8ea4 62%, #4f7288 100%); }
+  .tcc-desk.win     { background:linear-gradient(155deg, #1a86d0 0%, #0d63ad 55%, #08497f 100%); }
+  .tcc-desk::after { content:''; position:absolute; left:0; right:0; bottom:0; height:9px; background:rgba(12,22,34,.55); }
+  .tcc-icons { position:absolute; left:5px; top:5px; display:flex; flex-direction:column; gap:5px; }
+  .tcc-icons span { width:9px; height:9px; border-radius:2px; background:rgba(255,255,255,.75); }
+  .tcc-dlg { position:absolute; left:23%; top:15%; width:56%; height:64%; background:#20252f;
+             border:1px solid #39414f; border-radius:2px; padding:7px; }
+  .tcc-dlg .l { height:3px; border-radius:2px; background:rgba(255,255,255,.28); margin-bottom:5px; }
+  .tcc-dlg .l.s { width:45%; } .tcc-dlg .l.m { width:72%; }
+  .tcc-dlg .tiles { display:flex; gap:6px; margin-top:12px; justify-content:center; }
+  .tcc-dlg .tiles span { width:22px; height:22px; border-radius:3px; background:rgba(255,255,255,.14); }
+  .tcc-dlg2 { position:absolute; right:4%; top:22%; width:26%; height:52%; background:#f4f6f8;
+              border:1px solid #c9d2da; border-radius:2px; }
+
   /* Sim zone transition */
   .tc-sim-zone { transition:opacity 200ms ease, transform 200ms ease; }
   .tc-sim-zone.transitioning { opacity:0; transform:translateY(8px); }
@@ -477,7 +582,16 @@
   </div>
 
   <!-- ── SCENARIO SWITCHER ── -->
-  <div class="scenario-switcher mx-3 mb-0" style="border-radius:8px 8px 0 0; border:1px solid #dee2e6; border-bottom:none;">
+  <!-- Demo bar shown while the running Teacher Console is on screen -->
+  <div class="scenario-switcher mx-3 mb-0" id="tcc-demo-bar"
+       style="display:none; border-radius:8px 8px 0 0; border:1px solid #dee2e6; border-bottom:none; padding-bottom:12px">
+    <div class="scenario-switcher-label" style="margin:0; display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+      <span>Teacher Console — class in session:</span>
+      <strong id="tcc-bar-classes" style="color:#374151; font-weight:600"></strong>
+      <button class="sim-link" style="text-decoration:underline" onclick="tccExit()">← Back to class selection</button>
+    </div>
+  </div>
+  <div class="scenario-switcher mx-3 mb-0" id="s1-switcher" style="border-radius:8px 8px 0 0; border:1px solid #dee2e6; border-bottom:none;">
     <div class="scenario-switcher-label">Try a different setup to see how the console changes:</div>
     <div class="scenario-pills-row" id="scenario-pills-row">
       <!-- pills injected by JS -->
@@ -527,6 +641,130 @@
         </div>
       </div>
     </div>
+
+    <!-- ══ RUNNING TEACHER CONSOLE (shown after Start Class) ══ -->
+    <div id="tc-console-body">
+
+      <!-- Teacher controls row -->
+      <div class="tcc-bar">
+        <div class="tcc-ctl"><div class="tcc-ctl-t">Teacher</div><div class="tcc-ctl-t">Controls</div></div>
+        <div class="tcc-sep"></div>
+        <div class="tcc-ctl">
+          <div class="tcc-ctl-h">Class ID / Room</div>
+          <div class="tcc-ctl-v" id="tcc-class-label">6A <i class="fas fa-caret-down" style="font-size:9px"></i></div>
+        </div>
+        <div class="tcc-sep"></div>
+        <div class="tcc-ctl">
+          <div class="tcc-ctl-h">Settings</div>
+          <div class="tcc-ctl-v">Default <i class="fas fa-caret-down" style="font-size:9px"></i></div>
+        </div>
+        <div class="tcc-sep"></div>
+        <div class="tcc-ctl">
+          <div class="tcc-ctl-h">Audio</div>
+          <div class="tcc-ctl-v muted">Muted</div>
+        </div>
+        <i class="fas fa-play tcc-play"></i>
+
+        <div class="tcc-bar-right">
+          <span class="tcc-pill p"><span class="lbl">REMOTE</span></span>
+          <span class="tcc-pill g"><span class="lbl">SHARE</span><span class="crt"><i class="fas fa-chevron-down"></i></span></span>
+          <span class="tcc-pill b"><span class="lbl">ACTIONS</span><span class="crt"><i class="fas fa-chevron-down"></i></span></span>
+          <span class="tcc-pill b"><span class="lbl">CLASSROOMS</span><span class="crt"><i class="fas fa-chevron-down"></i></span></span>
+          <span class="tcc-pill b"><span class="lbl">ASSESS</span><span class="crt"><i class="fas fa-chevron-down"></i></span></span>
+          <span class="tcc-pill o"><span class="lbl">FOCUS</span><span class="crt"><i class="fas fa-chevron-down"></i></span></span>
+        </div>
+      </div>
+
+      <!-- Student controls row -->
+      <div class="tcc-bar tcc-bar-2">
+        <div class="tcc-ctl"><div class="tcc-ctl-t">Student</div><div class="tcc-ctl-t">Controls</div></div>
+        <div class="tcc-sep"></div>
+        <div class="tcc-ctl">
+          <div class="tcc-ctl-h">Raised Hands</div>
+          <div class="tcc-ctl-v">0 Raised</div>
+        </div>
+
+        <div class="tcc-bar-right">
+          <span class="tcc-search"><i class="fas fa-magnifying-glass"></i></span>
+          <span class="tcc-tog-label">Detailed View</span>
+          <button class="tcc-toggle" id="tcc-detailed" onclick="tccFlip(this)"></button>
+
+          <!-- LAYOUT + dropdown panel -->
+          <span class="tcc-drop" id="tcc-layout-drop">
+            <span class="tcc-pill b" onclick="tccToggleLayout(event)">
+              <span class="lbl">LAYOUT</span><span class="crt"><i class="fas fa-chevron-down"></i></span>
+            </span>
+            <div class="tcc-panel">
+              <div class="tcc-row"><span class="tcc-h">Grid View</span>
+                <button class="tcc-toggle" onclick="tccFlip(this)"></button></div>
+              <div class="tcc-rule"></div>
+
+              <div class="tcc-row" style="padding-bottom:4px"><span class="tcc-h">Card Size</span></div>
+              <div class="tcc-sizes" id="tcc-card-sizes" title="Card size is fixed at M in this mockup">
+                <button class="tcc-size locked">XS</button>
+                <button class="tcc-size locked">S</button>
+                <button class="tcc-size locked active">M</button>
+                <button class="tcc-size locked">L</button>
+              </div>
+              <div class="tcc-rule"></div>
+
+              <!-- NEW: Thumbnail Text Size — drives the student name size on each card -->
+              <div class="tcc-row" style="padding-bottom:4px"><span class="tcc-h">Thumbnail Text Size</span></div>
+              <div class="tcc-sizes" id="tcc-text-sizes">
+                <button class="tcc-size" onclick="tccSetTextSize('xs')">XS</button>
+                <button class="tcc-size active" onclick="tccSetTextSize('s')">S</button>
+                <button class="tcc-size" onclick="tccSetTextSize('m')">M</button>
+                <button class="tcc-size" onclick="tccSetTextSize('l')">L</button>
+              </div>
+              <div class="tcc-rule"></div>
+
+              <div class="tcc-row"><span class="tcc-h">Snap to Grid</span>
+                <button class="tcc-toggle on" onclick="tccFlip(this)"></button></div>
+              <div class="tcc-rule"></div>
+
+              <div class="tcc-row" style="padding-bottom:2px"><span class="tcc-h">Sort By</span></div>
+              <div class="tcc-row" style="padding-top:4px;padding-bottom:4px">
+                <span class="tcc-sub">Logon ID</span>
+                <span style="display:flex;gap:7px">
+                  <button class="tcc-ab" onclick="tccSort('logon','asc',this)">A-Z</button>
+                  <button class="tcc-ab" onclick="tccSort('logon','desc',this)">Z-A</button></span>
+              </div>
+              <div class="tcc-row" style="padding-top:4px;padding-bottom:4px">
+                <span class="tcc-sub">Student Name</span>
+                <span style="display:flex;gap:7px">
+                  <button class="tcc-ab" onclick="tccSort('name','asc',this)">A-Z</button>
+                  <button class="tcc-ab" onclick="tccSort('name','desc',this)">Z-A</button></span>
+              </div>
+              <div class="tcc-row" style="padding-top:4px"><span class="tcc-sub">Computer Name</span>
+                <span style="display:flex;gap:7px">
+                  <button class="tcc-ab" onclick="tccSort('computer','asc',this)">A-Z</button>
+                  <button class="tcc-ab" onclick="tccSort('computer','desc',this)">Z-A</button></span>
+              </div>
+              <div class="tcc-rule"></div>
+
+              <div class="tcc-row" style="padding-bottom:4px"><span class="tcc-h">Default Monitor Thumbnail</span></div>
+              <div class="tcc-sizes" id="tcc-monitors">
+                <button class="tcc-mon" onclick="tccPick(this)">1</button>
+                <button class="tcc-mon" onclick="tccPick(this)">2</button>
+                <button class="tcc-mon active" onclick="tccPick(this)">All</button>
+              </div>
+            </div>
+          </span>
+
+          <span class="tcc-pill b"><span class="lbl">SELECT</span><span class="crt"><i class="fas fa-chevron-down"></i></span></span>
+          <button class="tcc-refresh"><i class="fas fa-arrows-rotate"></i></button>
+        </div>
+      </div>
+
+      <!-- Student thumbnails (built by JS from the selected classes) -->
+      <div class="tcc-grid" id="tcc-grid" data-text="s"></div>
+
+      <div class="tcc-tray">
+        <i class="fas fa-globe"></i>
+        <span class="chat"><i class="fas fa-comment"></i></span>
+      </div>
+    </div>
+
   </div><!-- /console-mockup -->
 
   <!-- Info cards (unchanged) -->
