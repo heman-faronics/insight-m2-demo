@@ -9,6 +9,41 @@ const ENTRA_TENANT_ID = '04d60e3b-0fed-4071-a820-e4e87e8f8c98';
 const ENTRA_CLIENT_ID = '7eb737a9-32f2-4298-b617-87d35051d95d';
 const ENTRA_SCOPES    = ['openid', 'email', 'profile'];
 
+// Google Workspace SSO. Leave GOOGLE_CLIENT_ID empty and the Google buttons run
+// a simulated sign-in; drop in a real OAuth 2.0 Web client ID and the same
+// buttons use Google Identity Services for real. Nothing else changes.
+const GOOGLE_CLIENT_ID = '';
+const GOOGLE_SCOPES    = ['openid', 'email', 'profile'];
+const GOOGLE_DOMAIN    = 'demo.faronics.org';   // overridden by /api/google?op=config
+
+// ── Org configuration ──────────────────────────────────────────────────────────
+// Mirrors InsightSSOConfig.provider and InsightRosteringConfig.provider. The two
+// are independent: an org may run Entra sign-in with Google Classroom rostering,
+// or the reverse. Every client-facing surface reads these instead of hard-coding
+// "Microsoft" or "ClassLink".
+const orgConfig = {
+    ssoEnabled:     true,
+    ssoProvider:    'entra_id',          // entra_id | google_workspace
+    rosterEnabled:  true,
+    rosterProvider: 'classlink'          // classlink | google_classroom
+};
+
+const PROVIDERS = {
+    entra_id:         { label: 'Microsoft',        long: 'Microsoft Entra ID',  button: 'Sign in with Microsoft' },
+    google_workspace: { label: 'Google',           long: 'Google Workspace',    button: 'Sign in with Google'    }
+};
+const ROSTER_PROVIDERS = {
+    classlink:        { label: 'ClassLink',        long: 'ClassLink OneRoster' },
+    google_classroom: { label: 'Google Classroom', long: 'Google Classroom'    }
+};
+
+function ssoName()       { return PROVIDERS[orgConfig.ssoProvider].label; }
+function ssoLongName()   { return PROVIDERS[orgConfig.ssoProvider].long; }
+function ssoButtonText() { return PROVIDERS[orgConfig.ssoProvider].button; }
+function rosterName()    { return ROSTER_PROVIDERS[orgConfig.rosterProvider].label; }
+function isGoogleSso()   { return orgConfig.ssoProvider === 'google_workspace'; }
+function isGoogleRoster(){ return orgConfig.rosterProvider === 'google_classroom'; }
+
 // ── App state ──────────────────────────────────────────────────────────────────
 const state = {
     currentScreen: 1,
@@ -53,13 +88,29 @@ async function signIn() {
 
 // ── ClassLink API helper (via Vercel serverless function) ──────────────────────
 async function clApi(op, email) {
-    const url = `/api/classlink?op=${op}${email ? '&email=' + encodeURIComponent(email) : ''}`;
+    return providerApi('/api/classlink', op, email);
+}
+
+// Google Classroom — same contract, different serverless function
+async function gcApi(op, email) {
+    return providerApi('/api/google', op, email);
+}
+
+async function providerApi(base, op, email) {
+    const url = `${base}?op=${op}${email ? '&email=' + encodeURIComponent(email) : ''}`;
     const res = await fetch(url);
     if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || `API error: HTTP ${res.status}`);
     }
     return res.json();
+}
+
+// Provider-neutral roster call — the only thing the rest of the app should use.
+// Both endpoints return the same { sourcedId, classes[] } shape, so callers
+// never branch on which rostering provider the org happens to run.
+async function rosterApi(op, email) {
+    return isGoogleRoster() ? gcApi(op, email) : clApi(op, email);
 }
 
 // ── Screen navigation ──────────────────────────────────────────────────────────
@@ -132,19 +183,19 @@ async function teacherSignIn() {
     if (zone) zone.innerHTML = `
         <div style="text-align:center;padding:28px 0">
             <i class="fas fa-spinner fa-spin" style="color:#1F5C99;font-size:22px"></i>
-            <div style="margin-top:10px;font-size:12px;color:#6b7280">Opening Microsoft sign-in…</div>
+            <div style="margin-top:10px;font-size:12px;color:#6b7280">Opening ${esc(ssoName())} sign-in…</div>
         </div>`;
 
     try {
-        const msalResult = await signIn();
+        const msalResult = await ssoSignIn();
 
         if (zone) zone.innerHTML = `
             <div style="text-align:center;padding:28px 0">
                 <i class="fas fa-spinner fa-spin" style="color:#1F5C99;font-size:22px"></i>
-                <div style="margin-top:10px;font-size:12px;color:#6b7280">Fetching your ClassLink classrooms…</div>
+                <div style="margin-top:10px;font-size:12px;color:#6b7280">Fetching your ${esc(rosterName())} classrooms…</div>
             </div>`;
 
-        const clData = await clApi('teacher', msalResult.email);
+        const clData = await rosterApi('teacher', msalResult.email);
 
         state.teacher = {
             email:        msalResult.email,
@@ -178,6 +229,183 @@ async function teacherSignIn() {
     }
 }
 
+// ── Provider-driven copy ───────────────────────────────────────────────────────
+// Every client surface that names an identity or rostering provider reads from
+// orgConfig rather than hard-coding "Microsoft" / "ClassLink", so an org running
+// Google Workspace SSO with ClassLink rostering (or any other pairing) reads
+// correctly everywhere.
+
+const DEMO_ACCOUNTS = {
+    entra_id: {
+        teacher:  'teacher1@faronicsna.onmicrosoft.com',
+        students: [
+            ['student1@faronicsna.onmicrosoft.com', 'Frank Hoffman'],
+            ['student2@faronicsna.onmicrosoft.com', 'Gwendolyn Price']
+        ],
+        authority: 'login.microsoftonline.com',
+        sdk:       'MSAL Browser popup',
+        claims:    'Entra'
+    },
+    google_workspace: {
+        teacher:  'teacher1@demo.faronics.org',
+        students: [
+            ['student1@demo.faronics.org', 'Ava Nguyen'],
+            ['student2@demo.faronics.org', 'Liam Patel']
+        ],
+        authority: 'accounts.google.com',
+        sdk:       'Google Identity Services',
+        claims:    'Google'
+    }
+};
+
+const ROSTER_DETAIL = {
+    classlink: {
+        api:       '/api/classlink',
+        idField:   'ClassLink sourcedId',
+        teacherId: '5033_T5033-0005',
+        classes:   '2 active classes, 3 students each',
+        prod:      'In production, DFC serves classes from <code>tbl_RosteredClass</code> (pre-synced). In this demo the API route calls ClassLink live to show what DFC does during a sync job.',
+        prodStudent: 'In production, the Student Client receives the class ID from DFC after the teacher has started class. This demo calls ClassLink live to show what the roster lookup does.'
+    },
+    google_classroom: {
+        api:       '/api/google',
+        idField:   'Google Classroom courseId',
+        teacherId: 'teacher1@demo.faronics.org',
+        classes:   '2 active courses, 3 students each',
+        prod:      'In production, DFC serves classes from <code>tbl_RosteredClass</code> (pre-synced). The Google Classroom sync runs entirely server-side — it enumerates teachers through the Admin SDK, impersonates each one to read their courses, and writes the result to the same table ClassLink writes to. No Insight client changes.',
+        prodStudent: 'In production, the Student Client receives the class ID from DFC after the teacher has started class. The roster behind it came from the server-side Google Classroom sync — the client cannot tell which provider produced it.'
+    }
+};
+
+function demoAccounts() { return DEMO_ACCOUNTS[orgConfig.ssoProvider]; }
+function rosterDetail() { return ROSTER_DETAIL[orgConfig.rosterProvider]; }
+
+// Repaint every provider-named label, list and card on the page
+function syncProviderLabels() {
+    document.querySelectorAll('.js-sso-name').forEach(el   => el.textContent = ssoName());
+    document.querySelectorAll('.js-sso-long').forEach(el   => el.textContent = ssoLongName());
+    document.querySelectorAll('.js-roster-name').forEach(el => el.textContent = rosterName());
+
+    const a = demoAccounts(), r = rosterDetail();
+    const li = (rows) => rows.map(t => `<li>${t}</li>`).join('');
+
+    const s1 = document.getElementById('s1-happening');
+    if (s1) s1.innerHTML = li([
+        `${esc(a.sdk)} → <code>${esc(a.authority)}</code>`,
+        `Teacher signs in as <code>${esc(a.teacher)}</code>`,
+        `idToken returned; email extracted from ${esc(a.claims)} claims`,
+        `Browser calls <code>${esc(r.api)}?op=teacher&amp;email=…</code>`,
+        `Serverless function maps email → ${esc(r.idField)}`,
+        `Classes + student counts returned → dropdown populates`
+    ]);
+
+    const s1t = document.getElementById('s1-testacct');
+    if (s1t) s1t.innerHTML =
+        `<code>${esc(a.teacher)}</code><br>→ ${esc(rosterName())}: Marian Lucas · <code>${esc(r.teacherId)}</code><br>→ ${esc(r.classes)}`;
+
+    const s1p = document.getElementById('s1-proddiff');
+    if (s1p) s1p.innerHTML = r.prod;
+
+    const s2 = document.getElementById('s2-happening');
+    if (s2) s2.innerHTML = li([
+        `${esc(a.sdk)} → <code>${esc(a.authority)}</code>`,
+        `Student signs in as a <code>@${esc(a.teacher.split('@')[1])}</code> account`,
+        `idToken returned; email extracted from ${esc(a.claims)} claims`,
+        `Browser calls <code>${esc(r.api)}?op=student&amp;email=…</code>`,
+        `Serverless function looks up the ${esc(r.idField)}`,
+        `Enrolled class returned → student clicks Go to Class`
+    ]);
+
+    const s2t = document.getElementById('s2-testacct');
+    if (s2t) s2t.innerHTML = a.students.map(([em, nm]) => `<code>${esc(em)}</code> → ${esc(nm)}`).join('<br>');
+
+    const s2p = document.getElementById('s2-proddiff');
+    if (s2p) s2p.innerHTML = r.prodStudent;
+
+    // Scenario description cards re-read their provider-aware text
+    const c1 = document.getElementById('scenario-card');
+    if (c1) c1.textContent = simCardText(SIM_SCENARIOS[activeSimScenario - 1]);
+    const c2 = document.getElementById('s2-scenario-card');
+    if (c2) c2.textContent = simCardText(SIM_SCENARIOS_S2[activeSimScenarioS2 - 1]);
+
+    // Org Settings mirrors whatever the demo switches selected
+    syncOrgSettingsUi();
+}
+
+// Scenario cards may be a plain string or a function of the current providers
+function simCardText(scn) {
+    return typeof scn.card === 'function' ? scn.card() : scn.card;
+}
+
+// ── Google Workspace sign-in ───────────────────────────────────────────────────
+// Real Google Identity Services when GOOGLE_CLIENT_ID is set; otherwise a
+// simulated prompt so the flow is demonstrable before credentials land. Both
+// paths return the same { email, displayName } the Entra path returns.
+let googleClientLoaded = false;
+
+function loadGis() {
+    if (googleClientLoaded) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        if (typeof google !== 'undefined' && google.accounts) { googleClientLoaded = true; return resolve(); }
+        const el = document.createElement('script');
+        el.src    = 'https://accounts.google.com/gsi/client';
+        el.async  = true;
+        el.onload = () => { googleClientLoaded = true; resolve(); };
+        el.onerror = () => reject(new Error('Google Identity Services failed to load. Check your network connection.'));
+        document.head.appendChild(el);
+    });
+}
+
+function decodeJwtPayload(jwt) {
+    const part = jwt.split('.')[1];
+    const json = atob(part.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decodeURIComponent(escape(json)));
+}
+
+async function googleSignIn() {
+    if (!GOOGLE_CLIENT_ID) return googleSimulatedSignIn();
+
+    await loadGis();
+    return new Promise((resolve, reject) => {
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            hd:        GOOGLE_DOMAIN,          // restrict the chooser to the school domain
+            callback:  (response) => {
+                try {
+                    const claims = decodeJwtPayload(response.credential);
+                    resolve({
+                        email:       (claims.email || '').toLowerCase(),
+                        displayName: claims.name || claims.email,
+                        subject:     claims.sub          // stable Google user id
+                    });
+                } catch (e) { reject(new Error('Could not read the Google ID token.')); }
+            }
+        });
+        google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                reject(new Error('Google sign-in was dismissed.'));
+            }
+        });
+    });
+}
+
+// Simulated Google sign-in — mirrors the Microsoft demo bypass
+function googleSimulatedSignIn() {
+    const typed  = (typeof simDemoEmail === 'string' && simDemoEmail) || '';
+    const email  = (typed && typed.includes('@') ? typed : `teacher1@${GOOGLE_DOMAIN}`).toLowerCase();
+    return Promise.resolve({
+        email,
+        displayName: 'Marian Lucas',
+        subject:     '114285730192847561093',
+        simulated:   true
+    });
+}
+
+// The one sign-in entry point — dispatches on the org's configured SSO provider
+async function ssoSignIn() {
+    return isGoogleSso() ? googleSignIn() : signIn();
+}
+
 // ── Student sign-in ────────────────────────────────────────────────────────────
 async function studentSignIn() {
     const zone = document.getElementById('s2-sim-zone');
@@ -185,11 +413,11 @@ async function studentSignIn() {
     if (zone) zone.innerHTML = `
         <div style="text-align:center;padding:28px 0">
             <i class="fas fa-spinner fa-spin" style="color:#ce4900;font-size:22px"></i>
-            <div style="margin-top:10px;font-size:12px;color:#6b7280">Opening Microsoft sign-in…</div>
+            <div style="margin-top:10px;font-size:12px;color:#6b7280">Opening ${esc(ssoName())} sign-in…</div>
         </div>`;
 
     try {
-        const msalResult = await signIn();
+        const msalResult = await ssoSignIn();
 
         if (zone) zone.innerHTML = `
             <div style="text-align:center;padding:28px 0">
@@ -197,7 +425,7 @@ async function studentSignIn() {
                 <div style="margin-top:10px;font-size:12px;color:#6b7280">Fetching your enrolled class…</div>
             </div>`;
 
-        const clData = await clApi('student', msalResult.email);
+        const clData = await rosterApi('student', msalResult.email);
 
         state.student = {
             email:        msalResult.email,
@@ -231,34 +459,44 @@ async function studentSignIn() {
 }
 
 // ── ClassLink sync (Screen 3) ──────────────────────────────────────────────────
-async function triggerSync() {
-    const btn     = document.getElementById('btn-sync-now');
-    const spinner = document.getElementById('sync-spinner');
-    const icon    = document.getElementById('sync-icon');
-    const msgEl   = document.getElementById('sync-message');
+// Element ids differ per provider panel; the behaviour does not.
+const SYNC_UI = {
+    classlink: {
+        btn: 'btn-sync-now', spinner: 'sync-spinner', icon: 'sync-icon', msg: 'sync-message',
+        time: 'last-sync-time', badge: 'sync-status-badge', counts: 'sync-counts'
+    },
+    google_classroom: {
+        btn: 'gc-btn-sync-now', spinner: 'gc-sync-spinner', icon: 'gc-sync-icon', msg: 'gc-sync-message',
+        time: 'gc-last-sync-time', badge: 'gc-sync-status-badge', counts: 'gc-sync-counts'
+    }
+};
+
+async function triggerSync(provider) {
+    const prov = provider || orgConfig.rosterProvider;
+    const ui   = SYNC_UI[prov];
+    const $    = id => document.getElementById(id);
+
+    const btn = $(ui.btn), spinner = $(ui.spinner), icon = $(ui.icon), msgEl = $(ui.msg);
     if (!btn) return;
     btn.disabled = true;
     if (icon)    icon.classList.add('d-none');
     if (spinner) spinner.classList.remove('d-none');
-    if (msgEl)   msgEl.textContent = 'Connecting to ClassLink…';
+    if (msgEl)   msgEl.textContent = `Connecting to ${ROSTER_PROVIDERS[prov].label}…`;
 
     try {
-        const data = await clApi('sync');
+        const data = prov === 'google_classroom' ? await gcApi('sync') : await clApi('sync');
         state.sync = data;
+        if (data.mode) applyGoogleMode(prov === 'google_classroom' ? data.mode : null);
 
-        // Update the new DFC-style sync status elements
-        const timeEl    = document.getElementById('last-sync-time');
-        const badgeEl   = document.getElementById('sync-status-badge');
-        const countsEl  = document.getElementById('sync-counts');
-
-        if (timeEl)   timeEl.textContent  = data.syncedAt;
-        if (badgeEl)  { badgeEl.style.display = 'inline-flex'; }
+        const timeEl = $(ui.time), badgeEl = $(ui.badge), countsEl = $(ui.counts);
+        if (timeEl)  timeEl.textContent = data.syncedAt;
+        if (badgeEl) badgeEl.style.display = 'inline-flex';
         if (countsEl) {
             countsEl.style.display = 'inline';
             const students = data.studentCount != null ? `${data.studentCount} students` : '— students';
             countsEl.textContent = `${data.teacherCount} teachers  ·  ${data.classCount} classes  ·  ${students}`;
         }
-        if (msgEl)   msgEl.textContent = '';
+        if (msgEl) msgEl.textContent = '';
     } catch (err) {
         if (msgEl) msgEl.textContent = err.message;
     } finally {
@@ -762,20 +1000,120 @@ function dfcRosterProvider(value) {
     const googleEl    = document.getElementById('roster-google-classroom');
     if (classLinkEl) classLinkEl.style.display = value === 'classlink' ? '' : 'none';
     if (googleEl)    googleEl.style.display    = value === 'google-classroom' ? '' : 'none';
+
+    // InsightRosteringConfig.provider — one active provider per org
+    orgConfig.rosterProvider = value === 'google-classroom' ? 'google_classroom' : 'classlink';
+    syncProviderLabels();
 }
 
-function dfcSubmitEarlyAccess(formId, successId) {
-    const form    = document.getElementById(formId);
-    const success = document.getElementById(successId);
-    if (form)    form.style.display    = 'none';
-    if (success) success.style.display = 'block';
+// InsightSSOConfig.provider is also a single value, so enabling one identity
+// provider disables the other. The rostering provider is untouched — the two
+// are independent, and a mixed pairing is legitimate.
+function dfcSsoProviderToggle(provider, cb) {
+    const isGoogle = provider === 'google_workspace';
+    if (cb.checked) {
+        orgConfig.ssoProvider = provider;
+        orgConfig.ssoEnabled  = true;
+        const other = document.getElementById(isGoogle ? 'toggle-entra' : 'toggle-google-sso');
+        if (other) other.checked = false;
+    } else {
+        orgConfig.ssoEnabled = false;
+    }
+    syncOrgSettingsUi();
+    syncProviderLabels();
+
+    // Sign-in screens reset — the previous provider's session no longer applies
+    state.teacher = null; state.student = null;
+    simDemoSignInOpen = false; simDemoEmail = null;
+    activeSimStep = 1; activeSimStepS2 = 1;
+    simResetClassSel(); tccExit();
+    renderSim(false); renderSimS2(false);
+}
+
+// Keep both SSO toggles, their status text and their field blocks consistent
+// with orgConfig, whichever surface changed it.
+function syncOrgSettingsUi() {
+    const google = isGoogleSso();
+    const pairs = [
+        ['toggle-entra',      'status-entra',     'entra-fields',      !google && orgConfig.ssoEnabled],
+        ['toggle-google-sso', 'status-google-sso','google-sso-fields',  google && orgConfig.ssoEnabled]
+    ];
+    pairs.forEach(([toggleId, statusId, fieldsId, on]) => {
+        const t = document.getElementById(toggleId);
+        const st = document.getElementById(statusId);
+        const f = document.getElementById(fieldsId);
+        if (t)  t.checked = on;
+        if (st) { st.textContent = on ? 'On' : 'Off'; st.style.color = on ? '#2E78C1' : '#9ca3af'; }
+        if (f)  { f.style.opacity = on ? '1' : '0.4'; f.style.pointerEvents = on ? '' : 'none'; }
+    });
+
+    const sel = document.getElementById('roster-provider');
+    if (sel) sel.value = isGoogleRoster() ? 'google-classroom' : 'classlink';
+    const cl = document.getElementById('roster-classlink');
+    const gc = document.getElementById('roster-google-classroom');
+    if (cl) cl.style.display = isGoogleRoster() ? 'none' : '';
+    if (gc) gc.style.display = isGoogleRoster() ? '' : 'none';
+}
+
+function dfcGoogleDomainChange(value) {
+    const v = (value || '').trim().replace(/^@/, '');
+    if (!v) return;
+    DEMO_ACCOUNTS.google_workspace.teacher  = `teacher1@${v}`;
+    DEMO_ACCOUNTS.google_workspace.students = [[`student1@${v}`, 'Ava Nguyen'], [`student2@${v}`, 'Liam Patel']];
+    ROSTER_DETAIL.google_classroom.teacherId = `teacher1@${v}`;
+    ['gsso-domain', 'gc-domain'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim() !== v) el.value = v;
+    });
+    syncProviderLabels();
+}
+
+// Real round-trip to the serverless function, so the badge reflects whether
+// this deployment has Google credentials rather than always claiming success.
+async function dfcTestGoogleRoster(btn, resultId) {
+    const resultEl = document.getElementById(resultId);
+    const original = btn.innerHTML;
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:9px;margin-right:4px"></i>Testing…';
+    if (resultEl) resultEl.style.display = 'none';
+    try {
+        const data = await gcApi('test');
+        applyGoogleMode(data.mode);
+        if (resultEl) {
+            resultEl.className   = 'dfc-badge-verified';
+            resultEl.innerHTML   = `<i class="fas fa-check" style="font-size:8px"></i> ${esc(data.detail || 'Connection verified')}`;
+            resultEl.style.display = 'inline-flex';
+        }
+    } catch (err) {
+        if (resultEl) {
+            resultEl.className   = 'dfc-badge-failed';
+            resultEl.innerHTML   = `<i class="fas fa-times" style="font-size:8px"></i> ${esc(err.message)}`;
+            resultEl.style.display = 'inline-flex';
+        }
+    } finally {
+        btn.disabled  = false;
+        btn.innerHTML = original;
+    }
+}
+
+// The badge tells you at a glance whether you are looking at real Google data
+function applyGoogleMode(mode) {
+    if (!mode) return;
+    const badge = document.getElementById('gc-mode-badge');
+    if (!badge) return;
+    const live = mode === 'live';
+    badge.textContent     = live ? 'Live' : 'Simulated';
+    badge.style.background = live ? '#dcfce7' : '#fef3c7';
+    badge.style.color      = live ? '#166534' : '#92400e';
 }
 
 // Initialise masked secret values on page load
 document.addEventListener('DOMContentLoaded', function() {
     const secrets = [
         { id: 'entra-secret',  masked: '••••••••••••CAZZ' },
-        { id: 'roster-secret', masked: '••••••••••••9bee' }
+        { id: 'roster-secret', masked: '••••••••••••9bee' },
+        { id: 'gsso-secret',   masked: '••••••••••••TQ4e' },
+        { id: 'gc-key',        masked: '••••••••••••7fd1' }
     ];
     secrets.forEach(s => {
         const el = document.getElementById(s.id);
@@ -825,14 +1163,14 @@ function startOver() {
     simDemoSignInOpen = false; simDemoEmail = null; tccExit();
     document.querySelectorAll('#scenario-pills-row .scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
     const card1 = document.getElementById('scenario-card');
-    if (card1) card1.textContent = SIM_SCENARIOS[0].card;
+    if (card1) card1.textContent = simCardText(SIM_SCENARIOS[0]);
     renderSim(false);
 
     // Reset Screen 2 scenario switcher
     activeSimScenarioS2 = 1; activeSimStepS2 = 1; simS2ClassIdVisible = false;
     document.querySelectorAll('#s2-pills-row .scenario-pill').forEach((p, i) => p.classList.toggle('active', i === 0));
     const card2 = document.getElementById('s2-scenario-card');
-    if (card2) card2.textContent = SIM_SCENARIOS_S2[0].card;
+    if (card2) card2.textContent = simCardText(SIM_SCENARIOS_S2[0]);
     renderSimS2(false);
 
     var lst = document.getElementById('last-sync-time');
@@ -876,8 +1214,12 @@ function classifyError(err) {
 // ── Init ───────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     showScreen(1);
+    syncProviderLabels();
     initSimSwitcher();
     initSimSwitcherS2();
+    gcApi('config')
+        .then(cfg => { if (cfg.domain) dfcGoogleDomainChange(cfg.domain); applyGoogleMode(cfg.mode); })
+        .catch(() => { /* endpoint unavailable — panels stay on their defaults */ });
     document.addEventListener('click', (e) => {
         const w = document.getElementById('sim-class-msel');
         if (simClassPanelOpen && w && !w.contains(e.target)) simCloseClassPanel();
@@ -911,17 +1253,17 @@ let simS2ClassIdVisible = false;
 const SIM_SCENARIOS = [
     {
         pill: '★ Class roster + sign-in',
-        card: 'SSO Required with ClassLink: Sign in with Microsoft and your class list loads automatically — no Class ID needed.',
+        card: () => `SSO Required with ${rosterName()}: Sign in with ${ssoName()} and your class list loads automatically — no Class ID needed.`,
         steps: 3
     },
     {
         pill: 'Sign-in only',
-        card: "SSO Required without ClassLink: Microsoft sign-in is required, but you'll still type your Class ID after signing in.",
+        card: () => `SSO Required without ${rosterName()}: ${ssoName()} sign-in is required, but you'll still type your Class ID after signing in.`,
         steps: 2
     },
     {
         pill: 'Class ID only',
-        card: "Standard mode: No Microsoft sign-in. Enter your Class ID and optional password as usual.",
+        card: () => `Standard mode: No ${ssoName()} sign-in. Enter your Class ID and optional password as usual.`,
         steps: 1
     }
 ];
@@ -933,7 +1275,7 @@ function initSimSwitcher() {
         `<button class="scenario-pill${i === 0 ? ' active' : ''}" onclick="switchSim(${i + 1})">${s.pill}</button>`
     ).join('');
     const card = document.getElementById('scenario-card');
-    if (card) card.textContent = SIM_SCENARIOS[0].card;
+    if (card) card.textContent = simCardText(SIM_SCENARIOS[0]);
     renderSim(false);
 }
 
@@ -962,7 +1304,7 @@ function switchSim(n) {
     if (card) {
         card.classList.add('fading');
         setTimeout(() => {
-            card.textContent = SIM_SCENARIOS[n - 1].card;
+            card.textContent = simCardText(SIM_SCENARIOS[n - 1]);
             card.classList.remove('fading');
         }, 100);
     }
@@ -1023,14 +1365,31 @@ function simDemoSignIn() {
     renderSim(true);
 }
 
-function simDemoSignInSubmit() {
+async function simDemoSignInSubmit() {
     const em = document.getElementById('sim-demo-email');
-    simDemoEmail      = (em && em.value.trim()) || 'teacher1@faronicsna.onmicrosoft.com';
+    simDemoEmail      = (em && em.value.trim()) || demoAccounts().teacher;
     simDemoSignInOpen = false;
-    state.teacher     = null;   // demo bypass uses the sample class list, not live ClassLink
     activeSimStep     = 2;
     simResetClassSel();
+    state.teacher     = null;
     renderSim(true);
+
+    // Pull the real class list for the configured rostering provider. Falls back
+    // to the built-in sample list when the typed identity has no roster mapping,
+    // so an arbitrary demo email still reaches the class picker.
+    try {
+        const data = await rosterApi('teacher', simDemoEmail);
+        state.teacher = {
+            email:           simDemoEmail,
+            displayName:     data.displayName || simDemoEmail,
+            sourcedId:       data.sourcedId,
+            classes:         data.classes || [],
+            selectedClass:   null,
+            selectedClasses: []
+        };
+        simResetClassSel();
+        renderSim(false);
+    } catch (_) { /* unmapped demo identity — sample class list stands */ }
 }
 
 function simResetClassSel() {
@@ -1191,24 +1550,58 @@ function updateSimDots() {
 
 // ── HTML fragment helpers ──────────────────────────────────────────────────────
 
+const _G_SVG = `<svg width="15" height="15" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.8 2.5 30.2 0 24 0 14.7 0 6.8 5.4 3 13.3l7.9 6.1C12.7 13.2 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.1z"/><path fill="#FBBC05" d="M10.9 28.7A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.2.7-4.7L2.3 13.3A24 24 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.4-5.9z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.2-8.3 2.2-6.1 0-11.3-3.7-13.1-9.8l-8.4 5.9C6.8 42.6 14.7 48 24 48z"/></svg>`;
+
+// Glyph for whichever provider the org has configured
+function _ssoGlyph() { return isGoogleSso() ? _G_SVG : _MS_SVG; }
+
 const _MS_SVG = `<svg width="14" height="14" viewBox="0 0 21 21" style="flex-shrink:0"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>`;
 
 // Real sign-in button (Scenario 1 only — no "simulated" label)
 function _s1Step1Html() {
-    return `<button class="sim-ms-btn" onclick="teacherSignIn()">${_MS_SVG} Sign in with Microsoft</button>
-            <div class="sim-grey-text">Your school requires Microsoft sign-in</div>
-            <div style="text-align:center;margin-top:10px">
-              <button class="sim-link" style="text-decoration:underline" onclick="simDemoSignIn()">Demo: sign in without Microsoft</button>
+    return `<button class="sim-ms-btn" onclick="teacherSignIn()">${_ssoGlyph()} ${esc(ssoButtonText())}</button>
+            <div class="sim-grey-text">Your school requires ${esc(ssoName())} sign-in</div>
+            ${_ssoSwitchHtml()}
+            <div style="text-align:center;margin-top:8px">
+              <button class="sim-link" style="text-decoration:underline" onclick="simDemoSignIn()">Demo: sign in without ${esc(ssoName())}</button>
             </div>`;
+}
+
+// Demo control — flips the org's identity provider so both can be shown without
+// leaving the screen. In the product this is set once in Organization Settings.
+function _ssoSwitchHtml() {
+    const other = isGoogleSso() ? 'entra_id' : 'google_workspace';
+    return `<div style="text-align:center;margin-top:12px">
+              <button class="sim-link" onclick="demoSetSsoProvider('${other}')">
+                Demo: this org uses ${esc(PROVIDERS[other].long)} instead
+              </button>
+            </div>`;
+}
+
+// Switch the configured identity provider and re-render every surface that
+// mentions it — the sign-in screens, both policy screens and Org Settings.
+function demoSetSsoProvider(provider) {
+    orgConfig.ssoProvider = provider;
+    simDemoSignInOpen = false;
+    simDemoEmail      = null;
+    state.teacher     = null;
+    state.student     = null;
+    activeSimStep     = 1;
+    activeSimStepS2   = 1;
+    simResetClassSel();
+    tccExit();
+    renderSim(true);
+    renderSimS2(false);
+    syncProviderLabels();
 }
 
 // Demo bypass — a Microsoft-style credential form that accepts anything typed,
 // so the rostering and multi-class flow can be shown without a real Entra account.
 function _s1DemoSignInHtml() {
     return `<div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:12px">
-              ${_MS_SVG}<span style="font-size:13px;font-weight:600;color:#374151">Sign in</span>
+              ${_ssoGlyph()}<span style="font-size:13px;font-weight:600;color:#374151">Sign in</span>
             </div>
-            <input id="sim-demo-email" type="email" class="sim-input" value="teacher1@faronicsna.onmicrosoft.com">
+            <input id="sim-demo-email" type="email" class="sim-input" value="${esc(demoAccounts().teacher)}">
             <input id="sim-demo-pwd" type="password" class="sim-input" placeholder="Password" value="demo">
             <div class="sim-grey-text" style="margin:0 0 10px">Demo mode — any credentials are accepted</div>
             <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1282,16 +1675,23 @@ function _realClassDropdown(classes) {
 }
 
 function _signedInPill() {
-    const who = simDemoEmail || (state.teacher && state.teacher.email) || 'teacher1@faronicsna.onmicrosoft.com';
+    const who = simDemoEmail || (state.teacher && state.teacher.email) || demoAccounts().teacher;
     return `<div class="sim-signed-pill"><span style="color:#16a34a">●</span> Signed in as ${esc(who)}</div>`;
 }
 
 function _classDropdown(showFallback) {
-    return _classPicker([
-        { label: 'Science Lab · Period 2',        count: 14 },
-        { label: 'Mathematics 101 · Period 4',    count: 22 },
-        { label: 'English Literature · Period 6', count: 18 }
-    ], showFallback);
+    const sample = isGoogleRoster()
+        ? [
+            { label: 'Grade 6 Science · Period 2',     count: 14 },
+            { label: 'Grade 6 Mathematics · Period 4', count: 22 },
+            { label: 'Grade 6 English · Period 6',     count: 18 }
+          ]
+        : [
+            { label: 'Science Lab · Period 2',        count: 14 },
+            { label: 'Mathematics 101 · Period 4',    count: 22 },
+            { label: 'English Literature · Period 6', count: 18 }
+          ];
+    return _classPicker(sample, showFallback);
 }
 
 function _classIdEntry(label, inputId, btnId) {
@@ -1529,22 +1929,22 @@ function tccSetView(on) {
 const SIM_SCENARIOS_S2 = [
     {
         pill: '★ Class roster + sign-in',
-        card: 'Your school requires Microsoft sign-in. Once signed in, your class is assigned automatically from the school roster — no Class ID needed.',
+        card: () => `Your school requires ${ssoName()} sign-in. Once signed in, your class is assigned automatically from the school roster — no Class ID needed.`,
         steps: 2
     },
     {
         pill: 'Sign-in only',
-        card: "Microsoft sign-in is required, but class lookup is off. After signing in, you still type your Class ID to join.",
+        card: () => `${ssoName()} sign-in is required, but class lookup is off. After signing in, you still type your Class ID to join.`,
         steps: 2
     },
     {
         pill: 'Class ID only',
-        card: "No Microsoft sign-in. Enter your Class ID and optional password — this is how Insight works today without SSO.",
+        card: () => `No ${ssoName()} sign-in. Enter your Class ID and optional password — this is how Insight works today without SSO.`,
         steps: 1
     },
     {
         pill: 'What if sign-in fails?',
-        card: "See what the student experiences if Microsoft sign-in fails — and whether a Class ID fallback is available.",
+        card: () => `See what the student experiences if ${ssoName()} sign-in fails — and whether a Class ID fallback is available.`,
         steps: 3
     }
 ];
@@ -1556,7 +1956,7 @@ function initSimSwitcherS2() {
         `<button class="scenario-pill${i === 0 ? ' active' : ''}" onclick="switchSimS2(${i + 1})">${s.pill}</button>`
     ).join('');
     const card = document.getElementById('s2-scenario-card');
-    if (card) card.textContent = SIM_SCENARIOS_S2[0].card;
+    if (card) card.textContent = simCardText(SIM_SCENARIOS_S2[0]);
     renderSimS2(false);
 }
 
@@ -1572,7 +1972,7 @@ function switchSimS2(n) {
     if (card) {
         card.classList.add('fading');
         setTimeout(() => {
-            card.textContent = SIM_SCENARIOS_S2[n - 1].card;
+            card.textContent = simCardText(SIM_SCENARIOS_S2[n - 1]);
             card.classList.remove('fading');
         }, 100);
     }
@@ -1620,18 +2020,22 @@ function updateSimDotsS2() {
 
 // ── S2 HTML fragment helpers ───────────────────────────────────────────────────
 
+const _G_SVG_16 = `<svg width="17" height="17" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.8 2.5 30.2 0 24 0 14.7 0 6.8 5.4 3 13.3l7.9 6.1C12.7 13.2 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.1z"/><path fill="#FBBC05" d="M10.9 28.7A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.2.7-4.7L2.3 13.3A24 24 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.4-5.9z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.2-8.3 2.2-6.1 0-11.3-3.7-13.1-9.8l-8.4 5.9C6.8 42.6 14.7 48 24 48z"/></svg>`;
+
 const _MS_SVG_16 = `<svg width="16" height="16" viewBox="0 0 21 21" style="flex-shrink:0"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>`;
 
 // Real sign-in button (Scenario 1 only)
 function _s2Step1Html() {
-    return `<button class="sc-ms-btn" onclick="studentSignIn()">${_MS_SVG_16} Sign in with Microsoft</button>
-            <div class="sim-grey-text" style="margin-top:8px">Your school requires Microsoft sign-in</div>`;
+    return `<button class="sc-ms-btn" onclick="studentSignIn()">${_s2Glyph()} ${esc(ssoButtonText())}</button>
+            <div class="sim-grey-text" style="margin-top:8px">Your school requires ${esc(ssoName())} sign-in</div>`;
 }
 
-// Simulated orange MS button
+// Simulated provider button
 function _s2MsBtn(onclick) {
-    return `<button class="sc-ms-btn" onclick="${onclick}">${_MS_SVG_16} Sign in with Microsoft</button>`;
+    return `<button class="sc-ms-btn" onclick="${onclick}">${_s2Glyph()} ${esc(ssoButtonText())}</button>`;
 }
+
+function _s2Glyph() { return isGoogleSso() ? _G_SVG_16 : _MS_SVG_16; }
 
 // Class ID form styled to match student client
 function _s2ClassIdForm(inputId, btnId, label) {
@@ -1645,7 +2049,7 @@ function _s2ClassIdForm(inputId, btnId, label) {
 
 // Signed-in pill (green, uses real email if available)
 function _s2SignedInPill(email) {
-    const display = email || (state.student && state.student.email) || 'student1@faronicsna.onmicrosoft.com';
+    const display = email || (state.student && state.student.email) || demoAccounts().students[0][0];
     return `<div class="sim-signed-pill"><span style="color:#16a34a">●</span> Signed in as ${esc(display)}</div>`;
 }
 
@@ -1660,8 +2064,8 @@ function _s2ClassResult(title) {
 function buildSimS2Html() {
     const s    = activeSimScenarioS2;
     const step = activeSimStepS2;
-    const DEMO_CLASS = 'Science Lab · Period 2';
-    const DEMO_EMAIL = 'student1@faronicsna.onmicrosoft.com';
+    const DEMO_CLASS = isGoogleRoster() ? 'Grade 6 Science · Period 2' : 'Science Lab · Period 2';
+    const DEMO_EMAIL = demoAccounts().students[0][0];
 
     // ── S1: Class roster + sign-in (REAL auth) ───────────────────────────────
     if (s === 1) {
