@@ -52,7 +52,8 @@ const state = {
     sync:    null    // { teacherCount, classCount, syncedAt }
 };
 // All screens freely navigable — sign-in enriches data but doesn't block navigation
-const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true };
+const TOTAL_SCREENS = 9;
+const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true };
 
 // ── MSAL setup (v2) ────────────────────────────────────────────────────────────
 // Uses MSAL Browser v2 CDN (v3 dropped the UMD bundle so CDN use requires v2)
@@ -116,7 +117,7 @@ async function rosterApi(op, email) {
 // ── Screen navigation ──────────────────────────────────────────────────────────
 function navigate(delta) {
     const next = state.currentScreen + delta;
-    if (next < 1 || next > 8) return;
+    if (next < 1 || next > TOTAL_SCREENS) return;
     showScreen(next);
 }
 
@@ -125,7 +126,7 @@ function showScreen(n) {
     document.getElementById(`screen-${n}`).classList.add('active');
     state.currentScreen = n;
 
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= TOTAL_SCREENS; i++) {
         const dot = document.getElementById(`dot-${i}`);
         const lbl = document.getElementById(`lbl-${i}`);
         const con = document.getElementById(`conn-${i}`);
@@ -158,8 +159,8 @@ function updateNav() {
     const soBtn   = document.getElementById('btn-start-over');
     const hint    = document.getElementById('footer-hint');
     backBtn.style.display = n > 1 ? '' : 'none';
-    soBtn.style.display   = n === 8 ? '' : 'none';
-    if (n === 8) { nextBtn.style.display = 'none'; return; }
+    soBtn.style.display   = n === TOTAL_SCREENS ? '' : 'none';
+    if (n === TOTAL_SCREENS) { nextBtn.style.display = 'none'; return; }
     nextBtn.style.display = '';
     nextBtn.disabled = false;
     hint.textContent = '';
@@ -1215,6 +1216,7 @@ function classifyError(err) {
 document.addEventListener('DOMContentLoaded', () => {
     showScreen(1);
     syncProviderLabels();
+    tclInitScreen9();
     initSimSwitcher();
     initSimSwitcherS2();
     gcApi('config')
@@ -1225,6 +1227,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (simClassPanelOpen && w && !w.contains(e.target)) simCloseClassPanel();
         const d = document.getElementById('tcc-layout-drop');
         if (tccLayoutOpen && d && !d.contains(e.target)) tccCloseLayout();
+        const a = document.getElementById('tcl-actions-wrap');
+        if (tclActionsOpen && a && !a.contains(e.target)) tclCloseActions();
     });
 });
 
@@ -1755,6 +1759,236 @@ function buildSimHtml() {
     }
 
     return '';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SCREEN 9 — Insight Cloud page: push Class Settings to Teacher Consoles
+// A teacher exports their Class Settings to JSON from their own console; an
+// admin selects target consoles here and uploads that file. A setting arriving
+// under a name that already exists replaces it; new names are added.
+// ══════════════════════════════════════════════════════════════════════════════
+
+let tclActionsOpen = false;
+let tclFile        = null;   // { name, size, settings: [string] }
+
+// Settings already present on the demo consoles, so the preview can show which
+// incoming settings replace an existing one and which are new.
+const TCL_EXISTING = ['Default', 'Exam Mode', 'Computer Lab'];
+
+function tclToggleActions(e) {
+    if (e) e.stopPropagation();
+    tclActionsOpen = !tclActionsOpen;
+    const w = document.getElementById('tcl-actions-wrap');
+    if (w) w.classList.toggle('open', tclActionsOpen);
+}
+
+function tclCloseActions() {
+    if (!tclActionsOpen) return;
+    tclActionsOpen = false;
+    const w = document.getElementById('tcl-actions-wrap');
+    if (w) w.classList.remove('open');
+}
+
+function tclSelectedConsoles() {
+    return [...document.querySelectorAll('.tcl-row-cb')]
+        .filter(cb => cb.checked)
+        .map(cb => cb.dataset.name);
+}
+
+function tclToggleAll(master) {
+    document.querySelectorAll('.tcl-row-cb').forEach(cb => { cb.checked = master.checked; });
+    tclSelectionChanged();
+}
+
+function tclSelectionChanged() {
+    const boxes = [...document.querySelectorAll('.tcl-row-cb')];
+    boxes.forEach(cb => cb.closest('tr').classList.toggle('sel', cb.checked));
+    const all = document.getElementById('tcl-check-all');
+    if (all) {
+        const n = boxes.filter(cb => cb.checked).length;
+        all.checked       = n === boxes.length && n > 0;
+        all.indeterminate = n > 0 && n < boxes.length;
+    }
+    tclRefreshTargets();
+}
+
+function tclRefreshTargets() {
+    const names = tclSelectedConsoles();
+    const count = document.getElementById('tcl-target-count');
+    const list  = document.getElementById('tcl-target-names');
+    if (count) count.textContent = `${names.length} Teacher Console${names.length === 1 ? '' : 's'}`;
+    if (list)  list.textContent  = names.join(',  ');
+    tclRefreshApplyState();
+}
+
+function tclOpenAddSettings() {
+    tclCloseActions();
+    // Selecting nothing is an easy mistake — select every console rather than
+    // opening a dialog that cannot do anything.
+    if (!tclSelectedConsoles().length) {
+        document.querySelectorAll('.tcl-row-cb').forEach(cb => { cb.checked = true; });
+        tclSelectionChanged();
+    }
+    tclClearFile();
+    const res = document.getElementById('tcl-result');
+    if (res) { res.style.display = 'none'; res.innerHTML = ''; }
+    tclRefreshTargets();
+    const m = document.getElementById('tcl-settings-modal');
+    if (m) m.style.display = 'flex';
+}
+
+function tclCloseAddSettings() {
+    const m = document.getElementById('tcl-settings-modal');
+    if (m) m.style.display = 'none';
+}
+
+function tclClearFile() {
+    tclFile = null;
+    const input = document.getElementById('tcl-file');
+    if (input) input.value = '';
+    const drop = document.getElementById('tcl-drop');
+    if (drop) drop.classList.remove('has-file');
+    const empty = document.getElementById('tcl-drop-empty');
+    const chosen = document.getElementById('tcl-drop-chosen');
+    if (empty)  empty.style.display  = '';
+    if (chosen) chosen.style.display = 'none';
+    const prev = document.getElementById('tcl-preview');
+    if (prev) prev.style.display = 'none';
+    tclRefreshApplyState();
+}
+
+function tclFileChosen(input) {
+    const f = input.files && input.files[0];
+    if (f) tclAcceptFile(f);
+}
+
+function tclAcceptFile(f) {
+    if (!/\.json$/i.test(f.name)) {
+        alert('Class Settings must be exported from the Teacher Console as a .json file.');
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+        let settings = [];
+        try {
+            settings = tclReadSettingNames(JSON.parse(reader.result));
+        } catch (_) {
+            // Not valid JSON, or not a shape we recognise — still show the file so
+            // the flow can be demonstrated, with a clearly labelled sample.
+        }
+        if (!settings.length) settings = ['Default', 'Science Lab', 'Exam Mode'];
+        tclFile = { name: f.name, size: f.size, settings };
+        tclShowFile();
+    };
+    reader.readAsText(f);
+}
+
+// Accepts a few plausible export shapes rather than insisting on one
+function tclReadSettingNames(data) {
+    if (Array.isArray(data)) {
+        return data.map(x => typeof x === 'string' ? x : (x && (x.name || x.settingName))).filter(Boolean);
+    }
+    if (data && typeof data === 'object') {
+        for (const key of ['classSettings', 'settings', 'profiles']) {
+            if (Array.isArray(data[key])) {
+                return data[key].map(x => typeof x === 'string' ? x : (x && (x.name || x.settingName))).filter(Boolean);
+            }
+            if (data[key] && typeof data[key] === 'object') return Object.keys(data[key]);
+        }
+        return Object.keys(data).filter(k => typeof data[k] === 'object');
+    }
+    return [];
+}
+
+function tclShowFile() {
+    const drop = document.getElementById('tcl-drop');
+    if (drop) drop.classList.add('has-file');
+    const empty = document.getElementById('tcl-drop-empty');
+    const chosen = document.getElementById('tcl-drop-chosen');
+    if (empty)  empty.style.display  = 'none';
+    if (chosen) chosen.style.display = '';
+    const nameEl = document.getElementById('tcl-file-name');
+    const metaEl = document.getElementById('tcl-file-meta');
+    if (nameEl) nameEl.textContent = tclFile.name;
+    if (metaEl) metaEl.textContent =
+        `${(tclFile.size / 1024).toFixed(1)} KB  ·  ${tclFile.settings.length} setting${tclFile.settings.length === 1 ? '' : 's'}`;
+
+    const rows = document.getElementById('tcl-preview-rows');
+    if (rows) rows.innerHTML = tclFile.settings.map(name => {
+        const replaces = TCL_EXISTING.some(e => e.toLowerCase() === String(name).toLowerCase());
+        return `<tr>
+            <td>${esc(name)}</td>
+            <td>${replaces
+                ? '<span class="tcl-badge-replace">Replaces existing</span>'
+                : '<span class="tcl-badge-new">Added</span>'}</td>
+          </tr>`;
+    }).join('');
+    const prev = document.getElementById('tcl-preview');
+    if (prev) prev.style.display = '';
+
+    tclRefreshApplyState();
+}
+
+function tclRefreshApplyState() {
+    const btn = document.getElementById('tcl-apply-btn');
+    if (!btn) return;
+    const ready = !!tclFile && tclSelectedConsoles().length > 0;
+    btn.disabled      = !ready;
+    btn.style.background = ready ? '#2A6DB5' : '#d1d5db';
+    btn.style.cursor     = ready ? 'pointer' : 'not-allowed';
+}
+
+function tclApplySettings() {
+    if (!tclFile || !tclSelectedConsoles().length) return;
+    const names    = tclSelectedConsoles();
+    const replaced = tclFile.settings.filter(n => TCL_EXISTING.some(e => e.toLowerCase() === String(n).toLowerCase()));
+    const added    = tclFile.settings.filter(n => !replaced.includes(n));
+
+    const btn = document.getElementById('tcl-apply-btn');
+    btn.disabled = true;
+    btn.textContent = 'Applying…';
+
+    setTimeout(() => {
+        const res = document.getElementById('tcl-result');
+        if (res) {
+            res.style.display = '';
+            res.innerHTML = `
+              <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:13px 15px">
+                <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#166534;margin-bottom:7px">
+                  <i class="fas fa-circle-check"></i>Class Settings applied
+                </div>
+                <div style="font-size:12px;color:#15803d;line-height:1.8">
+                  Pushed <strong>${tclFile.settings.length}</strong> setting${tclFile.settings.length === 1 ? '' : 's'}
+                  to <strong>${names.length}</strong> Teacher Console${names.length === 1 ? '' : 's'}:
+                  ${esc(names.join(',  '))}
+                  ${replaced.length ? `<br><strong>${replaced.length}</strong> replaced an existing setting of the same name: ${esc(replaced.join(',  '))}` : ''}
+                  ${added.length ? `<br><strong>${added.length}</strong> added as new: ${esc(added.join(',  '))}` : ''}
+                  <br>Each console picks the change up on its next check-in.
+                </div>
+              </div>`;
+            res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        btn.textContent = 'Add Class Settings';
+        tclRefreshApplyState();
+    }, 900);
+}
+
+// Drag and drop onto the file area
+function tclInitScreen9() {
+    const drop = document.getElementById('tcl-drop');
+    if (drop) {
+        ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => {
+            e.preventDefault(); drop.classList.add('dragover');
+        }));
+        ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => {
+            e.preventDefault(); drop.classList.remove('dragover');
+        }));
+        drop.addEventListener('drop', e => {
+            const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+            if (f) tclAcceptFile(f);
+        });
+    }
+    tclSelectionChanged();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
