@@ -2899,20 +2899,16 @@ syncFtPolicy();
       <div class="tcl-step">
         <div class="tcl-step-num">1</div>
         <div class="tcl-step-body">
-          <div class="tcl-step-title">On the Teacher Console computer</div>
+          <div class="tcl-step-title">Export the settings from a Teacher Console</div>
           <div class="tcl-step-text">
-            The teacher whose configuration you want to copy exports it from their own console:
+            Class Settings are created on the Teacher Console itself, not in the cloud. To copy a configuration to
+            other teachers, it is first saved out to a file from the console that already has it.
           </div>
           <ol class="tcl-step-list">
             <li>Open <strong>Settings</strong> in the Teacher Console</li>
             <li>Choose <strong>Export Settings</strong></li>
-            <li>Select which settings to export</li>
-            <li>Save the <code>.json</code> file somewhere you can reach from this browser</li>
+            <li>Select the settings to export, then save the <code>.json</code> file</li>
           </ol>
-          <div class="tcl-step-note">
-            <i class="fas fa-circle-info"></i>
-            This is a one-time step per configuration. The same file can be pushed to as many consoles as you like.
-          </div>
         </div>
       </div>
 
@@ -2920,8 +2916,8 @@ syncFtPolicy();
       <div class="tcl-step">
         <div class="tcl-step-num">2</div>
         <div class="tcl-step-body">
-          <div class="tcl-step-title">On the Cloud Console — here</div>
-          <div class="tcl-step-text">Upload that file to push the settings to the selected Teacher Consoles.</div>
+          <div class="tcl-step-title">Upload that file here</div>
+          <div class="tcl-step-text">Its settings are pushed to the Teacher Consoles listed above.</div>
 
           <!-- Drop zone -->
           <div id="tcl-drop" class="tcl-drop" onclick="document.getElementById('tcl-file').click()">
@@ -2956,8 +2952,7 @@ syncFtPolicy();
         <div>
           <strong style="color:#92400e">If a setting with the same name already exists</strong>
           <div style="color:#92400e;line-height:1.6;margin-top:3px">
-            the incoming setting <strong>replaces</strong> it on that Teacher Console. Settings with names that do not
-            already exist are added. Nothing else on the console is changed or removed.
+            it is <strong>replaced</strong>. New names are added, and nothing else on the console changes.
           </div>
         </div>
       </div>
