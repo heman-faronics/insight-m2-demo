@@ -454,14 +454,12 @@
   .tcl-drop.dragover { border-color:#2A6DB5; background:#eff6ff; }
   .tcl-drop.has-file { border-style:solid; border-color:#86efac; background:#f0fdf4; }
 
-  .tcl-preview-table { width:100%; border-collapse:collapse; font-size:11.5px; border:1px solid #e5e7eb; }
-  .tcl-preview-table th { text-align:left; font-weight:700; color:#374151; background:#f8fafc;
-                          padding:7px 10px; border-bottom:1px solid #e5e7eb; }
-  .tcl-preview-table td { padding:7px 10px; color:#4b5563; border-bottom:1px solid #f1f3f5; }
-  .tcl-badge-replace { background:#fef3c7; color:#92400e; border-radius:9px; padding:2px 8px;
-                       font-size:10px; font-weight:700; }
-  .tcl-badge-new { background:#dcfce7; color:#166534; border-radius:9px; padding:2px 8px;
-                   font-size:10px; font-weight:700; }
+  #tcl-toast { display:none; position:absolute; top:33px; left:50%; transform:translateX(-50%);
+               background:#4CAF50; color:#fff; border-radius:3px; padding:9px 20px;
+               font-size:12.5px; align-items:center; gap:9px; z-index:70;
+               box-shadow:0 3px 12px rgba(0,0,0,.25); white-space:nowrap; }
+  #tcl-toast.show { display:flex; }
+  #tcl-toast i { font-size:14px; }
 
   .tcl-rule-box { display:flex; align-items:flex-start; gap:9px; background:#fffbeb;
                   border:1px solid #fcd34d; border-radius:4px; padding:11px 13px; font-size:12px; }
@@ -2701,8 +2699,13 @@ syncFtPolicy();
     <strong>ACTIONS</strong> menu below and choose <strong>Add Class Settings</strong> under Insight Actions.
   </p>
 
-  <div class="console-mockup" style="border-radius:4px;overflow:hidden">
+  <div class="console-mockup" style="border-radius:4px;overflow:hidden;position:relative">
     <div class="console-titlebar"><span class="win-btn win-close"></span><span class="win-btn win-min"></span><span class="win-btn win-max"></span><span class="ms-2">Deep Freeze Cloud — Insight → Teacher Consoles</span></div>
+
+    <!-- Confirmation toast — same treatment DFC uses for "policy has been updated" -->
+    <div id="tcl-toast">
+      <i class="fas fa-circle-check"></i><span id="tcl-toast-text"></span>
+    </div>
 
     <!-- DFC header bar -->
     <div style="background:#153C6C;display:flex;align-items:center;padding:0 12px;height:36px;gap:10px">
@@ -2886,15 +2889,6 @@ syncFtPolicy();
 
     <div style="padding:20px">
 
-      <!-- Who this applies to -->
-      <div id="tcl-target-banner" style="display:flex;align-items:flex-start;gap:9px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;padding:10px 13px;margin-bottom:18px">
-        <i class="fas fa-desktop" style="color:#2A6DB5;font-size:12px;margin-top:2px"></i>
-        <div style="font-size:12px;color:#1e3a5f;line-height:1.6">
-          Applying to <strong id="tcl-target-count">0 Teacher Consoles</strong>
-          <div id="tcl-target-names" style="color:#475569;font-size:11px;margin-top:2px"></div>
-        </div>
-      </div>
-
       <!-- Step 1 — on the Teacher Console -->
       <div class="tcl-step">
         <div class="tcl-step-num">1</div>
@@ -2917,7 +2911,7 @@ syncFtPolicy();
         <div class="tcl-step-num">2</div>
         <div class="tcl-step-body">
           <div class="tcl-step-title">Upload that file here</div>
-          <div class="tcl-step-text">Its settings are pushed to the Teacher Consoles listed above.</div>
+          <div class="tcl-step-text">Its settings are pushed to the Teacher Consoles you selected.</div>
 
           <!-- Drop zone -->
           <div id="tcl-drop" class="tcl-drop" onclick="document.getElementById('tcl-file').click()">
@@ -2934,15 +2928,6 @@ syncFtPolicy();
               <button class="sim-link" style="margin-top:6px;text-decoration:underline" onclick="event.stopPropagation();tclClearFile()">Choose a different file</button>
             </div>
           </div>
-
-          <!-- Parsed preview -->
-          <div id="tcl-preview" style="display:none;margin-top:12px">
-            <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Settings in this file</div>
-            <table class="tcl-preview-table">
-              <thead><tr><th>Setting name</th><th style="width:150px">On selected consoles</th></tr></thead>
-              <tbody id="tcl-preview-rows"></tbody>
-            </table>
-          </div>
         </div>
       </div>
 
@@ -2953,9 +2938,6 @@ syncFtPolicy();
           Settings with the same name are overwritten on the Teacher Console.
         </div>
       </div>
-
-      <!-- Result -->
-      <div id="tcl-result" style="display:none;margin-top:16px"></div>
 
     </div>
 

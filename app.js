@@ -1771,10 +1771,6 @@ function buildSimHtml() {
 let tclActionsOpen = false;
 let tclFile        = null;   // { name, size, settings: [string] }
 
-// Settings already present on the demo consoles, so the preview can show which
-// incoming settings replace an existing one and which are new.
-const TCL_EXISTING = ['Default', 'Exam Mode', 'Computer Lab'];
-
 function tclToggleActions(e) {
     if (e) e.stopPropagation();
     tclActionsOpen = !tclActionsOpen;
@@ -1809,15 +1805,6 @@ function tclSelectionChanged() {
         all.checked       = n === boxes.length && n > 0;
         all.indeterminate = n > 0 && n < boxes.length;
     }
-    tclRefreshTargets();
-}
-
-function tclRefreshTargets() {
-    const names = tclSelectedConsoles();
-    const count = document.getElementById('tcl-target-count');
-    const list  = document.getElementById('tcl-target-names');
-    if (count) count.textContent = `${names.length} Teacher Console${names.length === 1 ? '' : 's'}`;
-    if (list)  list.textContent  = names.join(',  ');
     tclRefreshApplyState();
 }
 
@@ -1830,9 +1817,7 @@ function tclOpenAddSettings() {
         tclSelectionChanged();
     }
     tclClearFile();
-    const res = document.getElementById('tcl-result');
-    if (res) { res.style.display = 'none'; res.innerHTML = ''; }
-    tclRefreshTargets();
+    tclRefreshApplyState();
     const m = document.getElementById('tcl-settings-modal');
     if (m) m.style.display = 'flex';
 }
@@ -1852,8 +1837,6 @@ function tclClearFile() {
     const chosen = document.getElementById('tcl-drop-chosen');
     if (empty)  empty.style.display  = '';
     if (chosen) chosen.style.display = 'none';
-    const prev = document.getElementById('tcl-preview');
-    if (prev) prev.style.display = 'none';
     tclRefreshApplyState();
 }
 
@@ -1912,20 +1895,6 @@ function tclShowFile() {
     if (nameEl) nameEl.textContent = tclFile.name;
     if (metaEl) metaEl.textContent =
         `${(tclFile.size / 1024).toFixed(1)} KB  ·  ${tclFile.settings.length} setting${tclFile.settings.length === 1 ? '' : 's'}`;
-
-    const rows = document.getElementById('tcl-preview-rows');
-    if (rows) rows.innerHTML = tclFile.settings.map(name => {
-        const replaces = TCL_EXISTING.some(e => e.toLowerCase() === String(name).toLowerCase());
-        return `<tr>
-            <td>${esc(name)}</td>
-            <td>${replaces
-                ? '<span class="tcl-badge-replace">Replaces existing</span>'
-                : '<span class="tcl-badge-new">Added</span>'}</td>
-          </tr>`;
-    }).join('');
-    const prev = document.getElementById('tcl-preview');
-    if (prev) prev.style.display = '';
-
     tclRefreshApplyState();
 }
 
@@ -1940,37 +1909,21 @@ function tclRefreshApplyState() {
 
 function tclApplySettings() {
     if (!tclFile || !tclSelectedConsoles().length) return;
-    const names    = tclSelectedConsoles();
-    const replaced = tclFile.settings.filter(n => TCL_EXISTING.some(e => e.toLowerCase() === String(n).toLowerCase()));
-    const added    = tclFile.settings.filter(n => !replaced.includes(n));
+    const n = tclSelectedConsoles().length;
+    tclCloseAddSettings();
+    tclShowToast(`Class Settings have been updated on ${n} Teacher Console${n === 1 ? '' : 's'}.`);
+}
 
-    const btn = document.getElementById('tcl-apply-btn');
-    btn.disabled = true;
-    btn.textContent = 'Applying…';
+let tclToastTimer = null;
 
-    setTimeout(() => {
-        const res = document.getElementById('tcl-result');
-        if (res) {
-            res.style.display = '';
-            res.innerHTML = `
-              <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:13px 15px">
-                <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#166534;margin-bottom:7px">
-                  <i class="fas fa-circle-check"></i>Class Settings applied
-                </div>
-                <div style="font-size:12px;color:#15803d;line-height:1.8">
-                  Pushed <strong>${tclFile.settings.length}</strong> setting${tclFile.settings.length === 1 ? '' : 's'}
-                  to <strong>${names.length}</strong> Teacher Console${names.length === 1 ? '' : 's'}:
-                  ${esc(names.join(',  '))}
-                  ${replaced.length ? `<br><strong>${replaced.length}</strong> replaced an existing setting of the same name: ${esc(replaced.join(',  '))}` : ''}
-                  ${added.length ? `<br><strong>${added.length}</strong> added as new: ${esc(added.join(',  '))}` : ''}
-                  <br>Each console picks the change up on its next check-in.
-                </div>
-              </div>`;
-            res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        btn.textContent = 'Add Class Settings';
-        tclRefreshApplyState();
-    }, 900);
+function tclShowToast(message) {
+    const toast = document.getElementById('tcl-toast');
+    const text  = document.getElementById('tcl-toast-text');
+    if (!toast || !text) return;
+    text.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(tclToastTimer);
+    tclToastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
 }
 
 // Drag and drop onto the file area
