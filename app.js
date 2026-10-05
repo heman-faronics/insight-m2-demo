@@ -1950,12 +1950,18 @@ function tclRefreshApplyState() {
 
 function tclApplySettings() {
     if (!tclFile || !tclSelectedConsoles().length) return;
-    const n = tclSelectedConsoles().length;
     tclCloseAddSettings();
-    tclShowToast(`Class Settings have been updated on ${n} Teacher Console${n === 1 ? '' : 's'}.`);
+    tclShowToast('Class Settings have been sent to the selected teacher consoles.');
 }
 
 let tclToastTimer = null;
+
+// The mockup has no Task Status screen behind this yet — keep the link inert
+// rather than jumping the page.
+function tclViewTaskStatus(e) {
+    if (e) e.preventDefault();
+    return false;
+}
 
 function tclShowToast(message) {
     const toast = document.getElementById('tcl-toast');

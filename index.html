@@ -460,6 +460,8 @@
                box-shadow:0 3px 12px rgba(0,0,0,.25); white-space:nowrap; }
   #tcl-toast.show { display:flex; }
   #tcl-toast i { font-size:14px; }
+  .tcl-toast-link { color:#fff; text-decoration:underline; font-weight:600; cursor:pointer; }
+  .tcl-toast-link:hover { color:#fff; opacity:.85; }
 
   .tcl-rule-box { display:flex; align-items:flex-start; gap:9px; background:#fffbeb;
                   border:1px solid #fcd34d; border-radius:4px; padding:11px 13px; font-size:12px; }
@@ -2704,7 +2706,9 @@ syncFtPolicy();
 
     <!-- Confirmation toast — same treatment DFC uses for "policy has been updated" -->
     <div id="tcl-toast">
-      <i class="fas fa-circle-check"></i><span id="tcl-toast-text"></span>
+      <i class="fas fa-circle-check"></i>
+      <span id="tcl-toast-text"></span>
+      <a href="#" class="tcl-toast-link" onclick="return tclViewTaskStatus(event)">View Task Status</a>
     </div>
 
     <!-- DFC header bar -->
