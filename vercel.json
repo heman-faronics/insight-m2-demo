@@ -1,5 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" }
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/:screen(\\d+)", "destination": "/index.html" },
+    { "source": "/:slug([a-z0-9-]+)", "destination": "/index.html" }
   ]
 }

@@ -53,6 +53,45 @@ const state = {
 };
 // All screens freely navigable — sign-in enriches data but doesn't block navigation
 const TOTAL_SCREENS = 9;
+
+// Deep links: /9 opens screen 9, and a readable alias works too so a shared
+// link says what it points at. vercel.json rewrites both to index.html.
+const SCREEN_SLUGS = {
+    1: 'teacher-sign-in',
+    2: 'student-sign-in',
+    3: 'org-settings',
+    4: 'local-connector',
+    5: 'teacher-policy',
+    6: 'class-settings',
+    7: 'student-policy',
+    8: 'site-admin',
+    9: 'insight-cloud-page'
+};
+
+// Resolve a path or hash to a screen number; 0 when it names no screen
+function screenFromToken(raw) {
+    const token = String(raw || '').replace(/^[/#]+|\/+$/g, '').toLowerCase();
+    if (!token) return 0;
+    if (/^\d+$/.test(token)) {
+        const n = parseInt(token, 10);
+        return n >= 1 && n <= TOTAL_SCREENS ? n : 0;
+    }
+    const hit = Object.keys(SCREEN_SLUGS).find(k => SCREEN_SLUGS[k] === token);
+    return hit ? Number(hit) : 0;
+}
+
+function screenFromUrl() {
+    return screenFromToken(location.pathname) || screenFromToken(location.hash) || 1;
+}
+
+// Keep the address bar in step with the current screen. A link opened by its
+// slug keeps the slug — only the screen number is pushed for in-app navigation.
+function syncUrl(n, replace) {
+    if (screenFromToken(location.pathname) === n) return;
+    try {
+        history[replace ? 'replaceState' : 'pushState']({ screen: n }, '', `/${n}${location.search}`);
+    } catch (_) { /* file:// or a sandboxed context — leave the URL alone */ }
+}
 const screenReady = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true };
 
 // ── MSAL setup (v2) ────────────────────────────────────────────────────────────
@@ -121,7 +160,7 @@ function navigate(delta) {
     showScreen(next);
 }
 
-function showScreen(n) {
+function showScreen(n, opts) {
     document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
     document.getElementById(`screen-${n}`).classList.add('active');
     state.currentScreen = n;
@@ -149,6 +188,7 @@ function showScreen(n) {
         polStudentSignInMode(sMode);
     }
     updateNav();
+    syncUrl(n, !!(opts && opts.replace));
     window.scrollTo(0, 0);
 }
 
@@ -1214,7 +1254,8 @@ function classifyError(err) {
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    showScreen(1);
+    showScreen(screenFromUrl(), { replace: true });
+    window.addEventListener('popstate', () => showScreen(screenFromUrl(), { replace: true }));
     syncProviderLabels();
     tclInitScreen9();
     initSimSwitcher();
